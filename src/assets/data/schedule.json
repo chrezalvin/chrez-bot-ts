@@ -1,0 +1,36 @@
+{
+    "schedule": [
+        {
+            "channel": "739696962097512452",
+            "cron": "0 5 * * *",
+            "timezone": "Japan",
+            "messageEmbed": {
+                "title": "It's 5am on Japanese Time",
+                "description": [
+                    "to do list: ",
+                    "- potum dart",
+                    "- daily achievement",
+                    "- daily signup",
+                    "- 30 day daily bonus"
+                ],
+                "footer": "check the japanese time using command 'Chrez time'!"
+            }
+        },
+        {
+            "channel": "739696962097512452",
+            "cron": "0 0 * * 5",
+            "timezone": "Japan",
+            "messageEmbed": {
+                "title": "It's guild raid day!",
+                "description": [
+                    "How to access guild raid: ",
+                    "> go to guild bar",
+                    "> talk to maid",
+                    "> choose hall of defiance",
+                    "> enter hall of defiance",
+                    "good luck!"
+                ]
+            }
+        }
+    ]
+}
