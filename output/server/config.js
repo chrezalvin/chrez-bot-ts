@@ -7,7 +7,6 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
-const http_errors_1 = __importDefault(require("http-errors"));
 const routes_1 = __importDefault(require("./routes"));
 const _config_1 = require("../config");
 const express = (0, express_1.default)();
@@ -21,7 +20,7 @@ for (const route of routes_1.default) {
 }
 // catch 404 and forward to error handler
 express.use(function (req, res, next) {
-    next((0, http_errors_1.default)(404));
+    res.json({ error: 404, message: "page not found" });
 });
 // error handler
 express.use(function (err, req, res, next) {

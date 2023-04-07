@@ -2,7 +2,6 @@ import Express, { NextFunction } from "express";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import createError from "http-errors";
 
 import routes from "./routes";
 
@@ -22,11 +21,11 @@ for(const route of routes){
 
 // catch 404 and forward to error handler
 express.use(function(req, res, next) {
-    next(createError(404));
+    res.json({error: 404, message: "page not found"});
   });
   
-  // error handler
-  express.use(function(
+// error handler
+express.use(function(
     err: { message: any; status: any; }, 
     req: { app: { get: (arg0: string) => string; }; }, 
     res: { 
@@ -42,6 +41,6 @@ express.use(function(req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.render('error');
-  });
+});
 
 export default express;

@@ -26,15 +26,8 @@ const rest = new discord_js_1.REST({ version: '10' }).setToken(config_1.DISCORD_
 // and deploy your commands!
 (async () => {
     try {
-        console.log("Removing Global commands");
-        let res = await rest.put(discord_js_1.Routes.applicationCommands(config_1.CLIENT_ID), { body: [] });
-        console.log(`successfully removed all (${res.length}) global commands`);
-        return;
         // The put method is used to fully refresh all commands in the guild with the current set
         for (const guildID of config_1.guildIDs) {
-            console.log(`Guild ID: ${guildID}`);
-            const dat = await rest.put(discord_js_1.Routes.applicationGuildCommands(config_1.CLIENT_ID, guildID), { body: [] });
-            console.log(`removed all commands (${dat.length}) from guild`);
             console.log(`Started refreshing ${slashCommands.length} application (/) commands.`);
             const data = await rest.put(discord_js_1.Routes.applicationGuildCommands(config_1.CLIENT_ID, guildID), { body: slashCommands });
             console.log(`Successfully reloaded ${data.length} application (/) commands.`);
