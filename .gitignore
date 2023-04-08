@@ -2,4 +2,4 @@ output
 node_modules
 *.env
 test*
-database.sqlite
+*.sqlite
