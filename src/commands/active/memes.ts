@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import { prefixes } from "@config";
 
-const memesDir = path.resolve(__dirname, "../../assets/images/meme");
+const memesDir = path.resolve("./images/meme");
 
 const memes = fs.readdirSync(memesDir);
 let attachment: AttachmentBuilder;

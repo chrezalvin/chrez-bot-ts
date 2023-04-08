@@ -7,7 +7,7 @@ import path from "path";
 import { prefixes } from "@config";
 // import curseds from "./memes";
 
-const cursedDir = path.resolve(__dirname, "../../assets/images/cursed");
+const cursedDir = path.resolve("./images/cursed");
 
 const curseds = fs.readdirSync(cursedDir);
 let attachment: AttachmentBuilder;
