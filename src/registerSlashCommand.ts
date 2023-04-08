@@ -15,6 +15,7 @@ for(const command of [...commands.active, ...commands.c_private]){
 }
 
 if(MODE === "development")
+    console.log("On development mode, running experimental commands");
     for(const command of commands.experimental.commands){
         if(command.slash?.slashCommand)
             slashCommands.push(command.slash.slashCommand.toJSON());

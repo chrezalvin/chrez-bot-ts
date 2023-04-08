@@ -20,5 +20,14 @@
             "- change bulkdelete so the return message will be deleted in 10 seconds",
             "- remove the name label on Chrez time embed (you still can see it on slash command)"
         ]
+    },
+    {
+        "version": "1.0.2",
+        "news": [
+            "- Added more quote variety"
+        ],
+        "bugfix": [
+            ""
+        ]
     }
 ]

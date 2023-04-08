@@ -1,30 +1,47 @@
-import {CommandReturnTypes} from "@typings/customTypes";
+import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
+
+const run: runCommand = (message , args?: string[]) => {
+    let version: string | null = null;
+
+    if(isChatInputCommandInteraction(message)){
+        const version_hold = message.options.getString("version", false);
+        if(version_hold !== null)
+            version = version_hold;
+    }
+    else
+        if(args && args[0] !== undefined)
+            version = args[0];
+
+    let update = updates[updates.length - 1];
+    const embed = new MyEmbedBuilder();
+
+    if(version !== undefined){
+        const find = updates.find(update => update.version === version);
+        if(find === undefined)
+            throw new Error(`version ${version} cannot be found!`);
+        update = find;
+    }
+
+    embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
+    if(update.news)
+        embed.addFields({name: "news", value: update.news.join("\n")})
+    if(update.bugfix)
+        embed.addFields({name: "bugfix", value: update.bugfix.join("\n")});
+
+    return embed;
+} 
 
 const command: CommandReturnTypes = {
     name: "update",
     alias: ["u", "news"],
     description: "Gives you update about chrezbot (news and bugfixes)",
     execute: (message, args) => {
-        const embed = new MyEmbedBuilder();
-        let update = updates[updates.length - 1];
-        
-        if(args[0] !== undefined){
-            const find = updates.find(update => update.version === args[0]);
-            if(find === undefined)
-                throw new Error(`version ${args[0]} cannot be found!`);
-            update = find;
-        }
+        const embed = run(message, args);
 
-        embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
-            if(update.news)
-                embed.addFields({name: "news", value: update.news.join("\n")})
-            if(update.bugfix)
-                embed.addFields({name: "bugfix", value: update.bugfix.join("\n")});
-        
         message.channel.send({embeds: [embed]});
     },
     slash:{
@@ -44,23 +61,8 @@ const command: CommandReturnTypes = {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
             
-            const embed = new MyEmbedBuilder();
-            const version = interaction.options.getString("version", false);
-
-            let update = updates[updates.length - 1];
-            if(version !== null){
-                const find = updates.find(update => update.version === version);
-                if(find === undefined)
-                    throw new Error(`version ${version} cannot be found!`);
-                update = find;
-            }
-
-            embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
-                if(update.news)
-                    embed.addFields({name: "news", value: update.news.join("\n")})
-                if(update.bugfix)
-                    embed.addFields({name: "bugfix", value: update.bugfix.join("\n")});
-            
+            const embed = run(interaction);
+ 
             interaction.reply({embeds: [embed]});
         }
     }

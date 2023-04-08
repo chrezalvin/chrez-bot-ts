@@ -1,7 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const customTypes_1 = require("../../typings/customTypes");
-const commandDump = [];
+const event_1 = __importDefault(require("./event"));
+const commandDump = [
+    event_1.default,
+];
 let commands = [];
 let inlines = [];
 for (const unknownCommand of commandDump) {

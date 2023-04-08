@@ -1,9 +1,58 @@
-import {CommandReturnTypes} from "@typings/customTypes";
+import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder, time } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 import { prefixes } from "@config";
+
+const run: runCommand = (message , args?: string[]) => {
+  let timezone: string | null = null;
+
+  if(isChatInputCommandInteraction(message)){
+    const timezone_hold = message.options.getString("timezone", false);
+    if(timezone_hold !== null)
+      timezone = timezone_hold;
+  }
+  else
+    if(args && args[0] !== undefined)
+      timezone = args[0];
+  const time = new Date();
+  const embed = new MyEmbedBuilder();
+
+  if(timezone === null){
+    const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
+
+    // calculate time left
+    const timeLeft = {
+      hour: 24 - (time.getUTCHours() + 10) % 24,
+      minute: 60 - time.getUTCMinutes()};
+    
+    let myText;
+    if(timeLeft.minute == 0)
+      myText = `${time.getHours()} hours left`;
+    else if (timeLeft.hour == 0)
+      myText = `${timeLeft.minute} minutes left`;
+    else if(timeLeft.hour == 0 && timeLeft.minute == 0)
+      myText = `It's midnight`;
+    else
+      myText = `${timeLeft.hour} hours and ${timeLeft.minute} minutes left`;
+
+    embed.setTitle(`it's ${japTime} Japanese time`).setFooter({text: `${myText} until midnight`});
+  }
+  else{
+    for(const timeChoice of timeChoices){
+      if(timeChoice.criteria.find(crit => crit === timezone) !== undefined){
+          const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
+          embed.setTitle(`${timeChoice.name} time`).setDescription(`**${localTime.join(" ")}**`);
+          return embed;
+      }
+    }
+
+    throw new Error("timezone not found!");
+  }
+
+  return embed;
+} 
 
 const command: CommandReturnTypes = {
     name: "time",
@@ -17,43 +66,9 @@ const command: CommandReturnTypes = {
     execute: async (message, args) => {
         const time = new Date();
         // get only the hh:mm:ss format
-        const embed = new MyEmbedBuilder();
-
-        if(args === undefined || args.length === 0){
-            const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
-
-            // calculate time left
-            const timeLeft = {
-              hour: 24 - (time.getUTCHours() + 10) % 24,
-              minute: 60 - time.getUTCMinutes()};
-            
-            let myText;
-            if(timeLeft.minute == 0)
-              myText = `${time.getHours()} hours left`;
-            else if (timeLeft.hour == 0)
-              myText = `${timeLeft.minute} minutes left`;
-            else if(timeLeft.hour == 0 && timeLeft.minute == 0)
-              myText = `It's midnight`;
-            else
-              myText = `${timeLeft.hour} hours and ${timeLeft.minute} minutes left`;
-
-            embed.setTitle(`it's ${japTime} Japanese time`).setFooter({text: `${myText} until midnight`});
-        }
-        else{
-            for(const timeChoice of timeChoices){
-                if(timeChoice.criteria.find(crit => crit === args[0]) !== undefined){
-                    const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
-                    embed.setTitle(`${timeChoice.name} time`).setDescription(`**${localTime.join(" ")}**`);
-                    await message.channel.send({embeds: [embed]});
-                    return;
-                }
-            }
-
-            throw new Error("timezone not found!");
-        }
+        const embed = run(message, args);
         
         message.channel.send({embeds: [embed]});
-    
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("time")
@@ -73,43 +88,7 @@ const command: CommandReturnTypes = {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
 
-            const time = new Date();
-            const timezone = interaction.options.getString("timezone", false);
-            const embed = new MyEmbedBuilder();
-            
-            if(timezone == null){
-                // get only the hh:mm:ss format
-                const japTime = time.toLocaleString('en-US', {timeZone: "Japan"}).split(' ')[1];
-                
-                // calculate time left
-                const timeLeft = {
-                  hour: 24 - (time.getUTCHours() + 10) % 24,
-                  minute: 60 - time.getUTCMinutes()};
-                
-                let myText;
-                if(timeLeft.minute == 0)
-                  myText = `${time.getHours()} hours left`;
-                else if (timeLeft.hour == 0)
-                  myText = `${timeLeft.minute} minutes left`;
-                else if(timeLeft.hour == 0 && timeLeft.minute == 0)
-                  myText = `It's midnight`;
-                else
-                  myText = `${timeLeft.hour} hours and ${timeLeft.minute} minutes left`;
-                
-                  embed.setTitle(`it's ${japTime} Japanese time`).setFooter({text: `${myText} until midnight`});
-            }
-            else{
-                for(const timeChoice of timeChoices){
-                    if(timeChoice.timezone === timezone){
-                        const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
-                        embed.setTitle(`${timeChoice.name} time`).setDescription(`**${localTime.join(" ")}**`);
-                        await interaction.reply({embeds: [embed]});
-                        return;
-                    }
-                }
-    
-                throw new Error("timezone not found!");
-            }
+            const embed = run(interaction);
             
             interaction.reply({embeds: [embed]});
         }

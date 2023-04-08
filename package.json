@@ -6,7 +6,7 @@
   "scripts": {
     "test": "SET DEBUG=* && node test.js",
     "test:ts": "ts-node -r tsconfig-paths/register ./src/test",
-    "devstart": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/index",
+    "devstart": "SET DEBUG=ChrezBot:*&&ts-node -r tsconfig-paths/register ./src/index",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
     "start": "node ./output/index",
     "build": "tsc && tsc-alias",

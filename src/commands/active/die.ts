@@ -1,24 +1,9 @@
-import { MyEmbedBuilder } from "@modules/basicFunctions";
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
+import {CommandReturnTypes} from "@typings/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 
-const run: runCommand = (message , args?: string[]) => {
-
-    if(isChatInputCommandInteraction(message)){
-        
-    }
-    else{
-
-    }
-
-    const embed = new MyEmbedBuilder();
-
-    return embed;
-} 
-
 const command: CommandReturnTypes = {
-    name: "hello",
-    description: "saying hello whenever user says hello",
+    name: "die",
+    description: "Do random stuff (including deleting people >:D)",
     execute: (message) => {
         if(!message.author.bot)
             message.channel.send("hi");

@@ -1,4 +1,5 @@
-import {type Message, SlashCommandBuilder, Interaction, ClientEvents, Awaitable} from "discord.js";
+import { MyEmbedBuilder } from "@modules/basicFunctions";
+import {type Message, SlashCommandBuilder, Interaction, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType} from "discord.js";
 
 export interface Command{
     name: string;
@@ -64,6 +65,47 @@ export function CommandReturnTypesChecking(obj: any): obj is CommandReturnTypes{
     }
     
     return true;
+}
+
+/**
+ * (Not recomended) 
+ * typecheck for Message<boolean>
+ * @param val
+ * @returns 
+ */
+export function isDiscordMessage(val: unknown): val is Message<boolean>{
+    if(typeof val !== "object" || val === null) return false;
+    
+    if("channel" in val)
+        if(val.channel !== null && typeof val.channel === "object")
+            if("send" in val.channel)
+                return val.channel.send instanceof Function;
+
+    return false;
+}
+
+/**
+ * typecheck for Interaction
+ * @param val
+ * @returns 
+ */
+export function isChatInputCommandInteraction(val: unknown): val is ChatInputCommandInteraction<CacheType>{
+    if(typeof val !== "object" || val === null) return false;
+
+    if("isChatInputCommand" in val)
+        if(val.isChatInputCommand instanceof Function)
+            if(typeof val.isChatInputCommand() === "boolean")
+                return val.isChatInputCommand();
+
+    return false;
+}
+
+/**
+ * run command type so it can deal with slash command and message command at the same time
+ */
+export type runCommand = {
+    (message: Message<boolean>, args: string[]): MyEmbedBuilder;
+    (message: ChatInputCommandInteraction<CacheType>): MyEmbedBuilder;
 }
 
 export async function importModule<_T>(path: string, ensureType?: (x: any) => x is _T){

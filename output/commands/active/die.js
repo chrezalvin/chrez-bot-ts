@@ -1,19 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const basicFunctions_1 = require("../../modules/basicFunctions");
-const customTypes_1 = require("../../typings/customTypes");
 const discord_js_1 = require("discord.js");
-const run = (message, args) => {
-    if ((0, customTypes_1.isChatInputCommandInteraction)(message)) {
-    }
-    else {
-    }
-    const embed = new basicFunctions_1.MyEmbedBuilder();
-    return embed;
-};
 const command = {
-    name: "hello",
-    description: "saying hello whenever user says hello",
+    name: "die",
+    description: "Do random stuff (including deleting people >:D)",
     execute: (message) => {
         if (!message.author.bot)
             message.channel.send("hi");

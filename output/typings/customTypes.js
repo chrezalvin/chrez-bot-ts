@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.importModule = exports.CommandReturnTypesChecking = exports.isInline = exports.isCommandReturnType = void 0;
+exports.importModule = exports.isChatInputCommandInteraction = exports.isDiscordMessage = exports.CommandReturnTypesChecking = exports.isInline = exports.isCommandReturnType = void 0;
 function isCommand(command) {
     if (typeof command !== "object" || !command)
         return false;
@@ -67,6 +67,37 @@ function CommandReturnTypesChecking(obj) {
     return true;
 }
 exports.CommandReturnTypesChecking = CommandReturnTypesChecking;
+/**
+ * (Not recomended)
+ * typecheck for Message<boolean>
+ * @param val
+ * @returns
+ */
+function isDiscordMessage(val) {
+    if (typeof val !== "object" || val === null)
+        return false;
+    if ("channel" in val)
+        if (val.channel !== null && typeof val.channel === "object")
+            if ("send" in val.channel)
+                return val.channel.send instanceof Function;
+    return false;
+}
+exports.isDiscordMessage = isDiscordMessage;
+/**
+ * typecheck for Interaction
+ * @param val
+ * @returns
+ */
+function isChatInputCommandInteraction(val) {
+    if (typeof val !== "object" || val === null)
+        return false;
+    if ("isChatInputCommand" in val)
+        if (val.isChatInputCommand instanceof Function)
+            if (typeof val.isChatInputCommand() === "boolean")
+                return val.isChatInputCommand();
+    return false;
+}
+exports.isChatInputCommandInteraction = isChatInputCommandInteraction;
 async function importModule(path, ensureType) {
     let imported = await (_a = `/${path}`, Promise.resolve().then(() => __importStar(require(_a))));
     if (imported != undefined && typeof imported === "object")

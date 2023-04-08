@@ -17,10 +17,11 @@ for (const command of [...commands_1.default.active, ...commands_1.default.c_pri
     }
 }
 if (config_1.MODE === "development")
-    for (const command of commands_1.default.experimental.commands) {
-        if (command.slash?.slashCommand)
-            slashCommands.push(command.slash.slashCommand.toJSON());
-    }
+    console.log("On development mode, running experimental commands");
+for (const command of commands_1.default.experimental.commands) {
+    if (command.slash?.slashCommand)
+        slashCommands.push(command.slash.slashCommand.toJSON());
+}
 // Construct and prepare an instance of the REST module
 const rest = new discord_js_1.REST({ version: '10' }).setToken(config_1.DISCORD_TOKEN);
 // and deploy your commands!

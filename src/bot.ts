@@ -1,5 +1,5 @@
 // idk why it wouldnt work on es6 import smh
-const debug = require("debug")("Chrezbot:bot.ts");
+const debug = require("debug")("ChrezBot:bot");
 
 import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes} from "@config";
 import { Client, Collection, GatewayIntentBits, Interaction, TextChannel, version } from "discord.js";

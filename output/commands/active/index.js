@@ -16,6 +16,21 @@ const cursed_1 = __importDefault(require("./cursed"));
 const help_1 = __importDefault(require("./help"));
 const embedify_1 = __importDefault(require("./embedify"));
 const update_1 = __importDefault(require("./update"));
+/*
+const run: runCommand = (message , args?: string[]) => {
+
+    if(isChatInputCommandInteraction(message)){
+
+    }
+    else{
+
+    }
+
+    const embed = new MyEmbedBuilder();
+
+    return embed;
+}
+*/
 const c = [
     hello_1.default,
     roll_1.default,

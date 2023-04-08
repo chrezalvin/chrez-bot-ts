@@ -12,6 +12,22 @@ import help from "./help";
 import embedify from "./embedify"
 import update from "./update";
 
+/*
+const run: runCommand = (message , args?: string[]) => {
+
+    if(isChatInputCommandInteraction(message)){
+
+    }
+    else{
+
+    }
+
+    const embed = new MyEmbedBuilder();
+
+    return embed;
+} 
+*/
+
 const c: CommandReturnTypes[] = [
     hello, 
     roll,

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = void 0;
 // idk why it wouldnt work on es6 import smh
-const debug = require("debug")("Chrezbot:bot.ts");
+const debug = require("debug")("ChrezBot:bot");
 const _config_1 = require("./config");
 const discord_js_1 = require("discord.js");
 const commands_1 = __importDefault(require("./commands/"));

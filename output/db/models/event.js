@@ -7,6 +7,9 @@ exports.Event = void 0;
 const sequelize_1 = require("sequelize");
 const config_1 = __importDefault(require("../config"));
 exports.Event = config_1.default.define("event", {
-    name: sequelize_1.DataTypes.TEXT
+    name: sequelize_1.DataTypes.TEXT,
+    date: sequelize_1.DataTypes.DATE,
+    description: sequelize_1.DataTypes.TEXT,
+    repeat: sequelize_1.DataTypes.TEXT
 });
 exports.default = exports.Event;
