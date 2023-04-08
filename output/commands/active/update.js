@@ -13,7 +13,7 @@ const command = {
     execute: (message, args) => {
         const embed = new basicFunctions_1.MyEmbedBuilder();
         let update = update_json_1.default[update_json_1.default.length - 1];
-        if (args[0] !== "") {
+        if (args[0] !== undefined) {
             const find = update_json_1.default.find(update => update.version === args[0]);
             if (find === undefined)
                 throw new Error(`version ${args[0]} cannot be found!`);
