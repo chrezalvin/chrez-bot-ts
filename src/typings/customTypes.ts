@@ -2,7 +2,7 @@ import {type Message, SlashCommandBuilder, Interaction, ClientEvents, Awaitable}
 
 export interface Command{
     name: string;
-    execute: (message: Message, args?: string[]) => Awaitable<void>;
+    execute: (message: Message, args: string[]) => Awaitable<void>;
     unavailable?: boolean;
     description: string;
 }

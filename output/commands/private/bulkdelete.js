@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const basicFunctions_1 = require("../../modules/basicFunctions");
 const discord_js_1 = require("discord.js");
+const messageTimeout = 10;
 const command = {
     name: "bulkdelete",
     description: "saying hello whenever user says hello",
@@ -26,8 +27,13 @@ const command = {
         let amount = num;
         const res = await message.channel.bulkDelete(amount, true);
         embed.setDescription(`successfully deleted ${res.size} messages`)
-            .setTitle("delete messages");
-        message.channel.send({ embeds: [embed] });
+            .setTitle("delete messages")
+            .setFooter({ text: `This message will be deleted in ${messageTimeout} seconds` });
+        const msg = await message.channel.send({ embeds: [embed] });
+        setTimeout(() => {
+            if (msg.deletable)
+                msg.delete();
+        }, messageTimeout * 1000);
     },
     slash: {
         slashCommand: new discord_js_1.SlashCommandBuilder()
@@ -53,8 +59,12 @@ const command = {
                 throw new Error("Failed to delete message!");
             }
             embed.setDescription(`successfully deleted ${res.size} messages`)
-                .setTitle("delete messages");
+                .setTitle("delete messages")
+                .setFooter({ text: `This message will be deleted in ${messageTimeout} seconds` });
             interaction.reply({ embeds: [embed] });
+            setTimeout(() => {
+                interaction.deleteReply();
+            }, messageTimeout * 1000);
         }
     }
 };

@@ -4,6 +4,8 @@ import { NewsChannel, SlashCommandBuilder, TextChannel, ThreadChannel } from "di
 
 type GuildTextBasedChannel = TextChannel | NewsChannel | ThreadChannel;
 
+const messageTimeout = 10;
+
 const command: CommandReturnTypes = {
     name: "bulkdelete",
     description: "saying hello whenever user says hello",
@@ -13,7 +15,6 @@ const command: CommandReturnTypes = {
         if(!message.guild || !message.guild.members.me) return;
 
         const embed = new MyEmbedBuilder();
-        console.log(message.guild.members.me.permissions);
         if(!message.guild.members.me.permissions.has("Administrator"))
             throw new Error("Chrezbot cannot delete message in this guild");
             
@@ -33,9 +34,15 @@ const command: CommandReturnTypes = {
         const res = await (message.channel as GuildTextBasedChannel).bulkDelete(amount, true);
         
         embed.setDescription(`successfully deleted ${res.size} messages`)
-            .setTitle("delete messages");
+            .setTitle("delete messages")
+            .setFooter({text: `This message will be deleted in ${messageTimeout} seconds`});
 
-        message.channel.send({embeds: [embed]});
+        const msg = await message.channel.send({embeds: [embed]});
+
+        setTimeout(() => {
+            if(msg.deletable)
+                msg.delete();
+        }, messageTimeout * 1000);
     },
     slash:{
         slashCommand: new SlashCommandBuilder()
@@ -67,9 +74,14 @@ const command: CommandReturnTypes = {
             }
 
             embed.setDescription(`successfully deleted ${res.size} messages`)
-            .setTitle("delete messages");
+                .setTitle("delete messages")
+                .setFooter({text: `This message will be deleted in ${messageTimeout} seconds`});
 
             interaction.reply({embeds: [embed]});
+
+            setTimeout(() => {
+                interaction.deleteReply();
+            }, messageTimeout * 1000);
         }
     }
 };

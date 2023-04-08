@@ -55,9 +55,13 @@ const command = {
         slashCommand: new discord_js_1.SlashCommandBuilder().setName("time")
             .setDescription("Check japanese time (and how long is it until midnight)")
             .addStringOption(opt => {
-            opt.setName("timezone").setDescription("(optional) Timezone to check");
-            for (const timeChoice of timeChoices_json_1.default)
-                opt.addChoices({ name: timeChoice.name, value: timeChoice.timezone });
+            opt.setName("timezone").setDescription("Timezone to check");
+            for (const timeChoice of timeChoices_json_1.default) {
+                if (timeChoice.memberRef)
+                    opt.addChoices({ name: `(${timeChoice.memberRef}) ${timeChoice.name}`, value: timeChoice.timezone });
+                else
+                    opt.addChoices({ name: timeChoice.name, value: timeChoice.timezone });
+            }
             return opt;
         }),
         interact: async (interaction) => {

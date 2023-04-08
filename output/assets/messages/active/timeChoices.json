@@ -1,6 +1,7 @@
 [
     {
-        "name": "(Gold) Indonesia/Jakarta",
+        "name": "Indonesia/Jakarta",
+        "memberRef": "Gold",
         "criteria": ["indo", "indonesia", "indonesia", "jakarta", "id", "gold", "cheese", "chrez"],
         "timezone": "Asia/Jakarta"
     },
@@ -15,17 +16,20 @@
         "timezone": "America/Chicago"
     },
     {
-        "name": "(hidan) India/Kolkata",
+        "name": "India/Kolkata",
+        "memberRef": "Hidan",
         "criteria": ["india", "indian", "ind", "hidan", "roks"],
         "timezone": "Asia/Kolkata"
     },
     {
-        "name": "(gcb) Philippine/Manila",
+        "name": "Philippine/Manila",
+        "memberRef": "GCB",
         "criteria": ["ph", "filipino", "philiphine", "manila", "gcb", "GCB"],
         "timezone": "Asia/Manila"
     },
     {
-        "name": "(Gya) Canada",
+        "name": "Canada",
+        "memberRef": "Gyatop",
         "criteria": ["cad", "canada", "kanada", "gya", "gyatop"],
         "timezone": "Canada/Central"
     },
@@ -35,17 +39,20 @@
         "timezone": "Asia/Taipei"
     },
     {
-        "name": "(sulain) Jerusalem",
+        "name": "Jerusalem",
+        "memberRef": "Sulain",
         "criteria": ["sulain", "su"],
         "timezone": "Asia/Jerusalem"
     },
     {
-        "name": "(lost) Guam",
+        "name": "Guam",
+        "memberRef": "Lost-One",
         "criteria": ["lost", "pacific"],
         "timezone": "Pacific/Guam"
     },
     {
-        "name": "(raiden) America/Puerto_Rico",
+        "name": "America/Puerto_Rico",
+        "memberRef": "Raiden",
         "criteria": ["rai", "raiden"],
         "timezone": "America/Puerto_Rico"
     }

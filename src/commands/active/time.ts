@@ -1,7 +1,7 @@
 import {CommandReturnTypes} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, time } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 import { prefixes } from "@config";
 
@@ -59,9 +59,13 @@ const command: CommandReturnTypes = {
         slashCommand: new SlashCommandBuilder().setName("time")
             .setDescription("Check japanese time (and how long is it until midnight)")
             .addStringOption(opt => {
-                opt.setName("timezone").setDescription("(optional) Timezone to check");
-                for(const timeChoice of timeChoices)
-                    opt.addChoices({name: timeChoice.name, value: timeChoice.timezone})
+                opt.setName("timezone").setDescription("Timezone to check");
+                for(const timeChoice of timeChoices){
+                    if(timeChoice.memberRef)
+                      opt.addChoices({name: `(${timeChoice.memberRef}) ${timeChoice.name}`, value: timeChoice.timezone})
+                    else
+                      opt.addChoices({name: timeChoice.name, value: timeChoice.timezone})
+                }
                 return opt;
             }),
 

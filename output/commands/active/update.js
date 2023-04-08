@@ -6,28 +6,53 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const basicFunctions_1 = require("../../modules/basicFunctions");
 const discord_js_1 = require("discord.js");
 const update_json_1 = __importDefault(require("../../assets/messages/active/update.json"));
-const _config_1 = require("../../config");
 const command = {
     name: "update",
     alias: ["u", "news"],
-    description: "Give you update about chrezbot (news and bugfixes)",
+    description: "Gives you update about chrezbot (news and bugfixes)",
     execute: (message, args) => {
         const embed = new basicFunctions_1.MyEmbedBuilder();
-        embed.setTitle(`Chrezbot \`v${_config_1.botVersion}\` news and bugfixes`)
-            .addFields({ name: "news", value: update_json_1.default.news.join("\n") })
-            .addFields({ name: "bugfix", value: update_json_1.default.bugfix.join("\n") });
+        let update = update_json_1.default[update_json_1.default.length - 1];
+        if (args[0] !== "") {
+            const find = update_json_1.default.find(update => update.version === args[0]);
+            if (find === undefined)
+                throw new Error(`version ${args[0]} cannot be found!`);
+            update = find;
+        }
+        embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`);
+        if (update.news)
+            embed.addFields({ name: "news", value: update.news.join("\n") });
+        if (update.bugfix)
+            embed.addFields({ name: "bugfix", value: update.bugfix.join("\n") });
         message.channel.send({ embeds: [embed] });
     },
     slash: {
         slashCommand: new discord_js_1.SlashCommandBuilder().setName("update")
-            .setDescription("Gives you uppdate about ChrezBot (news and bugfixes)"),
+            .setDescription("Gives you uppdate about ChrezBot (news and bugfixes)")
+            .addStringOption(opt => {
+            for (const update of update_json_1.default)
+                opt.addChoices({ name: `v${update.version}`, value: update.version });
+            opt.setName("version");
+            opt.setDescription("Version to specify");
+            return opt;
+        }),
         interact: (interaction) => {
             if (!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
             const embed = new basicFunctions_1.MyEmbedBuilder();
-            embed.setTitle(`Chrezbot \`v${_config_1.botVersion}\` news and bugfixes`)
-                .addFields({ name: "news", value: update_json_1.default.news.join("\n") })
-                .addFields({ name: "bugfix", value: update_json_1.default.bugfix.join("\n") });
+            const version = interaction.options.getString("version", false);
+            let update = update_json_1.default[update_json_1.default.length - 1];
+            if (version !== null) {
+                const find = update_json_1.default.find(update => update.version === version);
+                if (find === undefined)
+                    throw new Error(`version ${version} cannot be found!`);
+                update = find;
+            }
+            embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`);
+            if (update.news)
+                embed.addFields({ name: "news", value: update.news.join("\n") });
+            if (update.bugfix)
+                embed.addFields({ name: "bugfix", value: update.bugfix.join("\n") });
             interaction.reply({ embeds: [embed] });
         }
     }
