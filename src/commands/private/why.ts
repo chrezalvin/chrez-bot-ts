@@ -9,7 +9,7 @@ const command: CommandReturnTypes = {
     name: "why",
     description: "Answering the real question",
     alias: ["y"],
-    execute: (message) => {
+    execute: async (message) => {
         const why = whys[rngInt(0, whys.length - 1)];
 
         const embed = new MyEmbedBuilder({
@@ -18,22 +18,22 @@ const command: CommandReturnTypes = {
             footer: {text: why.footer}
         })
 
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds: [embed]});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("why").setDescription("Answering the real question"),
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isCommand())
                 throw new Error("Bot can't reply the interaction received");
-                const why = whys[rngInt(0, whys.length - 1)];
+            const why = whys[rngInt(0, whys.length - 1)];
 
-                const embed = new MyEmbedBuilder({
-                    title: why.title,
-                    description: why.description,
-                    footer: {text: why.footer}
-                })
+            const embed = new MyEmbedBuilder({
+                title: why.title,
+                description: why.description,
+                footer: {text: why.footer}
+            })
         
-                interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds: [embed]});
         }
     }
 };

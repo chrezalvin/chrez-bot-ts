@@ -1,7 +1,9 @@
+const debug = require("debug")("ChrezBot:cursed");
+
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder, AttachmentBuilder } from "discord.js";
+import { SlashCommandBuilder, AttachmentBuilder, ChannelType } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { prefixes } from "@config";
@@ -13,15 +15,23 @@ const curseds = fs.readdirSync(cursedDir);
 let attachment: AttachmentBuilder;
 
 const run: runCommand = (message , args?: string[]) => {
+    if(message.channel)
+        if(message.channel.type === ChannelType.GuildText)
+            if(!message.channel.nsfw)
+                throw new Error("I can only send cursed image in age restricted channel");
+
   let index: number|null = rngInt(0, curseds.length - 1);
 
   if(isChatInputCommandInteraction(message)){
-      let num = message.options.getInteger("index", false);
+    let num = message.options.getInteger("index", false);
+    debug(`running command /cursed index: ${num ?? "null"}`);
 
-      if(num !== null)
-          index = num;
+    if(num !== null)
+        index = num;
+
   }
   else{
+    debug(`running command ${prefixes[0]} cursed ${args !== undefined ? args.join(' '): ""}`);
       if(args && args[0] !== undefined){
           let num = parseInt(args[0]);
           if(!isNaN(num))
@@ -38,7 +48,7 @@ const run: runCommand = (message , args?: string[]) => {
   attachment = new AttachmentBuilder(`${cursedDir}/${meme}`, {name: `cursed.jpg`})
   const embed = new MyEmbedBuilder({title: `cursed #${index}`, footer: {text: ""}}).setImage(`attachment://cursed.jpg`);
 
-  return embed;
+  return [embed];
 }
 
 const command: CommandReturnTypes = {
@@ -49,9 +59,9 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} curse`, description: "give random cursed image"},
         {command: `${prefixes[0]} curse 19`, description: "give cursed image #19"}
     ],
-    execute: (message, args) => {
-        const embed = run(message, args);
-        message.channel.send({embeds: [embed], files: [attachment]});
+    execute: async (message, args) => {
+        const embeds = run(message, args);
+        await message.channel.send({embeds, files: [attachment]});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("cursed")
@@ -63,12 +73,12 @@ const command: CommandReturnTypes = {
             .addBooleanOption(opt => opt
               .setName("nsfw")
               .setDescription("(TODO) set if you want nsfw image, defaults to sfw")),
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
-            const embed = run(interaction);
+            const embeds = run(interaction);
 
-            interaction.reply({embeds: [embed], files: [attachment]});
+            await interaction.reply({embeds, files: [attachment]});
         }
     }
 };

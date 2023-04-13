@@ -1,3 +1,5 @@
+const debug = require("debug")("ChrezBot:story");
+
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
@@ -10,11 +12,13 @@ const run: runCommand = (message , args?: string[]) => {
 
     if(isChatInputCommandInteraction(message)){
         let num = message.options.getInteger("index", false);
+        debug(`running command /story index: ${num ?? "null"}`);
 
         if(num !== null)
             index = num;
     }
     else{
+        debug(`running command ${prefixes[0]} story ${args !== undefined ? args.join(' '): ""}`);
         if(args && args[0] !== undefined){
             let num = parseInt(args[0]);
             if(!isNaN(num))
@@ -32,7 +36,7 @@ const run: runCommand = (message , args?: string[]) => {
         .setDescription(story.description.join("\n"))
         .setTitle(`${story.title} by ${story.author}`);
 
-    return embed;
+    return [embed];
 } 
 
 const command: CommandReturnTypes = {
@@ -43,22 +47,22 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} story`, description: "give random story"},
         {command: `${prefixes[0]} story 3`, description: "give story #3"}
     ],
-    execute: (message, args) => {
-        const embed = run(message, args);
+    execute: async (message, args) => {
+        const embeds = run(message, args);
 
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("story")
             .setDescription("Creates a random story, you can specify which story you want using the option")
             .addIntegerOption(option => option.setName("index").setDescription("Index to target a story")),
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
                 
-            const embed = run(interaction);
+            const embeds = run(interaction);
     
-            interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds});
         }
     }
 };

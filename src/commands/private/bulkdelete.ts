@@ -63,7 +63,7 @@ const command: CommandReturnTypes = {
 
             if(!interaction.guild.members.me.permissions.has("ManageMessages"))
                 throw new Error("Chrezbot cannot delete message in this guild");
-            
+            await interaction.deferReply();
             const embed = new MyEmbedBuilder();
 
             const amount = interaction.options.getInteger("amount", true);
@@ -76,8 +76,8 @@ const command: CommandReturnTypes = {
             embed.setDescription(`successfully deleted ${res.size} messages`)
                 .setTitle("delete messages")
                 .setFooter({text: `This message will be deleted in ${messageTimeout} seconds`});
-
-            interaction.reply({embeds: [embed]});
+            
+            await interaction.reply({embeds: [embed]});
 
             setTimeout(() => {
                 interaction.deleteReply();

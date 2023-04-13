@@ -1,3 +1,5 @@
+const debug = require("debug")("ChrezBot:calculate");
+
 import { prefixes } from "@config";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
@@ -46,10 +48,12 @@ const run: runCommand = (message , args?: string[]) => {
 
     if(isChatInputCommandInteraction(message)){
         expression = message.options.getString("expression", true);
+        debug(`running command /calculate expression: ${expression ?? "null"}`);
     }
     else{
         if(args)
             expression = args.join("");
+        debug(`running command ${prefixes[0]} calculate ${expression}`);
     }
 
     if(expression === null)
@@ -71,7 +75,7 @@ const run: runCommand = (message , args?: string[]) => {
     embed.setTitle("calculates the expression")
         .setDescription(`${expressionSend} = ${result}`);
 
-    return embed;
+    return [embed];
 } 
 
 const command: CommandReturnTypes = {
@@ -82,23 +86,23 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} math 2 + 3`, description: "2 + 3 = 5"},
         {command: `${prefixes[0]} math 2k + 2^3`, description: "2k + 2^3 = 2008"}
     ],
-    execute: (message, args) => {
-        const embed = run(message, args);
+    execute: async (message, args) => {
+        const embeds = run(message, args);
 
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds});
     },
     slash:{
         slashCommand: new SlashCommandBuilder()
             .setName("calculate")
             .setDescription("Calculates a math expression")
             .addStringOption(opt => opt.setName("expression").setDescription("the expressions to calculate").setRequired(true)),
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isCommand() || !interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
 
-            const embed = run(interaction);
+            const embeds = run(interaction);
 
-            interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds});
         }
     }
 };

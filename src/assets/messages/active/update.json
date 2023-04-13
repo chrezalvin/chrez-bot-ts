@@ -23,12 +23,17 @@
     ]
 },
 {
-    "version": "1.0.2",
+    "version": "1.1.0",
     "news": [
-        "- Added more quote variety"
+        "- Added more quote variety",
+        "- Quote now have their author discord icon",
+        "- Added nsfw option to Chrez meme",
+        "- Chrez cursed now can be accessed only on nsfw channel",
+        "- Chrezbot can now tells when someone is having a birthday soon",
+        "- added /roshambo (rock paper scissor) game"
     ],
     "bugfix":[
-        ""
+        "- added reply when having connection issue"
     ]
 }
 ]

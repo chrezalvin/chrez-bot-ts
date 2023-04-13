@@ -1,3 +1,5 @@
+const debug = require("debug")("ChrezBot:roll");
+
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
@@ -18,8 +20,11 @@ const run: runCommand = (message , args?: string[]) => {
     if(isChatInputCommandInteraction(message)){
         a = message.options.getInteger("first", false);
         b = message.options.getInteger("second", false);
+
+        debug(`running command /roll first: ${a ?? "null"} second: ${b ?? "null"}`);
     }
     else{
+        debug(`running command ${prefixes[0]} roll ${args !== undefined ? args.join(' '): ""}`);
         if(args !== undefined && args[0] !== undefined){
             if(args[1] === undefined)
                 throw new Error("the second number must also be inputted");
@@ -41,7 +46,7 @@ const run: runCommand = (message , args?: string[]) => {
     if(a !== null && b !== null)
         embed.setTitle(`rolls a number between ${a} and ${b}`).setDescription(`I rolled a ${rngInt(a, b)}!`);
         
-    return embed;
+    return [embed];
 }
 
 const command: CommandReturnTypes = {
@@ -53,10 +58,10 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} roll 1 20`, description: "rolls a number between 1 and 20"},
         {command: `${prefixes[0]} roll 30 20`, description: "rolls a number between 30 and 20"},
     ],
-    execute: (message, args) => {
-        const embed = run(message, args);
+    execute: async (message, args) => {
+        const embeds = run(message, args);
 
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("roll")
@@ -64,12 +69,12 @@ const command: CommandReturnTypes = {
             .addIntegerOption(option => option.setName("first").setDescription("First Number"))
             .addIntegerOption(option => option.setName("second").setDescription("Second Number")),
             
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
-            const embed = run(interaction);
+            const embeds = run(interaction);
             
-            interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds});
         }
     }
 };

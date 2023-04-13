@@ -11,6 +11,7 @@ import cursed from "./cursed";
 import help from "./help";
 import embedify from "./embedify"
 import update from "./update";
+import roshambo from "./roshambo";
 
 /*
 const run: runCommand = (message , args?: string[]) => {
@@ -24,7 +25,7 @@ const run: runCommand = (message , args?: string[]) => {
 
     const embed = new MyEmbedBuilder();
 
-    return embed;
+    return [embed];
 } 
 */
 
@@ -39,7 +40,9 @@ const c: CommandReturnTypes[] = [
     memes,
     cursed,
     embedify,
-    update
+    update,
+    roshambo,
+    
 ].filter(command => !command.unavailable);
 
 // workaround for help command

@@ -2,11 +2,12 @@ import {inlineCommandReturnTypes} from "@typings/customTypes";
 
 import greet from "@assets/messages/inline/greet.json";
 import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
+import { prefixes } from "@config";
 
 const command: inlineCommandReturnTypes = {
     name: "greet",
     description: "Greet the user",
-    searchCriteria: ["Chrez", "cb", "cheese", "here"],
+    searchCriteria: ["cheese", "here", ...prefixes],
     execute: (message) => {
         const embed = new MyEmbedBuilder()
             .setTitle(`Chrezbot greets ${message.author.username}`)

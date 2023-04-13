@@ -1,3 +1,5 @@
+const debug = require("debug")("ChrezBot:story");
+
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
@@ -7,17 +9,22 @@ import { prefixes } from "@config";
 
 const run: runCommand = (message , args?: string[]) => {
   let timezone: string | null = null;
+  const time = new Date();
+  const embed = new MyEmbedBuilder();
 
   if(isChatInputCommandInteraction(message)){
     const timezone_hold = message.options.getString("timezone", false);
+
+    debug(`running command /time timezone: ${timezone_hold ?? "null"}`);
+
     if(timezone_hold !== null)
       timezone = timezone_hold;
   }
-  else
+  else{
+    debug(`running command ${prefixes[0]} time ${args !== undefined ? args.join(' '): ""}`);
     if(args && args[0] !== undefined)
       timezone = args[0];
-  const time = new Date();
-  const embed = new MyEmbedBuilder();
+  }
 
   if(timezone === null){
     const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
@@ -41,17 +48,17 @@ const run: runCommand = (message , args?: string[]) => {
   }
   else{
     for(const timeChoice of timeChoices){
-      if(timeChoice.criteria.find(crit => crit === timezone) !== undefined){
+      if(timeChoice.timezone === timezone || timeChoice.criteria.find(crit => crit === timezone) !== undefined){
           const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
           embed.setTitle(`${timeChoice.name} time`).setDescription(`**${localTime.join(" ")}**`);
-          return embed;
+          return [embed];
       }
     }
 
     throw new Error("timezone not found!");
   }
 
-  return embed;
+  return [embed];
 } 
 
 const command: CommandReturnTypes = {
@@ -66,9 +73,9 @@ const command: CommandReturnTypes = {
     execute: async (message, args) => {
         const time = new Date();
         // get only the hh:mm:ss format
-        const embed = run(message, args);
+        const embeds = run(message, args);
         
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("time")
@@ -88,9 +95,9 @@ const command: CommandReturnTypes = {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
 
-            const embed = run(interaction);
+            const embeds = run(interaction);
             
-            interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds});
         }
     }
 };

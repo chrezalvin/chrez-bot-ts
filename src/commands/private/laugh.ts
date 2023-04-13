@@ -9,7 +9,7 @@ const command: CommandReturnTypes = {
     name: "laugh",
     description: "laughs at whoever you point to",
     alias: ["haha", "l", "laughs", "heh"],
-    execute: (message) => {
+    execute: async (message) => {
         const laugh = laughs[rngInt(0, laughs.length - 1)];
 
         const embed = new MyEmbedBuilder({
@@ -17,11 +17,11 @@ const command: CommandReturnTypes = {
             description: laugh
         })
 
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds: [embed]});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("laugh").setDescription("laughs at you"),
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isCommand())
                 throw new Error("Bot can't reply the interaction received");
             const laugh = laughs[rngInt(0, laughs.length - 1)];
@@ -31,7 +31,7 @@ const command: CommandReturnTypes = {
                 description: laugh
             })
         
-            interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds: [embed]});
         }
     }
 };

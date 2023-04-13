@@ -1,20 +1,29 @@
+const debug = require("debug")("ChrezBot:update");
+
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, verifyString } from "discord.js";
 import updates from "@assets/messages/active/update.json";
+import { prefixes } from "@config";
 
 const run: runCommand = (message , args?: string[]) => {
     let version: string | null = null;
 
     if(isChatInputCommandInteraction(message)){
         const version_hold = message.options.getString("version", false);
+        debug(`running command /update timezone: ${version_hold ?? "null"}`);
+
+
         if(version_hold !== null)
             version = version_hold;
     }
-    else
+    else{
+        debug(`running command ${prefixes[0]} update ${args !== undefined ? args.join(' '): ""}`);
+
         if(args && args[0] !== undefined)
             version = args[0];
+    }
 
     let update = updates[updates.length - 1];
     const embed = new MyEmbedBuilder();
@@ -32,17 +41,17 @@ const run: runCommand = (message , args?: string[]) => {
     if(update.bugfix)
         embed.addFields({name: "bugfix", value: update.bugfix.join("\n")});
 
-    return embed;
+    return [embed];
 } 
 
 const command: CommandReturnTypes = {
     name: "update",
     alias: ["u", "news"],
     description: "Gives you update about chrezbot (news and bugfixes)",
-    execute: (message, args) => {
-        const embed = run(message, args);
+    execute: async (message, args) => {
+        const embeds = run(message, args);
 
-        message.channel.send({embeds: [embed]});
+        await message.channel.send({embeds});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("update")
@@ -57,13 +66,13 @@ const command: CommandReturnTypes = {
                 return opt;
                 }),
 
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
             
-            const embed = run(interaction);
+            const embeds = run(interaction);
  
-            interaction.reply({embeds: [embed]});
+            await interaction.reply({embeds});
         }
     }
 };

@@ -4,6 +4,7 @@ import event from "./event";
 
 const commandDump: (CommandReturnTypes | inlineCommandReturnTypes)[] = [
     event,
+    
 ]
 
 let commands: (CommandReturnTypes)[] = [];

@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { Event } from "@database";
+import path from "path";
 
 const router = Router();
 
 interface EventPost{
-
+    
 }
 
 function isEventPost(data: unknown): data is EventPost{
@@ -12,7 +13,10 @@ function isEventPost(data: unknown): data is EventPost{
 }
 
 router.get("/event", (_, res) => {
-    res.send("GET /Event");
+    const p = path.resolve("./static/index.html");
+    res.sendFile(p);
+
+    // res.send("GET /Event");
 })
 
 router.post("/event", async (req, res) => {
