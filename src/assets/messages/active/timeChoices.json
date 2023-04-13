@@ -3,7 +3,11 @@
         "name": "Indonesia/Jakarta",
         "memberRef": "Gold",
         "criteria": ["indo", "indonesia", "indonesia", "jakarta", "id", "gold", "cheese", "chrez"],
-        "timezone": "Asia/Jakarta"
+        "timezone": "Asia/Jakarta",
+        "memberSmthg": [
+            "545089547646795776",
+            "696693247350931488"
+        ]
     },
     {
         "name": "Japan",
@@ -19,7 +23,12 @@
         "name": "India/Kolkata",
         "memberRef": "Hidan",
         "criteria": ["india", "indian",  "ind", "hidan", "roks"],
-        "timezone": "Asia/Kolkata"
+        "timezone": "Asia/Kolkata",
+        "memberSmthg": [
+            "558614543929180171",
+            "515114664351498240"
+        ]
+
     },
     {
         "name": "Philippine/Manila",

@@ -1,6 +1,10 @@
 import { CommandReturnTypes, inlineCommandReturnTypes, isCommandReturnType, isInline } from "@typings/customTypes";
 
+import event from "./event";
+
 const commandDump: (CommandReturnTypes | inlineCommandReturnTypes)[] = [
+    event,
+    
 ]
 
 let commands: (CommandReturnTypes)[] = [];

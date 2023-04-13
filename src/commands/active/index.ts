@@ -11,6 +11,23 @@ import cursed from "./cursed";
 import help from "./help";
 import embedify from "./embedify"
 import update from "./update";
+import roshambo from "./roshambo";
+
+/*
+const run: runCommand = (message , args?: string[]) => {
+
+    if(isChatInputCommandInteraction(message)){
+
+    }
+    else{
+
+    }
+
+    const embed = new MyEmbedBuilder();
+
+    return [embed];
+} 
+*/
 
 const c: CommandReturnTypes[] = [
     hello, 
@@ -23,7 +40,9 @@ const c: CommandReturnTypes[] = [
     memes,
     cursed,
     embedify,
-    update
+    update,
+    roshambo,
+    
 ].filter(command => !command.unavailable);
 
 // workaround for help command

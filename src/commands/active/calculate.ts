@@ -1,6 +1,8 @@
+const debug = require("debug")("ChrezBot:calculate");
+
 import { prefixes } from "@config";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
-import {CommandReturnTypes} from "@typings/customTypes";
+import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 const evaluatex = require("evaluatex");
 
@@ -41,6 +43,41 @@ const replaceable = new Map<RegExp | string, V>([
 
 const calculationPrecision = 5;
 
+const run: runCommand = (message , args?: string[]) => {
+    let expression: string | null = null;
+
+    if(isChatInputCommandInteraction(message)){
+        expression = message.options.getString("expression", true);
+        debug(`running command /calculate expression: ${expression ?? "null"}`);
+    }
+    else{
+        if(args)
+            expression = args.join("");
+        debug(`running command ${prefixes[0]} calculate ${expression}`);
+    }
+
+    if(expression === null)
+        throw new Error("no expression to be evaluated!");
+    
+
+    // the expression that will be send instead for easier reading
+    let expressionSend = expression.replaceAll('*', '\\*'); 
+    const embed = new MyEmbedBuilder();
+
+    for(const [key, val] of replaceable)
+        if(typeof val === "string")
+            expression = expression.replaceAll(key, val);
+        else
+            expression = expression.replaceAll(key, val);
+
+    let result = evaluatex(expression)();
+
+    embed.setTitle("calculates the expression")
+        .setDescription(`${expressionSend} = ${result}`);
+
+    return [embed];
+} 
+
 const command: CommandReturnTypes = {
     name: "calculate",
     alias: ["math", "m", "calc"],
@@ -49,71 +86,23 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} math 2 + 3`, description: "2 + 3 = 5"},
         {command: `${prefixes[0]} math 2k + 2^3`, description: "2k + 2^3 = 2008"}
     ],
-    execute: (message, args) => {
-        if(args === undefined){
-            const embed = new MyEmbedBuilder().setError({description: "no math expression is given!"});
-            message.channel.send({embeds: [embed]});
-            return;
-        }
-        // the expression that will be proccessed
-        // also escapes the special characters
-        let expression = args.join('');
+    execute: async (message, args) => {
+        const embeds = run(message, args);
 
-        // the expression that will be send instead for easier reading
-        let expressionSend = expression.replaceAll('*', '\\*'); 
-        if(expression === ''){
-            const embed = new MyEmbedBuilder().setError({description: "no expression to be evaluated!"});
-            message.channel.send({embeds: [embed]});
-            return;
-        }
-
-        for(const [key, val] of replaceable)
-            if(typeof val === "string")
-                expression = expression.replaceAll(key, val);
-            else
-                expression = expression.replaceAll(key, val);
-
-        let result = evaluatex(expression)();
-
-        // round the result to the specified precision
-        // result = result.toFixed(calculationPrecision); TODO
-        // remove the trailling zeros
-        // result = result.replace(/\.?0+$/, ''); TODO
-
-        
-        const myEmbed = new MyEmbedBuilder()
-            .setTitle("calculates the expression")
-            .setDescription(`${expressionSend} = ${result}`);
-
-        message.channel.send({embeds: [myEmbed]});
+        await message.channel.send({embeds});
     },
     slash:{
         slashCommand: new SlashCommandBuilder()
             .setName("calculate")
             .setDescription("Calculates a math expression")
             .addStringOption(opt => opt.setName("expression").setDescription("the expressions to calculate").setRequired(true)),
-        interact: (interaction) => {
+        interact: async (interaction) => {
             if(!interaction.isCommand() || !interaction.isChatInputCommand())
                 throw new Error("Bot can't reply the interaction received");
 
-            let expression = interaction.options.getString("expression", true);
-            let expressionSend = expression.replaceAll('*', '\\*'); 
+            const embeds = run(interaction);
 
-            expression = expression.replaceAll(" ", "");
-
-            for(const [key, val] of replaceable)
-                if(typeof val === "string")
-                    expression = expression.replaceAll(key, val);
-                else
-                    expression = expression.replaceAll(key, val);
-            
-            let result = evaluatex(expression)();
-
-            const myEmbed = new MyEmbedBuilder()
-            .setTitle("calculates the expression")
-            .setDescription(`${expressionSend} = ${result}`);
-
-            interaction.reply({embeds: [myEmbed]});
+            await interaction.reply({embeds});
         }
     }
 };

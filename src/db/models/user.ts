@@ -1,16 +1,16 @@
 import { Optional, Model, DataTypes } from "sequelize";
 import sequelize from "../config";
 
-interface UserModel{
+export interface UserModel{
     name: string,
     favoriteColor: string,
     age: number,
     cash: number
 }
 
-type Opt = Optional<UserModel, "favoriteColor" | "age" | "cash">
+export type UserModelOptionals = Optional<UserModel, "favoriteColor" | "age" | "cash">
 
-export const User = sequelize.define<Model<UserModel, Opt>>("user", {
+export const User = sequelize.define<Model<UserModel, UserModelOptionals>>("user", {
   name: DataTypes.TEXT,
   favoriteColor: {
     type: DataTypes.TEXT,
