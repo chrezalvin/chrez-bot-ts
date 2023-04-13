@@ -28,7 +28,7 @@ const run: runCommand = (message , args?: string[]) => {
     let update = updates[updates.length - 1];
     const embed = new MyEmbedBuilder();
 
-    if(version !== undefined){
+    if(version !== null){
         const find = updates.find(update => update.version === version);
         if(find === undefined)
             throw new Error(`version ${version} cannot be found!`);
