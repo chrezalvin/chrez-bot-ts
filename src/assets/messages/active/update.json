@@ -33,7 +33,8 @@
         "- added /roshambo (rock paper scissor) game"
     ],
     "bugfix":[
-        "- added reply when having connection issue"
+        "- added reply when having connection issue",
+        "- fix bug on chrez update"
     ]
 }
 ]
