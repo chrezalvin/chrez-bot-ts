@@ -2,6 +2,8 @@ import { MyEmbedBuilder } from "@modules/basicFunctions";
 import {CommandReturnTypes} from "@typings/customTypes";
 import { NewsChannel, SlashCommandBuilder, TextChannel, ThreadChannel } from "discord.js";
 
+import { getProfileByID, userIsAdmin } from "@modules/profiles";
+
 type GuildTextBasedChannel = TextChannel | NewsChannel | ThreadChannel;
 
 const messageTimeout = 10;
@@ -20,6 +22,9 @@ const command: CommandReturnTypes = {
             
         if(args === undefined || args.length === 0)
             throw new Error("No amount to delete!");
+
+        if(!userIsAdmin(message.author.id))
+            throw new Error("This command is for private members only!");
 
         const num = parseInt(args[0]);
         if(isNaN(parseInt(args[0])))
@@ -56,13 +61,14 @@ const command: CommandReturnTypes = {
                 .setRequired(true)
             ),
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
             if(!interaction.guild || !interaction.guild.members.me) return;
 
             if(!interaction.guild.members.me.permissions.has("ManageMessages"))
                 throw new Error("Chrezbot cannot delete message in this guild");
+
+            if(!userIsAdmin(interaction.user.id))
+                throw new Error("This command is for private members only!");
+            
             await interaction.deferReply();
             const embed = new MyEmbedBuilder();
 
@@ -73,8 +79,12 @@ const command: CommandReturnTypes = {
                 throw new Error("Failed to delete message!");
             }
 
-            embed.setDescription(`successfully deleted ${res.size} messages`)
-                .setTitle("delete messages")
+            if(res.size !== amount)
+                embed.setDescription(`successfully deleted ${res.size} messages\nthe remaining ${amount - res.size} couldn't be deleted because of old message policy`);
+            else
+                embed.setDescription(`successfully deleted ${res.size} messages`);
+                
+            embed.setTitle("delete messages")
                 .setFooter({text: `This message will be deleted in ${messageTimeout} seconds`});
             
             await interaction.reply({embeds: [embed]});

@@ -23,8 +23,6 @@ const command: CommandReturnTypes = {
     slash:{
         slashCommand: new SlashCommandBuilder().setName("why").setDescription("Answering the real question"),
         interact: async (interaction) => {
-            if(!interaction.isCommand())
-                throw new Error("Bot can't reply the interaction received");
             const why = whys[rngInt(0, whys.length - 1)];
 
             const embed = new MyEmbedBuilder({

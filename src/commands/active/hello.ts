@@ -29,8 +29,6 @@ const command: CommandReturnTypes = {
     slash:{
         slashCommand: new SlashCommandBuilder().setName("hello").setDescription("Says hello"),
         interact: async (interaction) => {
-            if(!interaction.isCommand())
-                throw new Error("Bot can't reply the interaction received");
             debug(`running command ${prefixes[0]} hello`);
             await interaction.reply(`Hello, ${interaction.member?.user.username}!`);
         }

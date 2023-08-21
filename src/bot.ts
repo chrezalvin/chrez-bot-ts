@@ -1,16 +1,15 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:bot");
 
-import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes} from "@config";
-import { Client, Collection, DiscordAPIError, GatewayIntentBits, Interaction, TextChannel, version } from "discord.js";
+import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes, max_message_allowed} from "@config";
+import { Client, Collection, GatewayIntentBits, version } from "discord.js";
 
 import { CommandReturnTypes, inlineCommandReturnTypes, isDiscordAPIError } from "@typings/customTypes";
-import commands, { inline } from "./commands/";
+import commands from "./commands/";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
 import errorMessages from "@assets/data/error.json";
-import profiles from "@assets/data/profiles.json";
 
-import {CronJob} from "cron";
+import autoWorkersList from "autoWorkers";
 
 const _command = new Collection<string, CommandReturnTypes>();
 const _commandAlias = new Collection<string, string>();
@@ -27,15 +26,15 @@ debug("Loading active commands");
 for(const command of commands.active){
     _command.set(command.name, command);
     if(command.slash)
-    _slashCommands.set(command.slash.slashCommand.name, command.slash);
+        _slashCommands.set(command.slash.slashCommand.name, command.slash);
     if(command.alias)
-    for(const alias of command.alias){
-        if(_commandAlias.has(alias)){
-            console.warn(`WARNING: The alias ${alias} in Chrez ${command.name} has already been taken by command ${_commandAlias.get(alias)}, skipping this alias`);
-            continue;
+        for(const alias of command.alias){
+            if(_commandAlias.has(alias)){
+                console.warn(`WARNING: The alias ${alias} in Chrez ${command.name} has already been taken by command ${_commandAlias.get(alias)}. This command will NOT be overriden, skipping this alias`);
+                continue;
+            }
+            _commandAlias.set(alias, command.name);
         }
-        _commandAlias.set(alias, command.name);
-    }
 }
 debug("Done loading active commands");
 
@@ -43,32 +42,32 @@ debug("Loading private commands");
 for(const command of commands.c_private){
     _privateCommands.set(command.name, command);
     if(command.slash)
-    _privateSlashCommands.set(command.slash.slashCommand.name, command.slash);
+        _privateSlashCommands.set(command.slash.slashCommand.name, command.slash);
     if(command.alias)
-    for(const alias of command.alias){
-        if(_privateCommandAlias.has(alias)){
-            console.warn(`WARNING: The alias for private command ${alias} has already been taken by command ${_privateCommandAlias.get(alias)}, skipping this alias`);
-            continue;
+        for(const alias of command.alias){
+            if(_privateCommandAlias.has(alias)){
+                console.warn(`WARNING: The alias for private command ${alias} has already been taken by command ${_privateCommandAlias.get(alias)}, skipping this alias`);
+                continue;
+            }
+            _privateCommandAlias.set(alias, command.name);
         }
-        _privateCommandAlias.set(alias, command.name);
-    }
 }
 debug("Done loading private commands");
 
 debug("Loading Inline Commands");
 for(const inline of commands.inline){
     for(const criteria of inline.searchCriteria)
-    _aliasCriteriaMap.set(criteria, inline.name);
-    _inlineCommands.set(inline.name, inline);
+        _aliasCriteriaMap.set(criteria, inline.name);
+        _inlineCommands.set(inline.name, inline);
 }
 debug("Done loading inline Commands");
 
 if(MODE === "development"){
-    console.log("On development mode, adding experimental commands");
+    debug("On development mode, adding experimental commands");
     for(const command of commands.experimental.commands){
         _command.set(command.name, command);
         if(command.slash){
-            console.log(command.slash.slashCommand.name);
+            debug(`registering /${command.slash.slashCommand.name}`);
             _slashCommands.set(command.slash.slashCommand.name, command.slash);
         }
         if(command.alias)
@@ -91,7 +90,7 @@ if(MODE === "development"){
 
 debug("======= list of commands =======");
 debug(`create Message: ${_command.map((_, key) => key)}`);
-debug(`slash Commands: ${_slashCommands.map((_, key) => key)}`);
+debug(`slash Commands: ${_slashCommands.map((_, key) => `/${key} `)}`);
 debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
 debug(`private Commands: ${_privateCommands.map((_, key) => key)}`);
 
@@ -109,10 +108,11 @@ client.once("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
+    // check if the bot can send message into the channel
     if(!message.guild?.members.me?.permissions.has("ManageMessages")) return;
     
     // ignore message from bot or long message
-    if(message.author.bot || message.content.length > 300) return;
+    if(message.author.bot || message.content.length > max_message_allowed) return;
     
     // inline command handling
     for(const [v, k] of _aliasCriteriaMap){
@@ -128,6 +128,7 @@ client.on("messageCreate", async (message) => {
         }
     }
     
+    // check if command is directed to chrezbot (e.g "Chrez" math)
     if(prefixes.find(prefix => message.content.startsWith(prefix)) === undefined) 
     return;
     
@@ -138,50 +139,46 @@ client.on("messageCreate", async (message) => {
     debug(`args: ${args}`);
     
     const command = args.shift();
-    // check if command available
+    // check if command available (i.e: not just Chrez)
     if(command === undefined) return;
     
     try{
+        // check command
         if(_command.has(command))
-        await _command.get(command)?.execute(message, args);
+            await _command.get(command)?.execute(message, args);
+        // check alias for command
         else if(_commandAlias.has(command))
-        await _command.get(_commandAlias.get(command)!)?.execute(message, args);
+            _command.get(_commandAlias.get(command)!)?.execute(message, args);
+        // check if command is for private members (highest authority)
         else if(_privateCommands.has(command)){
             if(message.author.id === ownerID)
-            await _privateCommands.get(command)?.execute(message, args);
+                await _privateCommands.get(command)?.execute(message, args);
             else
-            throw new Error("This command is for private members only!");
+                throw new Error("This command is for private members only!");
         }
+        // check if command is for private members (lower authority)
         else if(_privateCommandAlias.has(command)){
             if(message.author.id === ownerID)
-            await _privateCommands.get(_privateCommandAlias.get(command)!)?.execute(message, args);
+                await _privateCommands.get(_privateCommandAlias.get(command)!)?.execute(message, args);
             else
-            throw new Error("This command is for private members only!");
+                throw new Error("This command is for private members only!");
         }
         else
-        throw new Error("Your command is not available in Chrez Command List");
+            throw new Error("Your command is not available in Chrez Command List");
     }
     catch(e: any){
         const embed = new MyEmbedBuilder();
         const deleteTime = 10;
         if(e.message && typeof e.message === "string")
-        embed.setError({description: `**${e.message}**`, footer: "this message will be deleted in 10 seconds"});
+            embed.setError({description: `**${e.message}**`, footer: "this message will be deleted in 10 seconds"});
         
         const msg = await message.channel.send({embeds: [embed]});
         setTimeout(() => {
             if(msg.deletable)
-            msg.delete();
+                msg.delete();
         }, deleteTime * 1000);
     }
 })
-
-async function sleep(ms: number){
-    const p = new Promise<void>((res, _) => {
-        setTimeout(() => {res()}, ms);
-    })
-    
-    await p;
-}
 
 client.on('interactionCreate', async (interaction) => {
     if(!interaction.isChatInputCommand()) return;
@@ -189,11 +186,11 @@ client.on('interactionCreate', async (interaction) => {
     
     try{
         if(_slashCommands.has(interaction.commandName))
-        await _slashCommands.get(interaction.commandName)?.interact(interaction);
+            await _slashCommands.get(interaction.commandName)?.interact(interaction);
         else if(_privateSlashCommands.has(interaction.commandName)){
             if(!interaction.member) return;
-            if(interaction.member.user.id === ownerID)
-                await _privateSlashCommands.get(interaction.commandName)?.interact(interaction);
+                if(interaction.member.user.id === ownerID)
+                    await _privateSlashCommands.get(interaction.commandName)?.interact(interaction);
             else
                 throw new Error("This command is for private members only!");
         }
@@ -213,16 +210,16 @@ client.on('interactionCreate', async (interaction) => {
             const found = errorMessages.find(err => discordAPIError.code == err.errorcode);
             
             if(found === undefined)
-            embed.setError({
-                description: "Encountered an unknown error!",
-                footer: "this message will be deleted in 10 seconds"
-            });
+                embed.setError({
+                    description: "Encountered an unknown error!",
+                    footer: "this message will be deleted in 10 seconds"
+                });
             else
-            embed.setError({
-                description: `${found.description}\ncode: ${found.errorcode}`,
-                title: `error: ${found.errorInfo}`,
-                footer: "this message will be deleted in 10 seconds"
-            });
+                embed.setError({
+                    description: `${found.description}\ncode: ${found.errorcode}`,
+                    title: `error: ${found.errorInfo}`,
+                    footer: "this message will be deleted in 10 seconds"
+                });
             
         }
         else{
@@ -259,49 +256,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 });
 
-// birthday responder
-// name of month
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-console.log("Adding cronjobs");
-for(const profile of profiles){
-    if(profile.birthday){
-        debug(`adding bday schedule for ${profile.name}`);
-        const bday = profile.birthday;
-        if(bday.day < 2){
-            bday.day = 28; // assuming all month are 28 days lol
-            --bday.month;
-            if(bday.month === 0) bday.month = 12;
-        }
-
-        // 2 days from now
-        // `0 8 ${bday.day} ${bday.month} *`
-        new CronJob(`0 8 ${bday.day} ${bday.month} *`, async () => {
-            // send to crystal phoenix
-            const ch = await client.channels.fetch("739696962097512452");
-
-            const embed = new MyEmbedBuilder({
-                title: `Somone is having a bday at ${monthNames[profile.birthday.month - 1]} ${profile.birthday.day}`,
-                description: "wonder who"
-            })
-
-            if(ch)
-                await (ch as TextChannel).send({embeds: [embed]});
-        }, null, true, "Japan");
-
-        new CronJob(`0 8 ${profile.birthday.day} ${profile.birthday.month} *`, async () => {
-            // send to crystal phoenix
-            const ch = await client.channels.fetch("739696962097512452");
-
-            const embed = new MyEmbedBuilder({
-                title: `${profile.name} is having a birthday!`,
-                description: `cool`
-            })
-
-            if(ch)
-                await (ch as TextChannel).send({embeds: [embed]});
-        }, null, true, "Japan");
-    }
-}
+console.log("adding cronjobs...");
+for(const autoWorker of autoWorkersList)
+    autoWorker(client);
 console.log("Sucessfully added cronjobs");
 
 process.on("unhandledRejection", async (error, _) => {

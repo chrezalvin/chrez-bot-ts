@@ -19,9 +19,6 @@ const command: CommandReturnTypes = {
             .addAttachmentOption(opt => opt.setName("attachment").setDescription("image attachment of the embed"))
         ,
         interact: (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
             const description = interaction.options.getString("description", true);
             const title = interaction.options.getString("title", false);
             const footer = interaction.options.getString("footer", false);

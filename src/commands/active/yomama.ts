@@ -57,9 +57,6 @@ const command: CommandReturnTypes = {
             .setDescription("Creates a random yo mama joke, you can specify which joke you want using the option")
             .addIntegerOption(option => option.setName("index").setDescription("Index to target a joke")),
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
             const embeds = run(interaction);
 
             await interaction.reply({embeds});

@@ -1,11 +1,13 @@
 const debug = require("debug")("ChrezBot:story");
 
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+import {MyEmbedBuilder} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder, time } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 import { prefixes } from "@config";
+
+import profiles from "@assets/data/profiles.json";
 
 const run: runCommand = (message , args?: string[]) => {
   let timezone: string | null = null;
@@ -55,9 +57,17 @@ const run: runCommand = (message , args?: string[]) => {
       }
     }
 
+    for(const profile of profiles){
+      if(profile.timezone)
+        if(profile.timezone === timezone || profile.alias.find(ali => ali === timezone) !== undefined){
+          const localTime = time.toLocaleString('en-US', {timeZone: profile.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
+          embed.setTitle(`${profile.timezone} time`).setDescription(`**${localTime.join(" ")}**`);
+          return [embed];
+        }
+    }
+
     throw new Error("timezone not found!");
   }
-
   return [embed];
 } 
 
@@ -92,9 +102,6 @@ const command: CommandReturnTypes = {
             }),
 
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
             const embeds = run(interaction);
             
             await interaction.reply({embeds});

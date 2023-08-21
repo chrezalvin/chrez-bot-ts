@@ -6,12 +6,19 @@ import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@ty
 import { SlashCommandBuilder } from "discord.js";
 const evaluatex = require("evaluatex");
 
+const units: Map<string, number> = new Map([ 
+    ["k", 3], 
+    ['m', 6],
+    ['b', 9],
+    ['t', 12],
+]);
+
 function replaceUnit(match: string, p1: string){
     switch(p1){
-        case 'k': return match.replace(/k/g, '000');
-        case 'm': return match.replace(/m/g, '000000');
-        case 'b': return match.replace(/b/g, '000000000');
-        case 't': return match.replace(/t/g, '000000000000');
+        case 'k': return match.replace(/k/g, '* 1000');
+        case 'm': return match.replace(/m/g, '* 1000000');
+        case 'b': return match.replace(/b/g, '* 1000000000');
+        case 't': return match.replace(/t/g, '* 1000000000000');
         default: return match;
     }
 }
@@ -45,6 +52,7 @@ const calculationPrecision = 5;
 
 const run: runCommand = (message , args?: string[]) => {
     let expression: string | null = null;
+    let isExpressionHaveUnit = false;
 
     if(isChatInputCommandInteraction(message)){
         expression = message.options.getString("expression", true);
@@ -59,6 +67,7 @@ const run: runCommand = (message , args?: string[]) => {
     if(expression === null)
         throw new Error("no expression to be evaluated!");
     
+    isExpressionHaveUnit = expression.match(/(k|m|t|b)/) !== null;
 
     // the expression that will be send instead for easier reading
     let expressionSend = expression.replaceAll('*', '\\*'); 
@@ -71,6 +80,38 @@ const run: runCommand = (message , args?: string[]) => {
             expression = expression.replaceAll(key, val);
 
     let result = evaluatex(expression)();
+
+    // remove trailing 000... when the expression have measurement unit (like k, m, t, ...)
+    // 4k + 4k = 8k not 8000 and 4k * 4k = 16m
+    if(isExpressionHaveUnit){
+        // count the number of zeros
+        let count = 0;
+        let num = Number.parseInt(`${result}`) ?? 0;
+        for(; num % 10 === 0 && num > 0; ++count)
+            num /= 10;
+
+        if((count + 1) % 3 === 0 && num > 10){
+            num /= 10;
+            ++count;
+        }
+
+        let res = "";
+        for(const [k, v] of units){
+            if(count === v){
+                res = `${num}${k}`;
+                break;
+            }
+            else if(count % 3 > 0 && count - (count % 3) === v){
+                res = `${num}${"0".repeat(count % 3)}${k}`;
+                break;
+            }
+        }
+
+        if(res === "")
+            res = `${num} \* 10^${count}`;
+
+        result = res;
+    }
 
     embed.setTitle("calculates the expression")
         .setDescription(`${expressionSend} = ${result}`);
@@ -95,11 +136,10 @@ const command: CommandReturnTypes = {
         slashCommand: new SlashCommandBuilder()
             .setName("calculate")
             .setDescription("Calculates a math expression")
-            .addStringOption(opt => opt.setName("expression").setDescription("the expressions to calculate").setRequired(true)),
+            .addStringOption(opt => opt.setName("expression")
+            .setDescription("the expressions to calculate")
+            .setRequired(true)),
         interact: async (interaction) => {
-            if(!interaction.isCommand() || !interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
             const embeds = run(interaction);
 
             await interaction.reply({embeds});

@@ -76,9 +76,6 @@ function help(index: CommandReturnTypes[]){
                     return opt;
                 }),
             interact: async (interaction) => {
-                if(!interaction.isChatInputCommand())
-                    throw new Error("Bot can't reply the interaction received");
-
                 const embeds = run(interaction);
                 
                 await interaction.reply({embeds});

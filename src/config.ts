@@ -1,4 +1,9 @@
 import {config} from "dotenv"; config();
+
+// basic configs
+// max character bot will allow, if it's higher then the message get ignored
+export const max_message_allowed = 300;
+
 export {ownerID, prefixes, botVersion, guildIDs} from "./assets/configs/config.json";
 
 export let MODE: "development" | "production";
@@ -21,7 +26,12 @@ if(process.env.APPLICATION_ID === "")
     throw new Error("Couldn't find Bot ID in .env");
 
 // still string | undefined so i put null coalescing
-export const CLIENT_ID = process.env.APPLICATION_ID ?? "";
+export const CLIENT_ID = process.env.CLIENT_ID ?? "";
 
+if(CLIENT_ID === "") console.warn("Warning: Couldn't find CLIENT_ID in .env");
 
-export default {DISCORD_TOKEN, MODE};
+export const CLIENT_SECRET = process.env.CLIENT_SECRET ?? "";
+
+if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .env");
+
+export const port = process.env.PORT ?? "3000";

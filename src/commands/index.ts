@@ -7,5 +7,4 @@ export const active = c_active;
 export const inline = c_inline;
 export const experimental = c_experimental;
 
-// export default [hello, roll];
 export default {active, inline, experimental, c_private};

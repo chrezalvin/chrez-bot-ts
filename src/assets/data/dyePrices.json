@@ -1,0 +1,35 @@
+[
+    {
+        "color": 1,
+        "code": "#FFFFFF",
+        "armor": {
+                "A": {
+                "priceMin": [
+                    {
+                        "updatedBy": "Chrez. A",
+                        "timestamp": 0,
+                        "price": 0
+                    }
+                ],
+                "priceMax": [
+                    {
+                        "updatedBy": "Chrez. A",
+                        "timestamp": 0,
+                        "price": 0
+                    }
+                ]
+            }
+        },
+        "shield": [],
+        "additional": [],
+        "ohs": [],
+        "ths": [],
+        "knuckle": [],
+        "halberd": [],
+        "md": [],
+        "staff": [],
+        "bow": [],
+        "bowgun": [],
+        "katana": []
+    }
+]

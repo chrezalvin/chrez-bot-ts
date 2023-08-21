@@ -36,5 +36,15 @@
         "- added reply when having connection issue",
         "- fix bug on chrez update"
     ]
+},
+{
+    "version": "1.1.0",
+    "news": [
+        "- Chrez time can now accept @mentions"
+    ],
+    "bugfix":[
+        "- added reply when having connection issue",
+        "- fix bug on chrez update"
+    ]
 }
 ]

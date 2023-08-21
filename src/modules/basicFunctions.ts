@@ -32,3 +32,9 @@ export function rngInt(min: number, max: number){
 export function rng(min: number, max: number){
     return Math.random() * Math.abs(max - min) + Math.min(max, min);
 }
+
+export async function sleep(ms: number){
+    return new Promise<void>((res, _) => {
+        setTimeout(() => {res()}, ms);
+    })
+}

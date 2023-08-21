@@ -22,8 +22,6 @@ const command: CommandReturnTypes = {
     slash:{
         slashCommand: new SlashCommandBuilder().setName("laugh").setDescription("laughs at you"),
         interact: async (interaction) => {
-            if(!interaction.isCommand())
-                throw new Error("Bot can't reply the interaction received");
             const laugh = laughs[rngInt(0, laughs.length - 1)];
 
             const embed = new MyEmbedBuilder({
