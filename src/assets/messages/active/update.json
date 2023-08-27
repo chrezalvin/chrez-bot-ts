@@ -46,5 +46,17 @@
         "- added reply when having connection issue",
         "- fix bug on chrez update"
     ]
+},
+{
+    "version": "1.2.0",
+    "news": [
+        "- changing inline command to just messages instead of embed (less annoying)",
+        "- adding more private command",
+        "- fix the bug on birthday message",
+        "- Chrez calculate now send results in unit when you use unit in calculation (e.g: 2k + 3k = 5k)"
+    ],
+    "bugfix":[
+        "- fix bug on Chrez calculate"
+    ]
 }
 ]
