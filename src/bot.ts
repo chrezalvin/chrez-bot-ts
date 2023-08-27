@@ -256,10 +256,22 @@ client.on('interactionCreate', async (interaction) => {
     }
 });
 
-console.log("adding cronjobs...");
+console.log("adding autoWorkers...");
 for(const autoWorker of autoWorkersList)
-    autoWorker(client);
-console.log("Sucessfully added cronjobs");
+    try{
+        autoWorker(client);
+    }
+    catch(e: unknown){
+        if(typeof e === "object" && e !== null)
+            if("message" in e){
+                if (typeof e.message === "string" || Array.isArray(e.message))
+                    console.error(`error at autoWorker ${autoWorker.name}: ${e.message}`);
+            }
+        else
+            console.error(`unknown error at autoWorker ${autoWorker.name}`);
+    }
+console.log("Sucessfully added autoWorkers");
+console.log(`list of active autoWorkers: ${autoWorkersList.map(w => w.name)}`);
 
 process.on("unhandledRejection", async (error, _) => {
     console.log(`fatal error: ${JSON.stringify(error)}`);
