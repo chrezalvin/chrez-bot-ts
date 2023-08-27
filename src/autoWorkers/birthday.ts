@@ -14,6 +14,10 @@ export default function birthday(client: Client<boolean>){
     for(const profile of profiles){
         if(profile.birthday){
             debug(`adding bday schedule for ${profile.name}`);
+            const date = new Date(profile.birthday.year ?? 2001, profile.birthday.month, profile.birthday.day);
+            const date2DaysBefore = new Date(profile.birthday.year ?? 2001, profile.birthday.month, profile.birthday.day);
+            date2DaysBefore.setDate(date2DaysBefore.getDate() - 2);
+
             const bday = profile.birthday;
             if(bday.day < 2){
                 bday.day = 28; // assuming all month are 28 days lol
@@ -23,7 +27,7 @@ export default function birthday(client: Client<boolean>){
 
             // 2 days from now
             // `0 8 ${bday.day} ${bday.month} *`
-            new CronJob(`0 8 ${bday.day} ${bday.month} *`, async () => {
+            new CronJob(`0 8 ${date2DaysBefore.getDate()} ${date2DaysBefore.getMonth()} *`, async () => {
                 // send to crystal phoenix
                 const ch = await client.channels.fetch("739696962097512452");
 
