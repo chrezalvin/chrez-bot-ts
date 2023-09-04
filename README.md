@@ -10,4 +10,4 @@ A Crystal Phoenix's guild discord app
 - `npm run devstart:build`: transpile to Chrezbot.js and then run (output location is in /output)
 - `npm start`: build and run the transpiled code
 - `npm run build`: transpile the code without running
-- `npm run loadSlashCommands`: load slash commands
+- `npm run loadSlashCommands`: loads slash commands

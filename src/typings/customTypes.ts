@@ -1,6 +1,5 @@
 import { MyEmbedBuilder } from "@modules/basicFunctions";
-import {type Message, SlashCommandBuilder, Interaction, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
-import guild_profiles from "@assets/data/profiles.json";
+import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
 
 export interface Command{
     name: string;

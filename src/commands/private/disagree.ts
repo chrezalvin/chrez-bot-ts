@@ -4,12 +4,18 @@ import { SlashCommandBuilder } from "discord.js";
 import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
 import {disagrees} from "@assets/data/disagrees.json";
 
+function run(args?: string[]){
+    if(args){
+        
+    }
+}
+
 const command: CommandReturnTypes = {
     name: "disagree",
     description: "disagrees with you",
     alias: ["reject", "diagreed", "nope", "nah"],
     execute: async (message, args?: string[]) => {
-        if(args){
+        if(args && args[0] !== ""){
             const embed = new MyEmbedBuilder({title: args.join(" "), description: disagrees[rngInt(0, disagrees.length - 1)]})
             await message.channel.send({embeds: [embed]});
         }

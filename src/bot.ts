@@ -132,14 +132,14 @@ client.on("messageCreate", async (message) => {
     if(prefixes.find(prefix => message.content.startsWith(prefix)) === undefined) 
     return;
     
-    const args = message.content.split(/ +/);
-    args.shift();
+    const args: string[] = message.content.split(/ +/);
+    args.shift(); // remove command name (Chrez)
     
     debug(`got message: ${message.content}`);
     debug(`args: ${args}`);
     
+    // check if command available (i.e: not just Chrez tho it should be alr guarded with inline command)
     const command = args.shift();
-    // check if command available (i.e: not just Chrez)
     if(command === undefined) return;
     
     try{
