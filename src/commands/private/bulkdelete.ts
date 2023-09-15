@@ -17,7 +17,7 @@ const command: CommandReturnTypes = {
         if(!message.guild || !message.guild.members.me) return;
 
         const embed = new MyEmbedBuilder();
-        if(!message.guild.members.me.permissions.has("Administrator"))
+        if(!message.guild.members.me.permissions.has("ManageMessages"))
             throw new Error("Chrezbot cannot delete message in this guild");
             
         if(args === undefined || args.length === 0)
