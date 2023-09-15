@@ -4,7 +4,7 @@ import {config} from "dotenv"; config();
 // max character bot can allow, if message word count is higher then the message will be ignored
 export const max_message_allowed = 300;
 
-export {ownerID, prefixes, botVersion, guildIDs} from "./assets/configs/config.json";
+export {ownerID, prefixes, botVersion, guildIDs, trustedID} from "./assets/configs/config.json";
 
 // Note: production mode removes use of debug tools but some log (console) will still be used whenever error happen
 export let MODE: "development" | "production";

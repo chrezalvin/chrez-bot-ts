@@ -1,7 +1,7 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:bot");
 
-import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes, max_message_allowed} from "@config";
+import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes, max_message_allowed, trustedID} from "@config";
 import { Client, Collection, GatewayIntentBits, version } from "discord.js";
 
 import { CommandReturnTypes, inlineCommandReturnTypes, isDiscordAPIError } from "@typings/customTypes";
@@ -158,7 +158,7 @@ client.on("messageCreate", async (message) => {
         }
         // check if command is for private members (lower authority)
         else if(_privateCommandAlias.has(command)){
-            if(message.author.id === ownerID)
+            if(message.author.id === ownerID && trustedID.find(id => message.author.id === id) !== undefined)
                 await _privateCommands.get(_privateCommandAlias.get(command)!)?.execute(message, args);
             else
                 throw new Error("This command is for private members only!");
