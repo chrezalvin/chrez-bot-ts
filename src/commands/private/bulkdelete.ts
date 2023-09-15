@@ -87,10 +87,10 @@ const command: CommandReturnTypes = {
             embed.setTitle("delete messages")
                 .setFooter({text: `This message will be deleted in ${messageTimeout} seconds`});
             
-            await interaction.reply({embeds: [embed]});
+            const msg = await interaction.channel?.send({embeds: [embed]});
 
             setTimeout(() => {
-                interaction.deleteReply();
+                msg?.delete();
             }, messageTimeout * 1000);
         }
     }

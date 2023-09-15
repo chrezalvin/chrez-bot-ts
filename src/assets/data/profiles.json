@@ -201,7 +201,8 @@
         "month": 3,
         "year": null
       },
-      "timezone": "Asia/Kolkata"
+      "timezone": "Asia/Kolkata",
+      "isAdmin": true
     },
     {
       "discordID": "561185379403956224",

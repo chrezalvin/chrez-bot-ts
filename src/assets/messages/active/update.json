@@ -57,7 +57,8 @@
         "- Added more people that can use private command"
     ],
     "bugfix":[
-        "- fix bugs on Chrez calculate"
+        "- fix bugs on Chrez calculate",
+        "- fix error can't delete message using /bulkdelete"
     ]
 }
 ]

@@ -10,6 +10,7 @@ import { MyEmbedBuilder } from "@modules/basicFunctions";
 import errorMessages from "@assets/data/error.json";
 
 import autoWorkersList from "autoWorkers";
+import { userIsAdmin } from "@modules/profiles";
 
 const _command = new Collection<string, CommandReturnTypes>();
 const _commandAlias = new Collection<string, string>();
@@ -151,7 +152,7 @@ client.on("messageCreate", async (message) => {
             _command.get(_commandAlias.get(command)!)?.execute(message, args);
         // check if command is for private members (highest authority)
         else if(_privateCommands.has(command)){
-            if(message.author.id === ownerID || trustedID.find(id => message.author.id === id) !== undefined)
+            if(message.author.id === ownerID || userIsAdmin(message.author.id))
                 await _privateCommands.get(command)?.execute(message, args);
             else
                 throw new Error("This command is for private members only!");
@@ -189,7 +190,7 @@ client.on('interactionCreate', async (interaction) => {
             await _slashCommands.get(interaction.commandName)?.interact(interaction);
         else if(_privateSlashCommands.has(interaction.commandName)){
             if(!interaction.member) return;
-                if(interaction.member.user.id === ownerID)
+                if(interaction.member.user.id === ownerID || userIsAdmin(interaction.member.user.id))
                     await _privateSlashCommands.get(interaction.commandName)?.interact(interaction);
             else
                 throw new Error("This command is for private members only!");
