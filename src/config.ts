@@ -38,4 +38,31 @@ if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .
 export const port = process.env.PORT ?? "3000";
 
 export let muted = false;
-export function setMute(set: boolean){muted = set;}
+let timerMuted: NodeJS.Timeout| null = null;
+export function setMute(set: boolean, callback?: () => void){
+    if(timerMuted === null){
+        if(set)
+            timerMuted = setTimeout(() => {
+                muted = false;
+                timerMuted = null;
+                if(callback)
+                    callback();
+            }, 60 * 10 * 1000);
+    }
+    else{
+        if(set){
+            clearTimeout(timerMuted);
+            timerMuted = setTimeout(() => {
+                muted = false;
+                timerMuted = null;
+                if(callback)
+                    callback();
+            }, 60 * 10);
+        }
+        else{
+            clearTimeout(timerMuted);
+            timerMuted = null;
+        }
+    }
+    muted = set;
+}

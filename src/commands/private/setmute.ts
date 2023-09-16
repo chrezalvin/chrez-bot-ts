@@ -11,37 +11,45 @@ const run: runCommand = (message, args?: string[]) => {
     if(isChatInputCommandInteraction(message)){
         flagMute = message.options.getBoolean("mute", true);
 
-        debug(`running command /mute ${flagMute}`);
+        debug(`running command /mute ${flagMute} args: ${args ?? "no args"}`);
     }
-    else if(args)
-        if(args[0].localeCompare("true"))
+    else if(args){
+        debug(`running command Chrez mute | args: ${args ?? "no args"}`);
+        console.log(args[0].localeCompare("true"));
+        if(!args[0].localeCompare("true"))
             flagMute = true;
-        else if(args[0].localeCompare("false"))
+        else if(!args[0].localeCompare("false"))
             flagMute = false;
         else
             throw new Error("the parameter is invalid");
+    }
     else 
         flagMute = true;
     
     const embed = new MyEmbedBuilder();
     if(flagMute == muted)
         embed.setDescription(`Chrezbot is already ${muted ? "muted": "unmuted"}`);
-    else if(muted)
-        embed.setDescription("Chrezbot has been muted!").setDescription("Inline command have been muted");
     else{
-        setMute(flagMute);
-        embed.setTitle("Chrezbot has been muted!").setDescription("Inline command have been muted");
+        setMute(
+            flagMute, 
+            flagMute ? () => {
+                if(message.channel)
+                    message.channel.send("Chrezbot has been unmuted");
+                } 
+            : undefined);
+        embed.setTitle(`Chrezbot has been ${flagMute? "muted": "unmuted"}!`)
+        if(flagMute)
+            embed.setDescription("Inline command have been muted for 10 minutes");
     }
 
     return  [embed];
 }
 
 const command: CommandReturnTypes = {
-    name: "setmute",
+    name: "mute",
     description: "mute the chrezbot",
-    alias: [],
+    alias: ["stfu", "shutup", "off"],
     execute: async (message, args: string[]) => {
-
         await message.channel.send({embeds: run(message, args)});
     },
     slash:{
