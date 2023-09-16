@@ -13,9 +13,8 @@ const run: runCommand = (message, args?: string[]) => {
 
         debug(`running command /mute ${flagMute} args: ${args ?? "no args"}`);
     }
-    else if(args){
+    else if(args && args[0]){
         debug(`running command Chrez mute | args: ${args ?? "no args"}`);
-        console.log(args[0].localeCompare("true"));
         if(!args[0].localeCompare("true"))
             flagMute = true;
         else if(!args[0].localeCompare("false"))
