@@ -1,7 +1,7 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:bot");
 
-import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes, max_message_allowed, trustedID} from "@config";
+import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes, max_message_allowed, trustedID, muted} from "@config";
 import { Client, Collection, GatewayIntentBits, version } from "discord.js";
 
 import { CommandReturnTypes, inlineCommandReturnTypes, isDiscordAPIError } from "@typings/customTypes";
@@ -116,6 +116,7 @@ client.on("messageCreate", async (message) => {
     if(message.author.bot || message.content.length > max_message_allowed) return;
     
     // inline command handling
+    if(!muted)
     for(const [v, k] of _aliasCriteriaMap){
         if(typeof v === "string")
         if(message.content === v){

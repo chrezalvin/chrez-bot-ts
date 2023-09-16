@@ -54,7 +54,8 @@
         "- adding more private command",
         "- fix the bug on birthday message",
         "- Chrez calculate now send results in unit when you use unit in calculation (e.g: 2k + 3k = 5k)",
-        "- Added more people that can use private command"
+        "- Added more people that can use private command",
+        "- added /mute to silent chrezbot from saying inline commands"
     ],
     "bugfix":[
         "- fix bugs on Chrez calculate",

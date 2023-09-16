@@ -36,3 +36,6 @@ export const CLIENT_SECRET = process.env.CLIENT_SECRET ?? "";
 if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .env");
 
 export const port = process.env.PORT ?? "3000";
+
+export let muted = false;
+export function setMute(set: boolean){muted = set;}
