@@ -3,7 +3,7 @@ const debug = require("debug")("ChrezBot:story");
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import stories from "@assets/messages/active/story.json";
 import { prefixes } from "@config";
 
@@ -32,11 +32,32 @@ const run: runCommand = (message , args?: string[]) => {
         throw new Error(`index cannot be negative`);
 
     const story = stories[index];
-    const embed = new MyEmbedBuilder()
-        .setDescription(story.description.join("\n"))
-        .setTitle(`${story.title} by ${story.author}`);
+    const embeds: MyEmbedBuilder[] = [];
+    const sentences: string[] = [];
+    let flagTitle: boolean = false;
+    for(let iii = 0, count = 0; iii < story.description.length; ++iii){
+        sentences.push(story.description[iii]);
+        count += story.description[iii].length
 
-    return [embed];
+        if(count > 2000){
+            embeds.push(
+                new MyEmbedBuilder()
+                .setDescription(sentences.splice(0, sentences.length).join('\n'))
+                .setTitle(!flagTitle ? `${story.title} by ${story.author}` : null)
+            )
+
+            count = 0;
+            flagTitle = true;
+        }
+    }
+
+    embeds.push(
+        new MyEmbedBuilder()
+        .setDescription(sentences.join("\n"))
+        .setTitle(!flagTitle ? `${story.title} by ${story.author}` : null)
+    )
+
+    return embeds;
 } 
 
 const command: CommandReturnTypes = {
@@ -49,20 +70,22 @@ const command: CommandReturnTypes = {
     ],
     execute: async (message, args) => {
         const embeds = run(message, args);
-
-        await message.channel.send({embeds});
+        
+        for(const embed of embeds)
+            await message.channel.send({embeds: [embed]});
     },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("story")
             .setDescription("Creates a random story, you can specify which story you want using the option")
             .addIntegerOption(option => option.setName("index").setDescription("Index to target a story")),
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-                
             const embeds = run(interaction);
     
-            await interaction.reply({embeds});
+            if(embeds.length !== 1)
+                for(const embed of embeds)
+                    await interaction.channel?.send({embeds: [embed]});
+            else
+                await interaction.reply({embeds});
         }
     }
 };

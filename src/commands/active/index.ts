@@ -1,4 +1,7 @@
 import { CommandReturnTypes } from "@typings/customTypes";
+
+import privateCommands from "../private";
+
 import hello from "./hello";
 import roll from "./roll";
 import calculate from "./calculate";
@@ -46,7 +49,7 @@ const c: CommandReturnTypes[] = [
 ].filter(command => !command.unavailable);
 
 // workaround for help command
-c.push(help(c));
+c.push(help(c, privateCommands));
 export const commands = c;
 
 export default commands;

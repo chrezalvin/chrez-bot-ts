@@ -1,6 +1,6 @@
 const debug = require("debug")("ChrezBot:quote");
 
-import {CommandReturnTypes, getProfileByID, isChatInputCommandInteraction, isDiscordMessage, runCommand} from "@typings/customTypes";
+import {CommandReturnTypes, isChatInputCommandInteraction, isDiscordMessage, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder } from "discord.js";
@@ -120,9 +120,6 @@ const command: CommandReturnTypes = {
                     return option;
                 }),
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-            
             const embeds = run(interaction);
             await interaction.reply({embeds});
         }

@@ -1,11 +1,13 @@
-const debug = require("debug")("ChrezBot:story");
+const debug = require("debug")("ChrezBot:time");
 
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+import {MyEmbedBuilder} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder, time } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 import { prefixes } from "@config";
+
+import profiles from "@assets/data/profiles.json";
 
 const run: runCommand = (message , args?: string[]) => {
   let timezone: string | null = null;
@@ -26,7 +28,7 @@ const run: runCommand = (message , args?: string[]) => {
       timezone = args[0];
   }
 
-  if(timezone === null){
+  if(timezone == null){
     const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
 
     // calculate time left
@@ -45,20 +47,28 @@ const run: runCommand = (message , args?: string[]) => {
       myText = `${timeLeft.hour} hours and ${timeLeft.minute} minutes left`;
 
     embed.setTitle(`it's ${japTime} Japanese time`).setFooter({text: `${myText} until midnight`});
+    return [embed];
   }
   else{
     for(const timeChoice of timeChoices){
-      if(timeChoice.timezone === timezone || timeChoice.criteria.find(crit => crit === timezone) !== undefined){
+      if(timeChoice.timezone === timezone || timeChoice.criteria.find(crit => crit.toLowerCase() === timezone?.toLowerCase()) !== undefined){
           const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
           embed.setTitle(`${timeChoice.name} time`).setDescription(`**${localTime.join(" ")}**`);
           return [embed];
       }
     }
 
+    for(const profile of profiles){
+      if(profile.timezone)
+        if(profile.name.toLowerCase() === timezone.toLowerCase() || profile.alias.find(ali => ali.toLowerCase() === timezone?.toLowerCase()) !== undefined){
+          const localTime = time.toLocaleString('en-US', {timeZone: profile.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
+          embed.setTitle(`${profile.timezone} time`).setDescription(`**${localTime.join(" ")}**`);
+          return [embed];
+        }
+    }
+
     throw new Error("timezone not found!");
   }
-
-  return [embed];
 } 
 
 const command: CommandReturnTypes = {
@@ -92,9 +102,6 @@ const command: CommandReturnTypes = {
             }),
 
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
             const embeds = run(interaction);
             
             await interaction.reply({embeds});

@@ -1,12 +1,14 @@
 const debug = require("debug")("ChrezBot:help");
 
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, User } from "discord.js";
 
 import { MyEmbedBuilder } from "@modules/basicFunctions";
 import { prefixes } from "@config";
+import { userIsAdmin } from "@modules/profiles";
 
-function help(index: CommandReturnTypes[]){
+// , privateCommands: CommandReturnTypes[]
+function help(index: CommandReturnTypes[], privateCommands: CommandReturnTypes[]){
     const run: runCommand = (message , args?: string[]) => {
         let command: string | null = null;
         const embed = new MyEmbedBuilder();
@@ -29,6 +31,27 @@ function help(index: CommandReturnTypes[]){
             embed.setTitle("Chrez-Bot active command help menu")
             .setDescription("here are the list of commands that chrezbot can use")
             .setFields(index.map(idx => {return {name: `\`${prefixes[0]} ${idx.name}\``, value: idx.description, inline: true}}));
+        }
+        else if(command === "private"){
+            let user: User;
+
+            if(isChatInputCommandInteraction(message))
+                user = message.user;
+            else
+                user = message.author;
+
+            if(!userIsAdmin(user.id))
+                throw new Error("You're not a private member");
+
+            embed.setTitle("Hold it!")
+                .setDescription("Due to security concerns, Chrez-Bot won't send command menu here!\nI've send private command help menu to your DM, check it out!");
+
+            user.send({embeds: [
+                new MyEmbedBuilder()
+                    .setTitle("Chrez-Bot private command help menu")
+                    .setDescription("here are the list of private commands that chrezbot can use")
+                    .setFields(privateCommands.map(idx => {return {name: `\`${prefixes[0]} ${idx.name}\``, value: idx.description, inline: true}}))
+            ]});
         }
         else{
             const find = index.find(idx => {
@@ -76,9 +99,6 @@ function help(index: CommandReturnTypes[]){
                     return opt;
                 }),
             interact: async (interaction) => {
-                if(!interaction.isChatInputCommand())
-                    throw new Error("Bot can't reply the interaction received");
-
                 const embeds = run(interaction);
                 
                 await interaction.reply({embeds});

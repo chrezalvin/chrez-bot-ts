@@ -1,7 +1,9 @@
 const debug = require("debug")("ChrezBot:quote");
 
-import {CommandReturnTypes, getProfileByID, isChatInputCommandInteraction, isDiscordMessage, runCommand} from "@typings/customTypes";
+import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+
+import { getProfileByID } from "@modules/profiles";
 
 import { SlashCommandBuilder } from "discord.js";
 import quotes from "@assets/messages/active/quote.json";
@@ -66,9 +68,6 @@ const command: CommandReturnTypes = {
             .setDescription("Creates a random quote, you can specify which quote you want using the option")
             .addIntegerOption(option => option.setName("index").setDescription("Index to target a quote")),
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-            
             const embeds = run(interaction);
             await interaction.reply({embeds});
         }

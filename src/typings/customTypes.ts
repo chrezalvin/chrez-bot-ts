@@ -1,6 +1,5 @@
 import { MyEmbedBuilder } from "@modules/basicFunctions";
-import {type Message, SlashCommandBuilder, Interaction, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
-import guild_profiles from "@assets/data/profiles.json";
+import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
 
 export interface Command{
     name: string;
@@ -19,7 +18,7 @@ export interface CommandReturnTypes extends Command {
     examples?: {command: string, description?: string}[];
     slash?:  {
         slashCommand: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">,
-        interact: (interaction: Interaction) => Awaitable<void>;
+        interact: (interaction: ChatInputCommandInteraction<CacheType>) => Awaitable<void>;
     }
 }
 
@@ -121,40 +120,6 @@ export async function importModule<_T>(path: string, ensureType?: (x: any) => x 
     if(!ensureType) return imported as _T;
     else if(ensureType && ensureType(imported)) return imported;
     else throw new Error("imported path is not the expected type");
-}
-
-interface Profile{
-    discordID: string,
-      name: string,
-      avatarID: string | null,
-      alias: string[],
-      birthday: null | {
-        day: number,
-        month: number,
-        year: number | null
-      }
-}
-
-/**
- * get a guild member by id, alot faster than by name
- * @param discordID user's discord ID
- * @returns Profile or null
- */
-export function getProfileByID(discordID: string): Profile | null{
-    const find = guild_profiles.find(profile => discordID === profile.discordID) ?? null;
-    return find;
-}
-
-/**
- * get a guild member by name or their aliases (slower than get by ID)
- * @param discordID user's name or alias (case insensitive)
- * @returns Profile or null
- */
-export function getProfileByName(name: string): Profile | null{
-    const find = guild_profiles.find(
-        profile => (profile.name === name.toLowerCase() || profile.alias.find( a => a === name.toLowerCase()))
-                ) ?? null;
-    return find;
 }
 
 export function isDiscordAPIError(val: unknown): val is DiscordAPIError{

@@ -3,7 +3,7 @@
       "discordID": "195538233302450176",
       "name": "SayszarTempest",
       "avatarID": "aab822d2dbb3125ddbbc0185cc0d1405",
-      "alias": ["zart", "szar", "zahto"],
+      "alias": ["zart", "szar", "zahto", "tart", "tat", "zat", "z"],
       "birthday": {
         "day": 27, 
         "month": 7,
@@ -35,12 +35,14 @@
       "discordID": "305179432300052482",
       "name": "GCB",
       "avatarID": "936a107ccf0cbdfe631367bef6681345",
-      "alias": ["weirdo"],
+      "alias": ["weirdo", "g", "cat", "gcat"],
       "birthday": {
         "day": 28,
         "month": 8,
         "year": null
-      }
+      },
+      "timezone": "Asia/Manila",
+      "isAdmin": true
     },
     {
       "discordID": "305853194586554372",
@@ -58,7 +60,8 @@
         "day": 12,
         "month": 3,
         "year": null
-      }
+      },
+      "timezone": "Canada/Central"
     },
     {
       "discordID": "345651346504024068",
@@ -120,12 +123,14 @@
       "discordID": "467054650181550113",
       "name": "Sulain",
       "avatarID": "5994a01903afd7e1b62bee18b89955b5",
-      "alias": ["su", "sul", "suii chan"],
+      "alias": ["su", "sul", "suii chan", "lainel", "s"],
       "birthday": {
         "day": 4,
         "month": 1,
         "year": null
-      }
+      },
+      "timezone": "Asia/Jerusalem",
+      "isAdmin": true
     },
     {
       "discordID": "467812665767624725",
@@ -138,7 +143,7 @@
       "discordID": "469422923187486730",
       "name": "Hutt",
       "avatarID": "5a1828705557c7d770c973313a397295",
-      "alias": ["huttrem", "hutto"],
+      "alias": ["huttrem", "hutto", "owl", "ok"],
       "birthday": {
         "day": 14,
         "month": 8,
@@ -164,7 +169,8 @@
       "name": "Roks",
       "avatarID": "19a5d09c238e9931d0beae9fa15a1a5e",
       "alias": [],
-      "birthday": null
+      "birthday": null,
+      "timezone": "Asia/Kolkata"
     },
     {
       "discordID": "545089547646795776",
@@ -175,7 +181,8 @@
         "day": 1,
         "month": 10,
         "year": null
-      }
+      },
+      "timezone": "Asia/Jakarta"
     },
     {
       "discordID": "557426997379203087",
@@ -188,12 +195,14 @@
       "discordID": "558614543929180171",
       "name": "hidan",
       "avatarID": "3b041d433122b25ebf89866eb98b873f",
-      "alias": ["weirdgirl"],
+      "alias": ["weirdgirl", "hich", "hichan", "lol"],
       "birthday": {
         "day": 22,
         "month": 3,
         "year": null
-      }
+      },
+      "timezone": "Asia/Kolkata",
+      "isAdmin": true
     },
     {
       "discordID": "561185379403956224",
@@ -298,7 +307,9 @@
       "name": "chrezalvin",
       "avatarID": "fac9a07278bdab65c839171de42a8450",
       "alias": ["chrez"],
-      "birthday": null
+      "birthday": null,
+      "timezone": "Asia/Jakarta",
+      "isAdmin": true
     },
     {
       "discordID": "705919932227125349",
@@ -312,7 +323,12 @@
       "name": "RaIdenaAFC",
       "avatarID": "8b57b10cb9ec37ea4e92f7638f3d6421",
       "alias": ["raiden", "rai"],
-      "birthday": null
+      "birthday": {
+        "day": 27,
+        "month": 4,
+        "year": null
+      },
+      "timezone": "America/Puerto_Rico"
     },
     {
       "discordID": "739311718274170890",
@@ -340,7 +356,8 @@
       "name": "Sakaido",
       "avatarID": "518c64fd2aea3462ed1bcfe4a3203587",
       "alias": ["lost", "lostone"],
-      "birthday": null
+      "birthday": null,
+      "timezone": "Pacific/Guam"
     },
     {
       "discordID": "763740607511658496",
@@ -375,7 +392,8 @@
       "name": "Chrez. A",
       "avatarID": "850458394dc3c9f281250f3ed84c26a9",
       "alias": [],
-      "birthday": null
+      "birthday": null,
+      "isAdmin": true
     },
     {
       "discordID": "867492002576597033",
@@ -409,12 +427,13 @@
       "discordID": "902173780992995368",
       "name": "MasterDuck",
       "avatarID": "b9396fa5d231afd9111c4924767483a8",
-      "alias": ["duck"],
+      "alias": ["duck", "ducky", "duckling", "d"],
       "birthday": {
         "day": 24,
         "month": 1,
         "year": null
-      }
+      },
+      "timezone": "Pacific/Saipan"
     },
     {
       "discordID": "906757763496050699",
@@ -508,6 +527,13 @@
       "discordID": "1092661584326832169",
       "name": "Shinigami",
       "avatarID": "c9bab3fb13615cda13dac8223acab16a",
+      "alias": [],
+      "birthday": null
+    },
+    {
+      "discordID": "1125314151313592421",
+      "name": "Lit - The Tit",
+      "avatarID": "",
       "alias": [],
       "birthday": null
     }

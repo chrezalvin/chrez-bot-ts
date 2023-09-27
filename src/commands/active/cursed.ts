@@ -74,8 +74,6 @@ const command: CommandReturnTypes = {
               .setName("nsfw")
               .setDescription("(TODO) set if you want nsfw image, defaults to sfw")),
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
             const embeds = run(interaction);
 
             await interaction.reply({embeds, files: [attachment]});

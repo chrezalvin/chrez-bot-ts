@@ -1,13 +1,15 @@
-import { Router } from "express";
+import { Request, Router } from "express";
+import profiles from "@assets/data/profiles.json";
 
 const router = Router();
 
-router.get("/", (_, res) => {
-    res.send("GET /");
+router.get("/", (_: Request, res) => {
+    const a = profiles;
+    res.json(profiles);
 })
 
 router.post("/", (_, res) => {
-    res.send("POST /");
+    res.json(profiles);
 })
 
 export default router;

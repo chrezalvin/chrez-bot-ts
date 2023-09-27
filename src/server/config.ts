@@ -1,4 +1,4 @@
-import Express, { NextFunction } from "express";
+import Express, { NextFunction, Response, Request } from "express";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -23,24 +23,32 @@ for(const route of routes){
 express.use(function(req, res, next) {
     res.json({error: 404, message: "page not found"});
   });
+
+function discordError(err: unknown): err is {error: string, error_description: string}{
+    if(err === null || typeof err !== "object") return false;
+
+    if("error" in err && typeof err.error === "string")
+        if("error_description" in err && typeof err.error_description === "string")
+            return true;
+    
+    return false;
+}
   
 // error handler
-express.use(function(
-    err: { message: any; status: any; }, 
-    req: { app: { get: (arg0: string) => string; }; }, 
-    res: { 
-        locals: { message: any; error: any; }; 
-        status: (arg0: any) => void; 
-        render: (arg0: string) => void; 
-    }, 
-    next: NextFunction) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = MODE === 'development' ? err : {};
-  
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+express.use(function(err: any, _req: Request, res: Response, _next: NextFunction) {
+    res.status(err.status || 400);
+    if(MODE === "development"){
+        if(err instanceof Error){
+            return res.send({error: 0, message: err.message});
+        }
+        if(discordError(err)){
+            return res.send({...err})
+        }
+
+        return res.send({message: "Unknown Error!", error: err});
+    }
+    else
+        res.send({message: "Unknown Error!"});
 });
 
 export default express;

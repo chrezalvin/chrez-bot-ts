@@ -70,8 +70,6 @@ const command: CommandReturnTypes = {
             .addIntegerOption(option => option.setName("second").setDescription("Second Number")),
             
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
             const embeds = run(interaction);
             
             await interaction.reply({embeds});

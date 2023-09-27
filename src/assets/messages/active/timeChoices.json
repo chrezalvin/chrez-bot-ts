@@ -2,12 +2,8 @@
     {
         "name": "Indonesia/Jakarta",
         "memberRef": "Gold",
-        "criteria": ["indo", "indonesia", "indonesia", "jakarta", "id", "gold", "cheese", "chrez"],
-        "timezone": "Asia/Jakarta",
-        "memberSmthg": [
-            "545089547646795776",
-            "696693247350931488"
-        ]
+        "criteria": ["indo", "indonesia", "indonesia", "jakarta", "id"],
+        "timezone": "Asia/Jakarta"
     },
     {
         "name": "Japan",
@@ -22,24 +18,20 @@
     {
         "name": "India/Kolkata",
         "memberRef": "Hidan",
-        "criteria": ["india", "indian",  "ind", "hidan", "roks"],
-        "timezone": "Asia/Kolkata",
-        "memberSmthg": [
-            "558614543929180171",
-            "515114664351498240"
-        ]
+        "criteria": ["india", "indian",  "ind"],
+        "timezone": "Asia/Kolkata"
 
     },
     {
         "name": "Philippine/Manila",
         "memberRef": "GCB",
-        "criteria": ["ph", "filipino", "philiphine", "manila", "gcb", "GCB"],
+        "criteria": ["ph", "filipino", "philiphine", "manila"],
         "timezone": "Asia/Manila"
     },
     {
         "name": "Canada",
         "memberRef": "Gyatop",
-        "criteria": ["cad", "canada", "kanada", "gya", "gyatop"],
+        "criteria": ["cad", "canada", "kanada"],
         "timezone": "Canada/Central"
     },
     {
@@ -50,19 +42,25 @@
     {
         "name": "Jerusalem",
         "memberRef": "Sulain",
-        "criteria": ["sulain", "su"],
+        "criteria": [],
         "timezone": "Asia/Jerusalem"
     },
     {
         "name": "Guam",
         "memberRef": "Lost-One",
-        "criteria": ["lost", "pacific"],
+        "criteria": ["pacific"],
         "timezone": "Pacific/Guam"
     },
     {
         "name": "America/Puerto_Rico",
         "memberRef": "Raiden",
-        "criteria": ["rai", "raiden"],
-        "timezone": "America/Puerto_Rico"
+        "timezone": "America/Puerto_Rico",
+        "criteria": []
+    },
+    {
+        "name": "Pacific/Northern Mariana Islands",
+        "memberRef": "MasterDuck",
+        "timezone": "Pacific/Saipan",
+        "criteria": ["mariana"]
     }
 ]

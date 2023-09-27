@@ -4,10 +4,8 @@
  * Module dependencies.
  */
 
-// allow cors
-const cors = require('cors');
-
 import app from "./config";
+import { port } from "@config";
 // var app = require('../app');
 var debug = require('debug')('node:server');
 var http = require('http');
@@ -16,8 +14,8 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+console.log(`Server running on port ${port}`);
 
 /**
  * Create HTTP server.
@@ -32,26 +30,6 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val: string) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
 
 /**
  * Event listener for HTTP server "error" event.

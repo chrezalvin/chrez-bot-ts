@@ -7,13 +7,13 @@ import { prefixes } from "@config";
 const command: inlineCommandReturnTypes = {
     name: "greet",
     description: "Greet the user",
-    searchCriteria: ["cheese", "here", ...prefixes],
+    searchCriteria: ["cheese", /^he+re+$/i, ...prefixes],
     execute: (message) => {
         const embed = new MyEmbedBuilder()
-            .setTitle(`Chrezbot greets ${message.author.username}`)
-            .setDescription(greet[rngInt(0, greet.length - 1)].replace("[name]", message.author.username));
+            // .setTitle(`Chrezbot greets ${message.author.username}`)
+            // .setDescription(greet[rngInt(0, greet.length - 1)].replace("[name]", message.author.username));
 
-        message.channel.send({embeds: [embed]});
+        message.channel.send(greet[rngInt(0, greet.length - 1)].replace("[name]", message.author.username));
     },
 };
 

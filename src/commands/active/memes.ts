@@ -13,6 +13,8 @@ const nsfw_memesDir = path.resolve("./images/meme/nsfw");
 
 const sfw_memes = fs.readdirSync(sfw_memesDir);
 const nsfw_memes = fs.readdirSync(nsfw_memesDir);
+
+// global attachment because it needs to be included when sending too
 let attachment: AttachmentBuilder;
 
 const run: runCommand = (message , args?: string[]) => {
@@ -38,14 +40,14 @@ const run: runCommand = (message , args?: string[]) => {
             let num = parseInt(args[0]);
             
             // nsfw on first args check
-            nsfw = args[0].toLowerCase() === "nsfw";
+            nsfw = args[0] === "nsfw";
             
             if(!isNaN(num))
                 index = num;
             
             // nsfw args
             if(args[1] !== undefined && !nsfw)
-                nsfw = args[1].toLowerCase() === "nsfw";
+                nsfw = args[1] === "nsfw";
         }
     }
     
@@ -78,6 +80,7 @@ const run: runCommand = (message , args?: string[]) => {
  
     const meme = nsfw ? nsfw_memes[index] : sfw_memes[index];
     attachment = new AttachmentBuilder(`${nsfw ? nsfw_memesDir : sfw_memesDir}/${meme}`, {name: `memes.jpg`});
+    console.log(attachment);
 
     const embed = new MyEmbedBuilder({title: `memes #${index}`, footer: {text: ""}}).setImage(`attachment://memes.jpg`);
     
@@ -108,9 +111,6 @@ const command: CommandReturnTypes = {
                 .setName("nsfw")
                 .setDescription("(TODO) set if you want nsfw memes, defaults to sfw")),
                 interact: async (interaction) => {
-                    if(!interaction.isChatInputCommand())
-                        throw new Error("Bot can't reply the interaction received");
-                        
                     const embeds = run(interaction);
                     
                     await interaction.reply({embeds, files: [attachment]});
