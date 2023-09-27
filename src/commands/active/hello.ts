@@ -27,7 +27,10 @@ const command: CommandReturnTypes = {
         await message.channel.send("hi");
     },
     slash:{
-        slashCommand: new SlashCommandBuilder().setName("hello").setDescription("Says hello"),
+        slashCommand: new SlashCommandBuilder()
+            .setName("hello")
+            .setDescription("Says hello")
+            .addChannelOption(ch => ch.setName("channel")),
         interact: async (interaction) => {
             debug(`running command ${prefixes[0]} hello`);
             await interaction.reply(`Hello, ${interaction.member?.user.username}!`);

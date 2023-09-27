@@ -56,5 +56,11 @@
         "memberRef": "Raiden",
         "timezone": "America/Puerto_Rico",
         "criteria": []
+    },
+    {
+        "name": "Pacific/Northern Mariana Islands",
+        "memberRef": "MasterDuck",
+        "timezone": "Pacific/Saipan",
+        "criteria": ["mariana"]
     }
 ]

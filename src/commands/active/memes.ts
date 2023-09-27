@@ -40,14 +40,14 @@ const run: runCommand = (message , args?: string[]) => {
             let num = parseInt(args[0]);
             
             // nsfw on first args check
-            nsfw = args[0].toLowerCase() === "nsfw";
+            nsfw = args[0] === "nsfw";
             
             if(!isNaN(num))
                 index = num;
             
             // nsfw args
             if(args[1] !== undefined && !nsfw)
-                nsfw = args[1].toLowerCase() === "nsfw";
+                nsfw = args[1] === "nsfw";
         }
     }
     

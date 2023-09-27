@@ -1,4 +1,4 @@
-const debug = require("debug")("ChrezBot:story");
+const debug = require("debug")("ChrezBot:time");
 
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder} from "../../modules/basicFunctions";
@@ -28,7 +28,7 @@ const run: runCommand = (message , args?: string[]) => {
       timezone = args[0];
   }
 
-  if(timezone === null){
+  if(timezone == null){
     const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
 
     // calculate time left
@@ -47,10 +47,11 @@ const run: runCommand = (message , args?: string[]) => {
       myText = `${timeLeft.hour} hours and ${timeLeft.minute} minutes left`;
 
     embed.setTitle(`it's ${japTime} Japanese time`).setFooter({text: `${myText} until midnight`});
+    return [embed];
   }
   else{
     for(const timeChoice of timeChoices){
-      if(timeChoice.timezone === timezone || timeChoice.criteria.find(crit => crit === timezone) !== undefined){
+      if(timeChoice.timezone === timezone || timeChoice.criteria.find(crit => crit.toLowerCase() === timezone?.toLowerCase()) !== undefined){
           const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
           embed.setTitle(`${timeChoice.name} time`).setDescription(`**${localTime.join(" ")}**`);
           return [embed];
@@ -59,7 +60,7 @@ const run: runCommand = (message , args?: string[]) => {
 
     for(const profile of profiles){
       if(profile.timezone)
-        if(profile.timezone === timezone || profile.alias.find(ali => ali === timezone) !== undefined){
+        if(profile.name.toLowerCase() === timezone.toLowerCase() || profile.alias.find(ali => ali.toLowerCase() === timezone?.toLowerCase()) !== undefined){
           const localTime = time.toLocaleString('en-US', {timeZone: profile.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
           embed.setTitle(`${profile.timezone} time`).setDescription(`**${localTime.join(" ")}**`);
           return [embed];
@@ -68,7 +69,6 @@ const run: runCommand = (message , args?: string[]) => {
 
     throw new Error("timezone not found!");
   }
-  return [embed];
 } 
 
 const command: CommandReturnTypes = {

@@ -9,7 +9,7 @@ if(DISCORD_TOKEN === undefined){
 
 const slashCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = []
 for(const command of [...commands.active, ...commands.c_private]){
-    if(command.slash?.slashCommand){
+    if(command.slash){
         slashCommands.push(command.slash.slashCommand.toJSON());
     }
 }

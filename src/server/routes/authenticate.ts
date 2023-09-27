@@ -29,7 +29,6 @@ async function requestOauth2(
     const tokenResponseData = await request(
       'https://discord.com/api/oauth2/token',
       {
-        
           method: 'POST',
           body: new URLSearchParams({
               ...opt,

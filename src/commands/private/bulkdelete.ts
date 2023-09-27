@@ -10,7 +10,13 @@ const messageTimeout = 10;
 
 const command: CommandReturnTypes = {
     name: "bulkdelete",
-    description: "saying hello whenever user says hello",
+    description: "delete messages based on how much you put",
+    examples: [
+        {
+            command: "Chrez bulkdelete 5",
+            description: "Deletes 5 messages"
+        }
+    ],
     execute: async (message, args) => {
         if(!message.channel.isTextBased()) return;
         

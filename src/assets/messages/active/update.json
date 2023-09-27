@@ -61,5 +61,20 @@
         "- fix bugs on Chrez calculate",
         "- fix error can't delete message using /bulkdelete"
     ]
+},
+{
+    "version": "1.2.1",
+    "news": [
+        "- added more quote variety",
+        "- added Chrez help for private members",
+        "- added more alias for Chrez time",
+        "- added Chrez help for private commands (private members only!)",
+        "- added more memes and cursed photos",
+        "- added more story"
+    ],
+    "bugfix": [
+        "- fix error on Chrez time",
+        "- fix the bug on birthday"
+    ]
 }
 ]

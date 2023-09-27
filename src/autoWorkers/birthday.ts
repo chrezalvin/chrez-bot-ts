@@ -1,7 +1,7 @@
 // birthday responder
+const debug = require("debug")("ChrezBot:birthday");
 
 import { CronJob } from "cron";
-import debug from "debug";
 
 import profiles from "@assets/data/profiles.json";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
@@ -14,25 +14,20 @@ export default function birthday(client: Client<boolean>){
     for(const profile of profiles){
         if(profile.birthday){
             debug(`adding bday schedule for ${profile.name}`);
-            const date = new Date(profile.birthday.year ?? 2001, profile.birthday.month, profile.birthday.day);
-            const date2DaysBefore = new Date(profile.birthday.year ?? 2001, profile.birthday.month, profile.birthday.day);
+
+            const date = new Date(profile.birthday.year ?? 2001, profile.birthday.month - 1, profile.birthday.day);
+            const date2DaysBefore = new Date(profile.birthday.year ?? 2001, profile.birthday.month - 1, profile.birthday.day);
             date2DaysBefore.setDate(date2DaysBefore.getDate() - 2);
+            
+            debug(`bday at ${monthNames[date.getMonth()]} ${date.getDate()}`);
+            debug(`2 days before: ${monthNames[date2DaysBefore.getMonth() - 1]} ${date2DaysBefore.getDate()}`);
 
-            const bday = profile.birthday;
-            if(bday.day < 2){
-                bday.day = 28; // assuming all month are 28 days lol
-                --bday.month;
-                if(bday.month === 0) bday.month = 12;
-            }
-
-            // 2 days from now
-            // `0 8 ${bday.day} ${bday.month} *`
-            new CronJob(`0 8 ${date2DaysBefore.getDate()} ${date2DaysBefore.getMonth()} *`, async () => {
+            new CronJob(`0 8 ${date2DaysBefore.getDate()} ${date2DaysBefore.getMonth() + 1} *`, async () => {
                 // send to crystal phoenix
                 const ch = await client.channels.fetch("739696962097512452");
 
                 const embed = new MyEmbedBuilder({
-                    title: `Somone is having a bday at ${monthNames[profile.birthday.month - 1]} ${profile.birthday.day}`,
+                    title: `Someone is having a birthday at ${monthNames[profile.birthday.month - 1]} ${profile.birthday.day}`,
                     description: "wonder who"
                 })
 
@@ -40,7 +35,7 @@ export default function birthday(client: Client<boolean>){
                     await (ch as TextChannel).send({embeds: [embed]});
             }, null, true, "Japan");
 
-            new CronJob(`0 8 ${profile.birthday.day} ${profile.birthday.month} *`, async () => {
+            new CronJob(`0 8 ${date.getDate()} ${date.getMonth() + 1} *`, async () => {
                 // send to crystal phoenix
                 const ch = await client.channels.fetch("739696962097512452");
 

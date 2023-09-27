@@ -98,7 +98,7 @@ debug(`private Commands: ${_privateCommands.map((_, key) => key)}`);
 export const client = new Client({intents: [
     GatewayIntentBits.Guilds, 
     GatewayIntentBits.GuildMessages, 
-    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.MessageContent
 ]})
 
 console.log(`Bot running on mode ${MODE}`);
@@ -134,6 +134,9 @@ client.on("messageCreate", async (message) => {
     if(prefixes.find(prefix => message.content.startsWith(prefix)) === undefined) 
     return;
     
+    /**
+     * argument variables, guaranteed lowercase and command removed
+     */
     const args: string[] = message.content.split(/ +/);
     args.shift(); // remove command name (Chrez)
     
@@ -142,8 +145,10 @@ client.on("messageCreate", async (message) => {
     
     // check if command available (i.e: not just Chrez tho it should be alr guarded with inline command)
     const command = args.shift();
+    // change args to lowercase
+    args.forEach((str, index, arr) => arr[index] = str.toLowerCase());
     if(command === undefined) return;
-    
+
     try{
         // check command
         if(_command.has(command))
