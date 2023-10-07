@@ -53,7 +53,7 @@ const run: runCommand = (message , args?: string[]) => {
 
     embeds.push(
         new MyEmbedBuilder()
-        .setDescription(sentences.join("\n"))
+        .setDescription(sentences.join("\n\n"))
         .setTitle(!flagTitle ? `${story.title} by ${story.author}` : null)
         .setFooter(story.footer ?{text: story.footer}: null)
     )
