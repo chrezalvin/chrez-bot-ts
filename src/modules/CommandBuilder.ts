@@ -35,7 +35,7 @@ export class CommandBuilder {
         message: Message<boolean> | ChatInputCommandInteraction<CacheType>, 
         args: string[]) => Promise<EmbedBuilder[]>
     ){
-        const embeds = await callback("", []);
+        // const embeds = await callback("", []);
     }
 
     get name(){ return this.m_name; }
