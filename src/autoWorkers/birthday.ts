@@ -18,11 +18,8 @@ export default function birthday(client: Client<boolean>){
             const date = new Date(profile.birthday.year ?? 2001, profile.birthday.month - 1, profile.birthday.day);
             const date2DaysBefore = new Date(profile.birthday.year ?? 2001, profile.birthday.month - 1, profile.birthday.day);
             date2DaysBefore.setDate(date2DaysBefore.getDate() - 2);
-            
-            debug(`bday at ${monthNames[date.getMonth()]} ${date.getDate()}`);
-            debug(`2 days before: ${monthNames[date2DaysBefore.getMonth() - 1]} ${date2DaysBefore.getDate()}`);
 
-            new CronJob(`0 8 ${date2DaysBefore.getDate()} ${date2DaysBefore.getMonth() + 1} *`, async () => {
+            new CronJob(`0 8 ${date2DaysBefore.getDate()} ${date2DaysBefore.getMonth()} *`, async () => {
                 // send to crystal phoenix
                 const ch = await client.channels.fetch("739696962097512452");
 
@@ -35,7 +32,7 @@ export default function birthday(client: Client<boolean>){
                     await (ch as TextChannel).send({embeds: [embed]});
             }, null, true, "Japan");
 
-            new CronJob(`0 8 ${date.getDate()} ${date.getMonth() + 1} *`, async () => {
+            new CronJob(`0 8 ${date.getDate()} ${date.getMonth()} *`, async () => {
                 // send to crystal phoenix
                 const ch = await client.channels.fetch("739696962097512452");
 

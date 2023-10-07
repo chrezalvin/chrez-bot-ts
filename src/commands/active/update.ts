@@ -3,16 +3,17 @@ const debug = require("debug")("ChrezBot:update");
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder, verifyString } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
-import { prefixes } from "@config";
+import { prefixes, botVersion } from "@config";
 
 const run: runCommand = (message , args?: string[]) => {
-    let version: string | null = null;
+    // defaulted to latest version
+    let version: string = botVersion;
 
     if(isChatInputCommandInteraction(message)){
         const version_hold = message.options.getString("version", false);
-        debug(`running command /update timezone: ${version_hold ?? "null"}`);
+        debug(`running command /${command.name} version: ${version_hold ?? "null"}`);
 
 
         if(version_hold !== null)
@@ -28,12 +29,10 @@ const run: runCommand = (message , args?: string[]) => {
     let update = updates[updates.length - 1];
     const embed = new MyEmbedBuilder();
 
-    if(version !== null){
-        const find = updates.find(update => update.version === version);
-        if(find === undefined)
-            throw new Error(`version ${version} cannot be found!`);
-        update = find;
-    }
+    const find = updates.find(update => update.version === version);
+    if(find === undefined)
+        throw new Error(`version ${version} cannot be found!`);
+    update = find;
 
     embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
     if(update.news)

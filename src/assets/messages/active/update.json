@@ -76,5 +76,15 @@
         "- fix error on Chrez time",
         "- fix the bug on birthday"
     ]
+},
+{
+    "version": "1.2.2",
+    "news": [
+        "- added more story",
+        "- added \"test\" inline"
+    ],
+    "bugfix": [
+        "- fix bug on birthday"
+    ]
 }
 ]

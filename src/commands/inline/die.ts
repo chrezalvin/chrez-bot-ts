@@ -1,5 +1,5 @@
 import {CommandReturnTypes, inlineCommandReturnTypes} from "@typings/customTypes";
-import { SlashCommandBuilder } from "discord.js";
+import { MessageType, SlashCommandBuilder } from "discord.js";
 
 import dieMessages from "@assets/messages/inline/die.json";
 import { rngInt } from "@modules/basicFunctions";

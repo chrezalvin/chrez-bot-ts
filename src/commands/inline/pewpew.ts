@@ -6,7 +6,7 @@ import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
 const command: inlineCommandReturnTypes = {
     name: "pewpew",
     description: "Give pewpew",
-    searchCriteria: ["pewpew", "pew", "pew pew"],
+    searchCriteria: ["pewpew", "pew", "pew pew", "mamekwpqnseueurbdudlalzmaa"],
     execute: (message) => {
         const embed = new MyEmbedBuilder()
             .setTitle(pewpew[rngInt(0, pewpew.length - 1)]);
