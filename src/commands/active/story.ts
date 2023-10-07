@@ -42,7 +42,7 @@ const run: runCommand = (message , args?: string[]) => {
         if(count > 2000){
             embeds.push(
                 new MyEmbedBuilder()
-                .setDescription(sentences.splice(0, sentences.length).join('\n'))
+                .setDescription(sentences.splice(0, sentences.length).join('\n\n'))
                 .setTitle(!flagTitle ? `${story.title} by ${story.author}` : null)
             )
 
@@ -55,6 +55,7 @@ const run: runCommand = (message , args?: string[]) => {
         new MyEmbedBuilder()
         .setDescription(sentences.join("\n"))
         .setTitle(!flagTitle ? `${story.title} by ${story.author}` : null)
+        .setFooter(story.footer ?{text: story.footer}: null)
     )
 
     return embeds;
@@ -62,7 +63,7 @@ const run: runCommand = (message , args?: string[]) => {
 
 const command: CommandReturnTypes = {
     name: "story",
-    alias: [],
+    alias: ["s"],
     description: "Creates a random story",
     examples: [
         {command: `${prefixes[0]} story`, description: "give random story"},

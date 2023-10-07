@@ -51,7 +51,7 @@ const run: runCommand = (message , args?: string[]) => {
 
 const command: CommandReturnTypes = {
     name: "roll",
-    alias: ["dice", "random"],
+    alias: ["dice", "random", "rng"],
     description: "rolls a number between 2 numbers, rolls a die otherwise",
     examples: [
         {command: `${prefixes[0]} roll`, description: "rolls a dice"},

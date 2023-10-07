@@ -3,7 +3,7 @@ const debug = require("debug")("ChrezBot:memes");
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder, AttachmentBuilder, ChannelType } from "discord.js";
+import { SlashCommandBuilder, AttachmentBuilder, ChannelType, EmbedBuilder } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { prefixes } from "@config";
@@ -80,10 +80,9 @@ const run: runCommand = (message , args?: string[]) => {
  
     const meme = nsfw ? nsfw_memes[index] : sfw_memes[index];
     attachment = new AttachmentBuilder(`${nsfw ? nsfw_memesDir : sfw_memesDir}/${meme}`, {name: `memes.jpg`});
-    console.log(attachment);
 
     const embed = new MyEmbedBuilder({title: `memes #${index}`, footer: {text: ""}}).setImage(`attachment://memes.jpg`);
-    
+
     return [embed];
 }
 

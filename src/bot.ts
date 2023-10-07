@@ -109,8 +109,10 @@ client.once("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
+    if(!message.guild) return;
+
     // check if the bot can send message into the channel
-    if(!message.guild?.members.me?.permissions.has("ManageMessages")) return;
+    if(!message.guild.members.me?.permissions.has("ManageMessages")) return;
     
     // ignore message from bot or long message
     if(message.author.bot || message.content.length > max_message_allowed) return;
@@ -263,7 +265,7 @@ client.on('interactionCreate', async (interaction) => {
     }
 });
 
-console.log("adding autoWorkers...");
+debug("adding autoWorkers...");
 for(const autoWorker of autoWorkersList)
     try{
         autoWorker(client);
@@ -277,8 +279,8 @@ for(const autoWorker of autoWorkersList)
         else
             console.error(`unknown error at autoWorker ${autoWorker.name}`);
     }
-console.log("Sucessfully added autoWorkers");
-console.log(`list of active autoWorkers: ${autoWorkersList.map(w => w.name)}`);
+debug("Sucessfully added autoWorkers");
+debug(`list of active autoWorkers: ${autoWorkersList.map(w => w.name)}`);
 
 process.on("unhandledRejection", async (error, _) => {
     console.log(`fatal error: ${JSON.stringify(error)}`);
