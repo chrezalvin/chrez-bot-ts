@@ -165,13 +165,13 @@ client.on("messageCreate", async (message) => {
             else
                 throw new Error("This command is for private members only!");
         }
-        // // check if command is for private members (lower authority)
-        // else if(_privateCommandAlias.has(command)){
-        //     if(message.author.id === ownerID && trustedID.find(id => message.author.id === id) !== undefined)
-        //         await _privateCommands.get(_privateCommandAlias.get(command)!)?.execute(message, args);
-        //     else
-        //         throw new Error("This command is for private members only!");
-        // }
+        // check if command is for private members (lower authority)
+        else if(_privateCommandAlias.has(command)){
+            if(message.author.id === ownerID || userIsAdmin(message.author.id))
+                await _privateCommands.get(_privateCommandAlias.get(command)!)?.execute(message, args);
+            else
+                throw new Error("This command is for private members only!");
+        }
         else
             throw new Error("Your command is not available in Chrez Command List");
     }
