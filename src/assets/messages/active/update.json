@@ -78,13 +78,14 @@
     ]
 },
 {
-    "version": "1.2.2",
+    "version": "1.2.3",
     "news": [
         "- added more story",
         "- added \"test\" inline"
     ],
     "bugfix": [
-        "- fix bug on birthday"
+        "- fix bug on birthday",
+        "- fix bug on Chrez story"
     ]
 }
 ]
