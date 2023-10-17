@@ -2,7 +2,7 @@
 const debug = require("debug")("ChrezBot:bot");
 
 import {DISCORD_TOKEN, MODE, botVersion, ownerID, prefixes, max_message_allowed, trustedID, muted} from "@config";
-import { Client, Collection, GatewayIntentBits, version } from "discord.js";
+import { ActivityType, Client, Collection, GatewayIntentBits, version } from "discord.js";
 
 import { CommandReturnTypes, inlineCommandReturnTypes, isDiscordAPIError } from "@typings/customTypes";
 import commands from "./commands/";
@@ -103,9 +103,14 @@ export const client = new Client({intents: [
 
 console.log(`Bot running on mode ${MODE}`);
 
-client.once("ready", () => {
+client.once("ready", (rClient) => {
     console.log("Bot ready!");
     debug(`discord.js version: ${version}\nbot version: ${botVersion}`);
+    
+    rClient.user.setActivity("Killdan",  {
+        name: "Hidan",
+        type: ActivityType.Playing
+    })
 });
 
 client.on("messageCreate", async (message) => {
