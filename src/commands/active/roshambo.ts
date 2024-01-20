@@ -5,6 +5,7 @@ import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder } from "discord.js";
 import { prefixes } from "@config";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
 const roshambo = [
     {name: "rock", weakness: "paper", advantage:"scissor"},
@@ -24,26 +25,9 @@ function brag(){
         .setDescription(`My winning percentage is ${Math.floor((winCount * 100)/loseCount)}%`)
 }
 
-const run: runCommand = (message , args?: string[]) => {
-    let choice: string | null = null;
+const run = (args: I_Roshambo) => {
+    let choice: string = args.choice;
     let botChoice = roshambo[rngInt(0, roshambo.length - 1)];
-
-    if(isChatInputCommandInteraction(message)){
-        const getOpt = message.options.getString("choose", true);
-
-        debug(`running command /roshambo choose: ${getOpt ?? "null"}`);
-
-        choice = getOpt;
-    }
-    else{
-        debug(`running command ${prefixes[0]} roshambo ${args !== undefined ? args.join(' '): ""}`);
-
-        if(args)
-            choice = args[0];
-    }
-
-    if(choice === null)
-        throw new Error("Insert input to play roshambo game!");
 
     const find = roshambo.find(ros => ros.name === choice);
     if(find === undefined)
@@ -95,35 +79,61 @@ const run: runCommand = (message , args?: string[]) => {
     return [embed];
 }
 
-const command: CommandReturnTypes = {
-    name: "roshambo",
-    alias: ["rps"],
-    description: "plays rock paper scissor",
-    examples: [
-        {command: `${prefixes[0]} roshambo rock`}
-    ],
-    execute: async (message, args) => {
-        const embeds = run(message, args);
+interface I_Roshambo{
+    choice: string;
+}
 
-        await message.channel.send({embeds});
-    },
-    slash:{
-        slashCommand: new SlashCommandBuilder().setName("roshambo")
-            .setDescription("Plays a rock paper scissor game")
-            .addStringOption(option => {option
-                    .setName("choose")
-                    .setDescription("rock or paper or scissor")
-                    .setRequired(true);
-                    
-                    for(const opt of roshambo )
-                        option.addChoices({name: opt.name, value: opt.name});
-                    return option;
-                }),
-        interact: async (interaction) => {
-            const embeds = run(interaction);
+const slashCommand = new SlashCommandBuilder().setName("roshambo")
+    .setDescription("Plays a rock paper scissor game")
+    .addStringOption(option => {option
+            .setName("choose")
+            .setDescription("rock or paper or scissor")
+            .setRequired(true);
+            
+            for(const opt of roshambo )
+                option.addChoices({name: opt.name, value: opt.name});
+            return option;
+    });
+
+const chrezRoshambo = new CommandBuilder<I_Roshambo>()
+    .setName("roshambo")
+    .setAlias(["rps"])
+    .setDescription("plays rock paper scissor")
+    .setExamples([
+        {command: `${prefixes[0]} roshambo rock`, description: ""}
+    ])
+    .setSlash({
+        slashCommand,
+        getParameter: (interaction) => {
+            const choice = interaction.options.getString("choose", true);
+
+            return {choice};
+        },
+        interact: async (interaction, args) => {
+            if(!args) throw new Error("argument is not provided");
+
+            const embeds = run(args);
+
             await interaction.reply({embeds});
         }
-    }
-};
+    })
+    .setChat({
+        getParameter: (_, args) => {
+            if(args.length === 0)
+                throw new Error("pick rock paper or scissor to play the game");
+    
+            const choice: string = args[0];
+    
+            return {choice};
+        },
+        execute: async (message, args) => {
+            if(!args) throw new Error("argument is not provided");
 
-export default command;
+            const embeds = run(args);
+    
+            await message.channel.send({embeds});
+        },
+    })
+
+
+export default chrezRoshambo;

@@ -11,6 +11,6 @@ export const commands: inlineCommandReturnTypes[] = [
     die,
     yay,
     test
-].filter(command => !command.unavailable);;
+].filter(command => !command.unavailable);
 
 export default commands;

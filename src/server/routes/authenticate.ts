@@ -41,13 +41,18 @@ async function requestOauth2(
       }});
       if(tokenResponseData.statusCode === 400){
         const errorJson = await tokenResponseData.body.json();
-        debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
+
+        if(typeof errorJson === "object" && errorJson !== null && "error" in errorJson)
+          debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
+        else
+          debug(`Statuscode 400 error given, reason: ${errorJson ?? "no reason found"}`)
+
         throw errorJson;
       }
   
       const res = await tokenResponseData.body.json();
   
-      return res;
+      return res as RESTPostOAuth2AccessTokenResult;
   }
   
   async function collectUserData(opt: {token_type: string, access_token: string}): Promise<APIUser>{
@@ -58,7 +63,11 @@ async function requestOauth2(
               });
       if(userResult.statusCode === 400){
         const errorJson = await userResult.body.json();
-        debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
+
+        if(typeof errorJson === "object" && errorJson !== null && "error" in errorJson)
+          debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
+        else
+          debug(`Statuscode 400 error given, reason: ${errorJson ?? "no reason found"}`);
         throw errorJson;
       }
   

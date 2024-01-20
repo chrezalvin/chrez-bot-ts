@@ -1,11 +1,15 @@
 import {config} from "dotenv"; config();
 
+// firebase for database;
+import { initializeApp } from "firebase/app";
+import {getFirestore} from "firebase/firestore/lite";
+
 // basic configs
 // max character bot can allow, if message word count is higher then the message will be ignored
 export const max_message_allowed = 300;
 
 export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
-export const botVersion = "1.2.3";
+export const botVersion = "1.3.0";
 
 // Note: production mode removes use of debug tools but some log (console) will still be used whenever error happen
 export let MODE: "development" | "production";
@@ -38,8 +42,11 @@ if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .
 
 export const port = process.env.PORT ?? "3000";
 
+// muted variable to share across all modules
 export let muted = false;
+
 let timerMuted: NodeJS.Timeout| null = null;
+
 export function setMute(set: boolean, callback?: () => void){
     if(timerMuted === null){
         if(set)
@@ -67,3 +74,14 @@ export function setMute(set: boolean, callback?: () => void){
     }
     muted = set;
 }
+
+const firebase_config = JSON.parse(process.env.FIREBASE_CONFIG ?? "{}");
+// check if firebase_config actually have JSON data
+if(Object.keys(firebase_config).length === 0)
+    throw new Error("Couldn't find FIREBASE_CONFIG in .env");
+
+export const firebaseApp = initializeApp(firebase_config);
+export const firestore = getFirestore(firebaseApp);
+
+
+// all exports

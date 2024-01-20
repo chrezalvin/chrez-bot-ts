@@ -1,11 +1,9 @@
-const debug = require("debug")("ChrezBot:memes");
-
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { SlashCommandBuilder, AttachmentBuilder, ChannelType, EmbedBuilder } from "discord.js";
+import { SlashCommandBuilder, AttachmentBuilder, ChannelType, EmbedBuilder, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import fs from "fs";
 import path from "path";
+import { CommandBuilder } from "@modules/CommandBuilder";
 import { prefixes } from "@config";
 
 const sfw_memesDir = path.resolve("./images/meme/sfw");
@@ -17,39 +15,9 @@ const nsfw_memes = fs.readdirSync(nsfw_memesDir);
 // global attachment because it needs to be included when sending too
 let attachment: AttachmentBuilder;
 
-const run: runCommand = (message , args?: string[]) => {
-    let index: number | null = null;
-    let nsfw: boolean = false;
-    
-    if(isChatInputCommandInteraction(message)){
-        // interaction
-        let num = message.options.getInteger("index", false);
-        nsfw = message.options.getBoolean("nsfw", false) ?? false;
-
-        debug(`running command /memes index: ${num ?? "null"} nsfw: ${nsfw ?? "null"}`);
-        
-        if(num !== null)
-            index = num;
-    }
-    else{
-        // message
-        debug(`running command ${prefixes[0]} memes ${args !== undefined ? args.join(' '): ""}`);
-
-        if(args && args[0] !== undefined){
-            // index check
-            let num = parseInt(args[0]);
-            
-            // nsfw on first args check
-            nsfw = args[0] === "nsfw";
-            
-            if(!isNaN(num))
-                index = num;
-            
-            // nsfw args
-            if(args[1] !== undefined && !nsfw)
-                nsfw = args[1] === "nsfw";
-        }
-    }
+const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Memes) => {
+    let index: number | null = args?.index ?? rngInt(0, sfw_memes.length - 1);
+    let nsfw: boolean = args?.nsfw ?? false;
     
     if(nsfw){
         if(index === null)
@@ -86,35 +54,76 @@ const run: runCommand = (message , args?: string[]) => {
     return [embed];
 }
 
-const command: CommandReturnTypes = {
-    name: "meme",
-    alias: ["memes"],
-    description: "Sends you a meme",
-    examples: [
+const slashCommand = new SlashCommandBuilder().setName("meme")
+    .setDescription("Sends you a meme")
+    .addIntegerOption(opt => opt
+        .setName("index")
+        .setDescription("Index to specify which memes you want to see")
+        .setMinValue(0)
+    )
+    .addBooleanOption(opt => opt
+        .setName("nsfw")
+        .setDescription("(TODO) set if you want nsfw memes, defaults to sfw")
+    )
+
+interface I_Memes{
+    index: number;
+    nsfw: boolean;
+}
+
+const memes = new CommandBuilder<I_Memes>()
+    .setName("meme")
+    .setAlias(["memes"])
+    .setDescription("Sends you a meme")
+    .setStatus("public")
+    .setMode("available")
+    .setExamples([
         {command: `${prefixes[0]} meme`, description: "give random meme"},
         {command: `${prefixes[0]} meme 19`, description: "give meme #19"}
-    ],
-    execute: async (message, args) => {
-        const embeds = run(message, args);
-        
-        await message.channel.send({embeds, files: [attachment]});
-    },
-    slash:{
-        slashCommand: new SlashCommandBuilder().setName("meme")
-        .setDescription("Sends you a meme")
-        .addIntegerOption(opt => opt
-            .setName("index")
-            .setDescription("Index to specify which memes you want to see")
-            .setMinValue(0))
-            .addBooleanOption(opt => opt
-                .setName("nsfw")
-                .setDescription("(TODO) set if you want nsfw memes, defaults to sfw")),
-                interact: async (interaction) => {
-                    const embeds = run(interaction);
-                    
-                    await interaction.reply({embeds, files: [attachment]});
+    ])
+    .setSlash({
+        slashCommand,
+        getParameter: (interaction) => {
+            const nsfw = interaction.options.getBoolean("nsfw", false) ?? false;
+            const index = interaction.options.getInteger("index", false) ?? nsfw ? rngInt(0, nsfw_memes.length - 1) : rngInt(0, sfw_memes.length - 1);
+
+            return {index, nsfw};
+        },
+        interact: async (interaction, args) => {
+            const embeds = run(interaction, args);
+            await interaction.reply({embeds, files: [attachment]});
+        },
+    })
+    .setChat({
+        getParameter: (_, args) => {
+            let nsfw: boolean = false;
+            let index: number = -1;
+
+            // possible args:
+            // Chrez meme 16 nsfw
+            // Chrez meme nsfw 16
+            // Chrez meme nsfw
+            // Chrez meme 16
+            args.find((arg) => arg === "nsfw" ? nsfw = true : false);
+            args.find((arg) => {
+                const num = parseInt(arg);
+                if(!isNaN(num)){
+                    index = num;
+                    return true;
                 }
-            }
-        };
+                return false;
+            });
+
+            if(index === -1)
+                index = rngInt(0, (nsfw ? nsfw_memes.length : sfw_memes.length) - 1);
+
+            return {index, nsfw};
+        },
+        execute: async (message, args) => {
+            const embeds = run(message, args);
+            await message.channel.send({embeds, files: [attachment]});
+        },
+    })
+    
         
-        export default command;
+export default memes;

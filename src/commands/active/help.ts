@@ -6,9 +6,10 @@ import { SlashCommandBuilder, User } from "discord.js";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
 import { prefixes } from "@config";
 import { userIsAdmin } from "@modules/profiles";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
 // , privateCommands: CommandReturnTypes[]
-function help(index: CommandReturnTypes[], privateCommands: CommandReturnTypes[]){
+function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: CommandReturnTypes[]){
     const run: runCommand = (message , args?: string[]) => {
         let command: string | null = null;
         const embed = new MyEmbedBuilder();
@@ -63,12 +64,12 @@ function help(index: CommandReturnTypes[], privateCommands: CommandReturnTypes[]
         
             if(find === undefined)
                 throw new Error("Cannot find the active command or its aliases!");
-
-            embed.setTitle(`${prefixes[0]} ${find.name} ${find.slash ? `or \`/${find.slash.slashCommand.name}\``: ""}`)
+            
+            embed.setTitle(`${prefixes[0]} ${find.name} ${find.slash ? `or \`/${find.slash?.slashCommand.name}\``: ""}`)
                 .setDescription(find.description);
             if(find.examples && find.examples.length > 0){
                 embed.addFields({name: "Examples", value: "\u200B"});
-                embed.addFields(find.examples.map(example => {return {name: example.command, value: example.description ?? "\u200B", inline: true}}));
+                embed.addFields(find.examples.map(example => { return {name: example.command, value: example.description ?? "\u200B", inline: true}}));
             }
 
             if(find.alias)

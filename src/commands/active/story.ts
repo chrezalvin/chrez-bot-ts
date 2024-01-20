@@ -6,6 +6,7 @@ import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import stories from "@assets/messages/active/story.json";
 import { prefixes } from "@config";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
 const run: runCommand = (message , args?: string[]) => {
     let index: number|null = rngInt(0, stories.length - 1);
@@ -60,6 +61,37 @@ const run: runCommand = (message , args?: string[]) => {
 
     return embeds;
 } 
+
+// const dummyCommand: CommandBuilder = new CommandBuilder({
+//     name: "story",
+//     alias: ["s"],
+//     description: "Creates a random story",
+//     examples: [
+//         {command: `${prefixes[0]} story`, description: "give random story"},
+//         {command: `${prefixes[0]} story 3`, description: "give story #3"}
+//     ],
+//     execute: async (message, args) => {
+//         // command is from interaction (slash command)
+//         if(isChatInputCommandInteraction(message)){
+//             const embeds = run(message);
+//             if(embeds.length !== 1)
+//                 for(const embed of embeds)
+//                     await message.channel?.send({embeds: [embed]});
+//             else
+//                 await message.reply({embeds});
+//         }
+
+//         // command is from regular chat
+//         else{
+//             const embeds = run(message, args);
+//             for(const embed of embeds)
+//                 await message.channel.send({embeds: [embed]});
+//         }
+//     },
+//     slash: new SlashCommandBuilder().setName("story")
+//             .setDescription("Creates a random story, you can specify which story you want using the option")
+//             .addIntegerOption(option => option.setName("index").setDescription("Index to target a story"))
+// })
 
 const command: CommandReturnTypes = {
     name: "story",
