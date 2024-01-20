@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import home from "./home";
 import base from "./base";
-import event from "./event";
+import event from "./events";
 import authenticate from "./authenticate";
 
 export const routes: Router[] = [

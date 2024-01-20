@@ -1,8 +1,8 @@
 const debug = require("debug")("ChrezBot:calculate");
 
 import { prefixes } from "@config";
+import { CommandBuilder } from "@modules/CommandBuilder";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 const evaluatex = require("evaluatex");
 
@@ -79,24 +79,10 @@ const replaceable = new Map<RegExp | string, V>([
 
 const calculationPrecision = 5;
 
-const run: runCommand = (message , args?: string[]) => {
-    let expression: string | null = null;
-    let isExpressionHaveUnit = false;
+const run = (args?: I_Calculate) => {
+    if(args === undefined) throw new Error("no expression to be evaluated!");
 
-    if(isChatInputCommandInteraction(message)){
-        expression = message.options.getString("expression", true);
-        debug(`running command /calculate expression: ${expression ?? "null"}`);
-    }
-    else{
-        if(args)
-            expression = args.join("");
-        debug(`running command ${prefixes[0]} calculate ${expression}`);
-    }
-
-    if(expression === null)
-        throw new Error("no expression to be evaluated!");
-    
-    isExpressionHaveUnit = expression.match(/(k|m|t|b)/) !== null;
+    let expression = args.expression;
 
     // the expression that will be send instead for easier reading
     let expressionSend = expression.replaceAll('*', '\\*'); 
@@ -104,16 +90,16 @@ const run: runCommand = (message , args?: string[]) => {
 
     for(const [key, val] of replaceable)
         if(typeof val === "string")
-            expression = expression.replaceAll(key, val);
+            expression = args.expression.replaceAll(key, val);
         else
-            expression = expression.replaceAll(key, val);
+            expression = args.expression.replaceAll(key, val);
 
     debug(`end expression: ${expression}`);
     let result = evaluatex(expression)();
 
     // remove trailing 000... when the expression have measurement unit (like k, m, t, ...)
     // 4k + 4k = 8k not 8000 and 4k * 4k = 16m
-    if(isExpressionHaveUnit && result >= 1000){
+    if(args.isExpressionHaveUnit && result >= 1000){
         // count the number of zeros
         result = replaceZeroWithUnit(Number.parseInt(`${result}`) ?? 0);
     }
@@ -124,7 +110,12 @@ const run: runCommand = (message , args?: string[]) => {
     return [embed];
 } 
 
-const command: CommandReturnTypes = {
+interface I_Calculate{
+    expression: string;
+    isExpressionHaveUnit: boolean;
+}
+
+const calculate = new CommandBuilder<I_Calculate>({
     name: "calculate",
     alias: ["math", "m", "calc"],
     description: "Calculates a math expression",
@@ -132,11 +123,6 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} math 2 + 3`, description: "2 + 3 = 5"},
         {command: `${prefixes[0]} math 2k + 2^3`, description: "2k + 2^3 = 2008"}
     ],
-    execute: async (message, args) => {
-        const embeds = run(message, args);
-
-        await message.channel.send({embeds});
-    },
     slash:{
         slashCommand: new SlashCommandBuilder()
             .setName("calculate")
@@ -144,12 +130,34 @@ const command: CommandReturnTypes = {
             .addStringOption(opt => opt.setName("expression")
             .setDescription("the expressions to calculate")
             .setRequired(true)),
-        interact: async (interaction) => {
-            const embeds = run(interaction);
+        interact: async (interaction, args) => {
+            const embeds = run(args);
 
             await interaction.reply({embeds});
-        }
-    }
-};
+        },
+        getParameter(interaction) {
+            const expression = interaction.options.getString("expression", true);
+            const isExpressionHaveUnit = expression.match(/(k|m|t|b)/) !== null;
 
-export default command;
+            return {expression, isExpressionHaveUnit};
+        }
+    },
+    chat: {
+        execute: async (message, args) => {
+            const embeds = run(args);
+
+            await message.channel.send({embeds});
+        },
+        getParameter(_, args) {
+            if(args.length === 0)
+                throw new Error("no expression to be evaluated!");
+    
+            const expression: string = args.join("");
+            const isExpressionHaveUnit = expression.match(/(k|m|t|b)/) !== null;
+    
+            return {expression, isExpressionHaveUnit};
+        }
+    },
+})
+
+export default calculate;

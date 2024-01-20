@@ -132,3 +132,30 @@ export function isDiscordAPIError(val: unknown): val is DiscordAPIError{
 
     return false;
 }
+
+export interface I_Cause{
+    readonly ok: boolean;
+    readonly message: string;
+}
+
+/**
+ * return type for functions that can return error
+ */
+export class Cause implements I_Cause{
+    readonly ok: boolean;
+    readonly message: string;
+
+    static isCause(val: unknown): val is Cause{
+        if(typeof val === "object" && val !== null)
+            if("ok" in val)
+                if("message" in val)
+                    return typeof val.ok === "boolean" && typeof val.message === "string";
+
+        return false;
+    }
+
+    constructor(ok: boolean = true, message: string = ""){
+        this.ok = ok;
+        this.message = message;
+    }
+}

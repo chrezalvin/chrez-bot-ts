@@ -10,6 +10,7 @@ if(DISCORD_TOKEN === undefined){
 const slashCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = []
 for(const command of [...commands.active, ...commands.c_private]){
     if(command.slash){
+        console.log(`Registering command ${command.name}`);
         slashCommands.push(command.slash.slashCommand.toJSON());
     }
 }
@@ -17,8 +18,9 @@ for(const command of [...commands.active, ...commands.c_private]){
 if(MODE === "development")
     console.log("On development mode, running experimental commands");
     for(const command of commands.experimental.commands){
-        if(command.slash?.slashCommand)
+        if(command.slash?.slashCommand){
             slashCommands.push(command.slash.slashCommand.toJSON());
+        }
     }
 
 // Construct and prepare an instance of the REST module

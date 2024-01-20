@@ -2,12 +2,32 @@
 // import once from "./once";
 // import { Awaitable, ClientEvents } from "discord.js";
 
-// interface EventReturnType<K extends keyof ClientEvents>{
-//     name: K;
-//     execute: (...args: ClientEvents[K]) => Awaitable<void>;
+// export const discordEventKeys = createEnum({
+//     applicationCommandPermissionsUpdate: "applicationCommandPermissionsUpdate",
+//     autoModerationActionExecution: "autoModerationActionExecution",
+//     autoModerationRuleCreate: "autoModerationRuleCreate",
+//     autoModerationRuleDelete: "autoModerationRuleDelete",
+//     autoModerationRuleUpdate: "autoModerationRuleUpdate",
+//     inviteCreate: "inviteCreate",
+//     inviteDelete: "inviteDelete",
+//     messageCreate: "messageCreate",
+//     messageDelete: "messageDelete",
+//     messageReactionRemoveAll: "messageReactionRemoveAll",
+//     interactionCreate: "interactionCreate"
+// })
+
+// type DiscordEventKeys = keyof typeof discordEventKeys;
+
+// interface EventReturnType{
+//     name: DiscordEventKeys;
+//     execute: (...args: [DiscordEventKeys]) => Awaitable<void>;
 // }
 
-// export const botEvents: Record<"on" | "once", EventReturnType> = {
+// function createEnum<T extends { [P in keyof T]: P }>(o: T) {
+//     return o
+// }
+
+// export const botEvents: Record<"on" | "once", EventReturnType[]> = {
 //     on: on.events,
 //     once: once.events
 // }

@@ -15,6 +15,7 @@ import help from "./help";
 import embedify from "./embedify"
 import update from "./update";
 import roshambo from "./roshambo";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
 /*
 const run: runCommand = (message , args?: string[]) => {
@@ -32,7 +33,7 @@ const run: runCommand = (message , args?: string[]) => {
 } 
 */
 
-const c: CommandReturnTypes[] = [
+const c: (CommandReturnTypes | CommandBuilder<any>)[] = [
     hello, 
     roll,
     calculate,
@@ -46,7 +47,12 @@ const c: CommandReturnTypes[] = [
     update,
     roshambo,
     
-].filter(command => !command.unavailable);
+].filter(command => {
+    if(!(command instanceof CommandBuilder))
+        return !command.unavailable
+    else
+        return command.mode !== "unavailable";
+});
 
 // workaround for help command
 c.push(help(c, privateCommands));

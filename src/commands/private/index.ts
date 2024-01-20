@@ -5,6 +5,7 @@ import laugh from "./laugh";
 import agree from "./agree";
 import disagree from "./disagree";
 import mute from "./setmute";
+import notifyRaid from "./notifyRaid";
 
 export const commands: CommandReturnTypes[] = [
     bulkDelete,
@@ -12,7 +13,8 @@ export const commands: CommandReturnTypes[] = [
     laugh,
     agree,
     disagree,
-    mute
+    mute,
+    notifyRaid    
 ].filter(command => !command.unavailable);
 
 export default commands;

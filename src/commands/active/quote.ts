@@ -1,6 +1,5 @@
 const debug = require("debug")("ChrezBot:quote");
 
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
 import { getProfileByID } from "@modules/profiles";
@@ -8,24 +7,10 @@ import { getProfileByID } from "@modules/profiles";
 import { SlashCommandBuilder } from "discord.js";
 import quotes from "@assets/messages/active/quote.json";
 import { prefixes } from "@config";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
-const run: runCommand = (message , args?: string[]) => {
-    let index: number = rngInt(0, quotes.length - 1);
-
-    if(isChatInputCommandInteraction(message)){
-        const getOpt = message.options.getInteger("index", false);
-
-        debug(`running command /quote index: ${getOpt ?? "null"}`);
-
-        if(getOpt !== null)
-            index = getOpt;
-    }
-    else{
-        debug(`running command ${prefixes[0]} quote ${args !== undefined ? args.join(' '): ""}`);
-
-        if(args && !isNaN(parseInt(args[0])))
-            index = parseInt(args[0]);
-    }
+const run = (args?: I_Quote) => {
+    let index: number = args?.index ?? rngInt(0, quotes.length - 1);
 
     if(index >= quotes.length)
         throw new Error(`index out of bounds, please choose between 0 to ${quotes.length - 1}`);
@@ -50,7 +35,11 @@ const run: runCommand = (message , args?: string[]) => {
     return [embed];
 }
 
-const command: CommandReturnTypes = {
+interface I_Quote{
+    index: number;
+};
+
+const quote = new CommandBuilder<I_Quote>({
     name: "quote",
     alias: ["q"],
     description: "Creates a random quote",
@@ -58,20 +47,34 @@ const command: CommandReturnTypes = {
         {command: `${prefixes[0]} quote`, description: "give random quote"},
         {command: `${prefixes[0]} quote 19`, description: "give quote #19"}
     ],
-    execute: async (message, args) => {
-        const embeds = run(message, args);
-
-        await message.channel.send({embeds});
-    },
     slash:{
         slashCommand: new SlashCommandBuilder().setName("quote")
             .setDescription("Creates a random quote, you can specify which quote you want using the option")
             .addIntegerOption(option => option.setName("index").setDescription("Index to target a quote")),
-        interact: async (interaction) => {
-            const embeds = run(interaction);
+        interact: async (interaction, args) => {
+            const embeds = run(args);
             await interaction.reply({embeds});
-        }
-    }
-};
+        },
+        getParameter(interaction) {
+            const getOpt = interaction.options.getInteger("index", false) ?? rngInt(0, quotes.length - 1);
 
-export default command;
+            return {index: getOpt};
+        }
+    },
+    chat: {
+        getParameter(_, args) {
+            let index = rngInt(0, quotes.length - 1);
+            if(args && !isNaN(parseInt(args[0])))
+                index = parseInt(args[0]);
+
+            return {index};
+        },
+        execute: async (message, args) => {
+            const embeds = run(args);
+
+            message.channel.send({embeds});
+        },
+    }
+})
+
+export default quote;

@@ -1,91 +1,55 @@
-import {CommandReturnTypes} from "@typings/customTypes";
-import { SlashCommandBuilder } from "discord.js";
-
-import {Event} from "@database";
+import { prefixes } from "@config";
+import { CommandReturnTypes} from "@typings/customTypes";
+import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
+import {getEventByMonth} from "../../server/services/events";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
+
+interface runCommand{
+    (message: Message<boolean>, args: string[]): Promise<MyEmbedBuilder[]>;
+    (message: ChatInputCommandInteraction<CacheType>): Promise<MyEmbedBuilder[]>;
+}
+
+const run: runCommand = async (message, args?: string[]) => {
+    const events = await getEventByMonth();
+
+    const embeds = events.eventList.map(event => {
+        return new MyEmbedBuilder({
+            title: event.name,
+            description: event.description
+        })
+    })
+
+    return embeds;
+}
 
 const command: CommandReturnTypes = {
     name: "event",
-    alias: ["e", "events"],
-    description: "Give list of all event that will happen",
+    alias: ["e", "ev", "events"],
+    description: "Check what event is happening this month",
+    examples: [
+      {command: `${prefixes[0]} event`, description: "Give the list event this month"},
+      {command: `${prefixes[0]} event january`, description: "Give the list of events in january"},
+  ],
     execute: async (message, args) => {
-        let eventName = args[0];
-        const embed = new MyEmbedBuilder();
-
-        if(eventName === undefined){
-            embed.setTitle("List of all events going on");
-            const data = await Event.findAll({
-                limit: 10
-            });
-
-
-            if(data.length === 0)
-                embed.setDescription("No event are currently active");
-            else
-                embed.setDescription(data.map(data => `${data.dataValues.name} => ${data.dataValues.date}`).join("\n"));
-
-            await message.channel.send({embeds: [embed]});
-        }
-        else{
-            embed.setTitle(`list of all event called ${eventName}`);
-            // TODO CASE INSENSITIVE
-            const data = await Event.findAll({
-                where: {
-                    name: eventName,
-                }
-            });
-
-            if(data.length === 0)
-                throw new Error(`event ${eventName} cannot be found!`);
-            
-            embed.setDescription(data.map(data => `${data.dataValues.name} => ${data.dataValues.date}`).join("\n"));
-            await message.channel.send({embeds: [embed]});
-        }
+        const time = new Date();
+        // get only the hh:mm:ss format
+        const embeds = await run(message, args);
+        
+        await message.channel.send({embeds});
     },
     slash:{
-        slashCommand: new SlashCommandBuilder()
-            .setName("event")
-            .setDescription("Give list of all event that will happen")
-            .addStringOption(opt => opt
-                .setName("event_name")
-                .setDescription("Specify the name of event")
-                .setRequired(false)
-            ),
+        slashCommand: new SlashCommandBuilder().setName("event")
+            .setDescription("Check what event is happening")
+            .addStringOption(opt => 
+                opt
+                .setName("month")
+                .setDescription("month to check")
+                .setRequired(false)),
+
         interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-
-            const event_name = interaction.options.getString("event_name", false);
-            const embed = new MyEmbedBuilder();
-
-            if(event_name === null){
-                embed.setTitle("List of all events going on");
-                const data = await Event.findAll({
-                    limit: 10
-                });
-    
-                if(data.length === 0)
-                    embed.setDescription("No event are currently active");
-                else
-                    embed.setDescription(data.map(data => `${data.dataValues.name} => ${data.dataValues.date}`).join("\n"));
-    
-                await interaction.reply({embeds: [embed]});
-            }
-            else{
-                embed.setTitle(`list of all event called ${event_name}`);
-                // TODO CASE INSENSITIVE
-                const data = await Event.findAll({
-                    where: {
-                        name: event_name,
-                    }
-                });
-
-                if(data.length === 0)
-                    throw new Error(`event ${event_name} cannot be found!`);
-
-                embed.setDescription(data.map(data => `${data.dataValues.name} => ${data.dataValues.date}`).join("\n"));
-                await interaction.reply({embeds: [embed]});
-            }
+            const embeds = await run(interaction);
+            
+            await interaction.reply({embeds});
         }
     }
 };
