@@ -106,7 +106,7 @@ if(MODE === "development"){
     
     for(const inline of commands.experimental.inlines){
         for(const criteria of inline.searchCriteria)
-        _aliasCriteriaMap.set(criteria, inline.name);
+            _aliasCriteriaMap.set(criteria, inline.name);
         _inlineCommands.set(inline.name, inline);
     }
     debug("Done loading experimental commands");
