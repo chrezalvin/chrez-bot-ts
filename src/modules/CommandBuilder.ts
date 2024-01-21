@@ -77,8 +77,6 @@ export class CommandBuilder<_T> implements CommandData<_T>{
                 this.setChat(data.chat);
 
             this.examples = data.examples ?? [];
-
-            debug(`successfully created command ${this.name}`);
         }
     }
 

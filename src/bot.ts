@@ -16,8 +16,10 @@ import { CommandBuilder, CommandStatus } from "@modules/CommandBuilder";
 const allCommandList = new Collection<string, CommandBuilder<any>>();
 
 for(const command of [...commands.active, ...commands.c_private]){
-    if(CommandBuilder.isCommandBuilder(command))
+    if(CommandBuilder.isCommandBuilder(command)){
         allCommandList.set(command.name, command);
+        debug(`successfully created command ${command.name}`);
+    }
 }
 
 if(MODE === "development"){
