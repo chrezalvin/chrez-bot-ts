@@ -42,24 +42,6 @@ const _privateSlashCommands = new Collection<string, CommandReturnTypes["slash"]
 const _aliasCriteriaMap = new Collection<string|RegExp, string>();
 const _inlineCommands= new Collection<string, inlineCommandReturnTypes>();
 
-debug("Loading active commands");
-for(const command of commands.active){
-    if(CommandBuilder.isCommandBuilder(command)) continue;
-
-    _command.set(command.name, command);
-    if(command.slash)
-        _slashCommands.set(command.slash.slashCommand.name, command.slash);
-    if(command.alias)
-        for(const alias of command.alias){
-            if(_commandAlias.has(alias)){
-                console.warn(`WARNING: The alias ${alias} in Chrez ${command.name} has already been taken by command ${_commandAlias.get(alias)}. This command will NOT be overriden, skipping this alias`);
-                continue;
-            }
-            _commandAlias.set(alias, command.name);
-        }
-}
-debug("Done loading active commands");
-
 debug("Loading private commands");
 for(const command of commands.c_private){
     if(CommandBuilder.isCommandBuilder(command)) continue;
