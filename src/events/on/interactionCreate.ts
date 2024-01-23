@@ -1,12 +1,7 @@
-import { EventReturnType } from "@typings/customTypes";
-import { Client, ClientEvents, Events, InteractionType } from "discord.js";
+import {EventArguments} from "../"
 
-const event: EventReturnType<Events.InteractionCreate> = {
-    name: Events.InteractionCreate,
-    execute(interaction) {
-        if(interaction.isChatInputCommand())
-            console.log(`accepted interaction by ${interaction.commandName}`);
-    }
-}
+const event: EventArguments<"interactionCreate"> = ["interactionCreate", (interaction) => {
+
+}]
 
 export default event;

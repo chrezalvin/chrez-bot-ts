@@ -1,7 +1,15 @@
-import interactionCreate from "./interactionCreate";
-import messageCreate from "./messageCreate";
+import { ClientEvents } from "discord.js";
+import { EventArguments, EventReturnType} from "../";
 
-export default {
-    eventName: "on" as const,
-    events: [interactionCreate, messageCreate]
-};
+import interactionCreate from "./interactionCreate";
+
+const executeList = [
+    interactionCreate
+] as EventArguments<keyof ClientEvents>[];
+
+const once: EventReturnType = {
+    name: "on",
+    execute: executeList,
+}
+
+export default once;

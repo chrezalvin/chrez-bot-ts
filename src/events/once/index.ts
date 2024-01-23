@@ -1,6 +1,14 @@
+import { ClientEvents } from "discord.js";
+import { EventArguments, EventReturnType} from "../";
 import ready from "./ready";
 
-export default {
-    eventName: "once" as const,
-    events: [ready]
-};
+const executeList = [
+    ready
+] as EventArguments<keyof ClientEvents>[];
+
+const once: EventReturnType = {
+    name: "once",
+    execute: executeList,
+}
+
+export default once;
