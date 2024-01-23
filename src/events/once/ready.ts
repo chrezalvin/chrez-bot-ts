@@ -1,10 +1,13 @@
-import { ClientEvents } from "discord.js";
+import { ClientEvents, version } from "discord.js";
 import { EventArguments} from "../";
+import { MODE, botVersion } from "@config";
+import debug from "debug";
 
 const event: EventArguments<"ready"> = [
     "ready", 
-    (_) => {
-        console.log("Bot ready!");
+    () => {
+        console.log(`Bot ready! running on mode ${MODE}`);
+        debug(`discord.js version: ${version}\nbot version: ${botVersion}`);
     }
 ]
 
