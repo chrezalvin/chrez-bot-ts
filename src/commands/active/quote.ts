@@ -75,5 +75,6 @@ const quote = new CommandBuilder<I_Quote>()
             message.channel.send({embeds});
         },
     })
+    .setMode("unavailable");
 
 export default quote;

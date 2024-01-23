@@ -9,7 +9,7 @@ import { userIsAdmin } from "@modules/profiles";
 import { CommandBuilder } from "@modules/CommandBuilder";
 
 // , privateCommands: CommandReturnTypes[]
-function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: CommandReturnTypes[]){
+function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: (CommandReturnTypes | CommandBuilder<any>)[]){
     const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType> , args?: I_Help) => {
         let command: string | null = args?.command ?? null;
         const embed = new MyEmbedBuilder();
