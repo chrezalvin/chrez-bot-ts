@@ -1,6 +1,6 @@
 const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
-import {max_message_allowed, muted, ownerID, prefixes} from "@config";
+import {max_message_allowed, muted, prefixes} from "@config";
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
@@ -53,27 +53,7 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     if(command === undefined) return;
 
     try{
-        // check command
-        if(sharedCommands.command.has(command))
-            await sharedCommands.command.get(command)?.execute(message, args);
-        // check alias for command
-        else if(sharedCommands.commandAlias.has(command))
-            sharedCommands.command.get(sharedCommands.commandAlias.get(command)!)?.execute(message, args);
-        // check if command is for private members (highest authority)
-        else if(sharedCommands.privateCommands.has(command)){
-            if(message.author.id === ownerID || userIsAdmin(message.author.id))
-                await sharedCommands.privateCommands.get(command)?.execute(message, args);
-            else
-                throw new Error("This command is for private members only!");
-        }
-        // check if command is for private members (lower authority)
-        else if(sharedCommands.privateCommandAlias.has(command)){
-            if(message.author.id === ownerID || userIsAdmin(message.author.id))
-                await sharedCommands.privateCommands.get(sharedCommands.privateCommandAlias.get(command)!)?.execute(message, args);
-            else
-                throw new Error("This command is for private members only!");
-        }
-        else if(sharedCommands.allCommands.has(command)){
+        if(sharedCommands.allCommands.has(command)){
             const chatCommand = sharedCommands.allCommands.get(command)!;
 
             if(CommandBuilder.isCommandBuilder(chatCommand)){

@@ -117,6 +117,13 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     }
 
     /**
+     * chat JSON data
+     */
+    get chat(){
+        return this.m_chat;
+    }
+
+    /**
      * get the command mode
      */
     get mode(){ return this.m_mode; }

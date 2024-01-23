@@ -18,8 +18,10 @@ export const client = new Client({intents: [
 ]})
 
 for(const botEvent of events){
-    for(const execute of botEvent.execute)
+    for(const execute of botEvent.execute){
+        debug(`created event ${botEvent.name} ${execute[0]}`);
         client[botEvent.name](...execute);
+    }
 }
 
 export async function sendError(

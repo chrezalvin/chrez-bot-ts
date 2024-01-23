@@ -16,34 +16,8 @@ for(const command of [...commands.active, ...commands.c_private]){
     }
 }
 
-const _command = new Collection<string, CommandReturnTypes>();
-const _commandAlias = new Collection<string, string>();
-const _slashCommands = new Collection<string, CommandReturnTypes["slash"]>();
-
-const _privateCommands = new Collection<string, CommandReturnTypes>();
-const _privateCommandAlias = new Collection<string, string>();
-const _privateSlashCommands = new Collection<string, CommandReturnTypes["slash"]>();
-
 const _aliasCriteriaMap = new Collection<string|RegExp, string>();
 const _inlineCommands= new Collection<string, inlineCommandReturnTypes>();
-
-debug("Loading private commands");
-for(const command of commands.c_private){
-    if(CommandBuilder.isCommandBuilder(command)) continue;
-
-    _privateCommands.set(command.name, command);
-    if(command.slash)
-        _privateSlashCommands.set(command.slash.slashCommand.name, command.slash);
-    if(command.alias)
-        for(const alias of command.alias){
-            if(_privateCommandAlias.has(alias)){
-                console.warn(`WARNING: The alias for private command ${alias} has already been taken by command ${_privateCommandAlias.get(alias)}, skipping this alias`);
-                continue;
-            }
-            _privateCommandAlias.set(alias, command.name);
-        }
-}
-debug("Done loading private commands");
 
 debug("Loading Inline Commands");
 for(const inline of commands.inline){
@@ -71,18 +45,18 @@ if(MODE === "development"){
     debug("Done loading experimental commands");
 }
 
-debug("======= list of commands =======");
-debug(`create Message: ${_command.map((_, key) => key)}`);
-debug(`slash Commands: ${_slashCommands.map((_, key) => `/${key} `)}`);
-debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
-debug(`private Commands: ${_privateCommands.map((_, key) => key)}`);
+// debug("======= list of commands =======");
+// debug(`create Message: ${_command.map((_, key) => key)}`);
+// debug(`slash Commands: ${_slashCommands.map((_, key) => `/${key} `)}`);
+// debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
+// debug(`private Commands: ${_privateCommands.map((_, key) => key)}`);
 
-export const command = _command;
-export const commandAlias = _commandAlias;
-export const slashCommands = _slashCommands;
-export const privateCommands = _privateCommands;
-export const privateCommandAlias = _privateCommandAlias;
-export const privateSlashCommands = _privateSlashCommands;
+debug("======= list of commands =======");
+debug(`create Message: ${allCommandList.filter(command => command.chat).map((_, key) => key)}`);
+debug(`slash Commands: ${allCommandList.filter(command => command.slash).map((_, key) => `/${key} `)}`);
+debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
+debug(`private Commands: ${allCommandList.filter(command => command.status === "private").map((_, key) => key)}`);
+
 export const aliasCriteriaMap = _aliasCriteriaMap;
 export const inlineCommands = _inlineCommands;
 export const allCommands = allCommandList;

@@ -1,29 +1,11 @@
-const debug = require("debug")("ChrezBot:mute");
+import { SlashCommandBuilder } from "discord.js";
 
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import { MessageCreateOptions, MessagePayload, SlashCommandBuilder } from "discord.js";
-
-import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
+import { MyEmbedBuilder } from "@modules/basicFunctions";
 import { muted, setMute } from "@config";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
-const run: runCommand = (message, args?: string[]) => {
-    let flagMute: boolean;
-    if(isChatInputCommandInteraction(message)){
-        flagMute = message.options.getBoolean("mute", true);
-
-        debug(`running command /mute ${flagMute} args: ${args ?? "no args"}`);
-    }
-    else if(args && args[0]){
-        debug(`running command Chrez mute | args: ${args ?? "no args"}`);
-        if(!args[0].localeCompare("true"))
-            flagMute = true;
-        else if(!args[0].localeCompare("false"))
-            flagMute = false;
-        else
-            throw new Error("the parameter is invalid");
-    }
-    else 
-        flagMute = true;
+const run = (args?: I_Mute) => {
+    let flagMute: boolean = args?.mute ?? true;
     
     const embed = new MyEmbedBuilder();
     if(flagMute == muted)
@@ -31,10 +13,7 @@ const run: runCommand = (message, args?: string[]) => {
     else{
         setMute(
             flagMute, 
-            flagMute ? () => {
-                if(message.channel)
-                    message.channel.send("Chrezbot has been unmuted");
-                } 
+            flagMute ? args?.onUnmuted
             : undefined);
         embed.setTitle(`Chrezbot has been ${flagMute? "muted": "unmuted"}!`)
         if(flagMute)
@@ -44,22 +23,54 @@ const run: runCommand = (message, args?: string[]) => {
     return  [embed];
 }
 
-const command: CommandReturnTypes = {
-    name: "mute",
-    description: "mute the chrezbot",
-    alias: ["stfu", "shutup", "off"],
-    execute: async (message, args: string[]) => {
-        await message.channel.send({embeds: run(message, args)});
-    },
-    slash:{
-        slashCommand: new SlashCommandBuilder()
-            .setName("mute")
-            .setDescription("mutes chrezbot")
-            .addBooleanOption(input => input.setName("mute").setDescription("set mute to true or false").setRequired(true)),
-        interact: async (interaction) => {
-            await interaction.reply({embeds: run(interaction)});
-        }
-    }
-};
+interface I_Mute{
+    mute: boolean;
+    onUnmuted?: () => void;
+}
 
-export default command;
+const slashCommand = new SlashCommandBuilder()
+        .setName("mute")
+        .setDescription("mutes chrezbot")
+        .addBooleanOption(input => input.setName("mute").setDescription("set mute to true or false").setRequired(true));
+
+const mute = new CommandBuilder<I_Mute>()
+        .setName("mute")
+        .setDescription("mutes chrezbot")
+        .setAlias(["stfu", "shutup", "off"])
+        .setSlash({
+            slashCommand,
+            getParameter: (interaction) => {
+                const mute = interaction.options.getBoolean("mute", true);
+                const onUnmuted = () => {
+                    interaction.channel?.send({embeds: [new MyEmbedBuilder({description: "Chrezbot is now unmuted"})]});
+                }
+                return {
+                    mute,
+                    onUnmuted
+                };
+            },
+            interact: async (interaction, args) => {
+                const res = run(args);
+            
+                await interaction.reply({embeds: res});
+            }
+        })
+        .setChat({
+            getParameter: (message, args) => {
+                const muted = args[0] === "false" ? false : true;
+                const onUnmuted = () => {
+                    message.channel.send({embeds: [new MyEmbedBuilder({description: "Chrezbot is now unmuted"})]});
+                }
+                return {
+                    mute: muted,
+                    onUnmuted
+                };
+            },
+            execute: async (message, args) => {
+                const res = run(args);
+            
+                await message.channel.send({embeds: res});
+            }
+        })
+
+export default mute;
