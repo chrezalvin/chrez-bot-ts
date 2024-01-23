@@ -94,7 +94,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     /**
      * command description
      */
-    get description(){ return this.m_description; }
+    get description(){ return `${this.m_mode !== "available" ? `(${this.m_mode})` : ""} ${this.m_description}`; }
 
     /**
      * the status of the command
