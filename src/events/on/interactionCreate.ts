@@ -1,7 +1,6 @@
 const debug = require("debug")("ChrezBot:interactionCreate");
 
 import { sendError } from "@bot";
-import { ownerID } from "@config";
 import { CommandBuilder } from "@modules/CommandBuilder";
 import { MyEmbedBuilder } from "@modules/basicFunctions";
 import { userIsAdmin } from "@modules/profiles";
