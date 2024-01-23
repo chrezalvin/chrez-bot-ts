@@ -118,8 +118,10 @@ async function sendError(
     
 
     if(isChatInputCommandInteraction(message)){
-        const msg = await message.reply({embeds: [embed], ephemeral: true});
-            if(deleteTime && msg) 
+        console.log("test");
+        message.deferred ? await message.editReply({embeds: [embed]}) : await message.reply({embeds: [embed]});
+        console.log("test2");
+        if(deleteTime)
             setTimeout(async () => {
                 message.deleteReply();
             }, deleteTime * 1000);
@@ -127,10 +129,10 @@ async function sendError(
     else{
         const msg = await message.channel.send({embeds: [embed]});
         if(deleteTime) 
-        setTimeout(async () => {
-            if(msg.deletable)
-                await msg.delete();
-        }, deleteTime * 1000);
+            setTimeout(async () => {
+                if(msg.deletable)
+                    await msg.delete();
+            }, deleteTime * 1000);
     }
 }
 
@@ -138,6 +140,8 @@ client.once("ready", (_) => {
     console.log(`Bot ready! running on mode ${MODE}`);
     debug(`discord.js version: ${version}\nbot version: ${botVersion}`);
 });
+
+client.removeAllListeners
 
 client.on("messageCreate", async (message) => {
     if(!message.guild) return;
@@ -229,20 +233,26 @@ client.on("messageCreate", async (message) => {
             throw new Error("Your command is not available in Chrez Command List");
     }
     catch(e: unknown){
-        debug(`error: ${e}`);
+        try{
+            debug(`error: ${e}`);
 
-        // check if error can be send through discord
-        if(!message.channel) return;
+            // check if error can be send through discord
+            if(!message.channel) return;
 
-        if(e != null && typeof e === "object")
-            if("message" in e && typeof e.message === "string")
-                sendError(message, e.message);
-            else if(typeof e == "string")
-                sendError(message, e);
+            if(e != null && typeof e === "object")
+                if("message" in e && typeof e.message === "string")
+                    sendError(message, e.message);
+                else if(typeof e == "string")
+                    sendError(message, e);
+                else
+                    sendError(message, "Unknown error occured");
             else
                 sendError(message, "Unknown error occured");
-        else
-            sendError(message, "Unknown error occured");
+        }
+        catch(e: unknown){
+            // this catch is last resport if fatal error occured
+            console.log(`fatal error: ${JSON.stringify(e)}`);
+        }
     }
 })
 
@@ -288,6 +298,7 @@ client.on('interactionCreate', async (interaction) => {
         }
     }
     catch(e: unknown){
+        try{
         const embed = new MyEmbedBuilder();
         const deleteTime = 10;
         
@@ -337,15 +348,18 @@ client.on('interactionCreate', async (interaction) => {
         }
 
         if(interaction.channel){
-            const get = await interaction.channel.send({embeds: [embed]});
+            interaction.deferred ? await interaction.editReply({embeds: [embed]}) : await interaction.reply({embeds: [embed]});
             setTimeout(async () => {
-                if(get.deletable) 
-                await get.delete();
+                interaction.deleteReply();
             }, deleteTime * 1000);
         }
         else console.log("Can't find any channel to send the message");
     }
-});
+    catch(e: unknown){
+        // this catch is last resport if fatal error occured
+        console.log(`fatal error: ${JSON.stringify(e)}`);
+    }
+}});
 
 debug("adding autoWorkers...");
 for(const autoWorker of autoWorkersList)
