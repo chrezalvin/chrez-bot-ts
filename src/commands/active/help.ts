@@ -87,8 +87,8 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
         .setDescription("give all commands for chrezbot")
         .setSlash({
             slashCommand,
-            interact: async (interaction) => {
-                const embeds = run(interaction);
+            interact: async (interaction, args) => {
+                const embeds = run(interaction, args);
                 
                 await interaction.reply({embeds});
             },

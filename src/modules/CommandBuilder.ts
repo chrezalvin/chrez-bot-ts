@@ -263,7 +263,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
             if(this.m_slash === undefined) return new Cause(false, "slash option is not available for this command");
 
             params = this.m_slash.getParameter?.(message);
-            debug(`slash params: ${params}`);
+            debug(`slash params: ${JSON.stringify(params)}`);
 
             return await this.m_slash.interact(message, params);
         }
