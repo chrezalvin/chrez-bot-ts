@@ -10,6 +10,7 @@ import { CommandBuilder } from "@modules/CommandBuilder";
 
 const run = (args?: I_Time) => {
   let timezone: string | null = args?.timezone ?? null;
+  
   const time = new Date();
   const embed = new MyEmbedBuilder();
 

@@ -2,30 +2,28 @@ import { CommandReturnTypes, inlineCommandReturnTypes, isCommandReturnType, isIn
 
 import event from "./event";
 import dyePrice from "./dyePrice";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
-const commandDump: (CommandReturnTypes | inlineCommandReturnTypes)[] = [
+const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
     event,
     // dyePrice    
 ]
 
-let commands: (CommandReturnTypes)[] = [];
+let commands: (CommandBuilder<any>)[] = [];
 
 let inlines: (inlineCommandReturnTypes)[] = [];
 
 for(const unknownCommand of commandDump){
-    if(unknownCommand.unavailable) continue;
-    
-    if(isInline(unknownCommand))
-        inlines.push(unknownCommand);
-    else if(isCommandReturnType(unknownCommand))
-        commands.push(unknownCommand);
-}
+    if(CommandBuilder.isCommandBuilder(unknownCommand)){
+        if(unknownCommand.mode === "unavailable") continue;
 
-// mark experimentals
-for(const command of commands){
-    if(command.slash?.slashCommand){
-        command.slash.slashCommand.setDescription(`(experimental) ${command.slash.slashCommand.description}`);
+        commands.push(unknownCommand);
     }
+    else{
+        if(unknownCommand.unavailable) continue;
+
+        inlines.push(unknownCommand);
+    }    
 }
 
 export default {commands, inlines};

@@ -1,30 +1,15 @@
 const debug = require("debug")("ChrezBot:update");
 
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+import {MyEmbedBuilder} from "../../modules/basicFunctions";
 
 import { SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
 import { prefixes, botVersion } from "@config";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
-const run: runCommand = (message , args?: string[]) => {
+const run = ( args?: I_Update) => {
     // defaulted to latest version
-    let version: string = botVersion;
-
-    if(isChatInputCommandInteraction(message)){
-        const version_hold = message.options.getString("version", false);
-        debug(`running command /${command.name} version: ${version_hold ?? "null"}`);
-
-
-        if(version_hold !== null)
-            version = version_hold;
-    }
-    else{
-        debug(`running command ${prefixes[0]} update ${args !== undefined ? args.join(' '): ""}`);
-
-        if(args && args[0] !== undefined)
-            version = args[0];
-    }
+    let version: string = args?.version ?? botVersion;
 
     let update = updates[updates.length - 1];
     const embed = new MyEmbedBuilder();
@@ -43,16 +28,19 @@ const run: runCommand = (message , args?: string[]) => {
     return [embed];
 } 
 
-const command: CommandReturnTypes = {
-    name: "update",
-    alias: ["u", "news"],
-    description: "Gives you update about chrezbot (news and bugfixes)",
-    execute: async (message, args) => {
-        const embeds = run(message, args);
+interface I_Update{
+    version: string | null;
+}
 
-        await message.channel.send({embeds});
-    },
-    slash:{
+const update = new CommandBuilder<I_Update>()
+    .setName("update")
+    .setAlias(["u", "news"])
+    .setDescription("Gives you update about chrezbot (news and bugfixes)")
+    .setExamples([
+        {command: `${prefixes[0]} update`, description: "give latest update"},
+        {command: `${prefixes[0]} update 1.1.0`, description: "give update 1.1.0"}
+    ])
+    .setSlash({
         slashCommand: new SlashCommandBuilder().setName("update")
             .setDescription("Gives you uppdate about ChrezBot (news and bugfixes)")
             .addStringOption(opt => {
@@ -64,16 +52,31 @@ const command: CommandReturnTypes = {
 
                 return opt;
                 }),
+        getParameter: (interaction) => {
+            const version = interaction.options.getString("version", false);
 
-        interact: async (interaction) => {
-            if(!interaction.isChatInputCommand())
-                throw new Error("Bot can't reply the interaction received");
-            
-            const embeds = run(interaction);
- 
+            return {version};
+        },
+        interact: async (interaction, args) => {
+            const embeds = run(args);
+
             await interaction.reply({embeds});
         }
-    }
-};
+    })
+    .setChat({
+        getParameter: (_, args) => {
+            let version: string | null = null;
 
-export default command;
+            if(args && args[0] !== undefined)
+                version = args[0];
+
+            return {version};
+        },
+        execute: async (message, args) => {
+            const embeds = run(args);
+
+            message.channel.send({embeds});
+        },
+    })
+
+export default update;

@@ -1,7 +1,7 @@
 const debug = require("debug")("ChrezBot:help");
 
 import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import { SlashCommandBuilder, User } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
 
 import { MyEmbedBuilder } from "@modules/basicFunctions";
 import { prefixes } from "@config";
@@ -9,23 +9,10 @@ import { userIsAdmin } from "@modules/profiles";
 import { CommandBuilder } from "@modules/CommandBuilder";
 
 // , privateCommands: CommandReturnTypes[]
-function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: CommandReturnTypes[]){
-    const run: runCommand = (message , args?: string[]) => {
-        let command: string | null = null;
+function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: (CommandReturnTypes | CommandBuilder<any>)[]){
+    const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType> , args?: I_Help) => {
+        let command: string | null = args?.command ?? null;
         const embed = new MyEmbedBuilder();
-    
-        if(isChatInputCommandInteraction(message)){
-            command = message.options.getString("command", false);
-
-            debug(`running command /help command: ${command ?? "null"}`);
-
-        }
-        else{
-            if(args && args[0] !== undefined)
-                command = args[0];
-
-            debug(`running command ${prefixes[0]} help ${args !== undefined ? args.join(' '): ""}`);
-        }
     
         if(command === null){
             // displays all active commands
@@ -79,35 +66,56 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
         return [embed];
     } 
 
-    const command: CommandReturnTypes = {
-        name: "help",
-        description: "give all commands for chrezbot",
-        alias: ["h"],
-        execute: async (message, args) => {
-            const embeds = run(message, args);
-
-            await message.channel.send({embeds});
-        },
-        slash:{
-            slashCommand: new SlashCommandBuilder()
-                .setName("help")
-                .setDescription("give all commands for chrezbot or specify which command to check").
-                addStringOption(opt => {
-                    opt.setName("command").setDescription("command to check");
-                    for(const idx of index)
-                        opt.addChoices({name: `${prefixes[0]} ${idx.name}`, value: idx.name})
-
-                    return opt;
-                }),
-            interact: async (interaction) => {
-                const embeds = run(interaction);
-                
-                await interaction.reply({embeds});
-            }
-        }
+    interface I_Help{
+        command: string | null;
     }
 
-    return command;
+    const slashCommand = new SlashCommandBuilder()
+            .setName("help")
+            .setDescription("give all commands for chrezbot or specify which command to check").
+            addStringOption(opt => {
+                opt.setName("command").setDescription("command to check");
+                for(const idx of index)
+                    opt.addChoices({name: `${prefixes[0]} ${idx.name}`, value: idx.name})
+
+                return opt;
+            });
+
+    const chrezHelp = new CommandBuilder<I_Help>()
+        .setName("help")
+        .setAlias(["h"])
+        .setDescription("give all commands for chrezbot")
+        .setSlash({
+            slashCommand,
+            interact: async (interaction, args) => {
+                const embeds = run(interaction, args);
+                
+                await interaction.reply({embeds});
+            },
+            getParameter: (interaction) => {
+                const command = interaction.options.getString("command", false);
+
+                return {command};
+            }
+        })
+        .setChat({
+            execute: async (message, args) => {
+                const embeds = run(message, args);
+
+                await message.channel.send({embeds});
+            },
+            getParameter: (_, args) => {
+                let command: string | null = null;
+
+                if(args && args[0] !== undefined)
+                    command = args[0];
+
+                return {command};
+            }
+        })
+
+
+    return chrezHelp;
 };
 
 export default help;

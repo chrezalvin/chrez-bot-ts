@@ -6,15 +6,21 @@ import agree from "./agree";
 import disagree from "./disagree";
 import mute from "./setmute";
 import notifyRaid from "./notifyRaid";
+import { CommandBuilder } from "@modules/CommandBuilder";
 
-export const commands: CommandReturnTypes[] = [
+export const commands: (CommandReturnTypes | CommandBuilder<any>)[] = [
     bulkDelete,
     why,
     laugh,
     agree,
     disagree,
     mute,
-    notifyRaid    
-].filter(command => !command.unavailable);
+    notifyRaid
+].filter(command => {
+    if(command instanceof CommandBuilder)
+        return command;
+    else
+        return !command.unavailable;
+});
 
 export default commands;

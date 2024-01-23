@@ -39,15 +39,15 @@ interface I_Quote{
     index: number;
 };
 
-const quote = new CommandBuilder<I_Quote>({
-    name: "quote",
-    alias: ["q"],
-    description: "Creates a random quote",
-    examples: [
+const quote = new CommandBuilder<I_Quote>()
+    .setName("quote")
+    .setAlias(["q"])
+    .setDescription("Creates a random quote")
+    .setExamples([
         {command: `${prefixes[0]} quote`, description: "give random quote"},
         {command: `${prefixes[0]} quote 19`, description: "give quote #19"}
-    ],
-    slash:{
+    ])
+    .setSlash({
         slashCommand: new SlashCommandBuilder().setName("quote")
             .setDescription("Creates a random quote, you can specify which quote you want using the option")
             .addIntegerOption(option => option.setName("index").setDescription("Index to target a quote")),
@@ -60,8 +60,8 @@ const quote = new CommandBuilder<I_Quote>({
 
             return {index: getOpt};
         }
-    },
-    chat: {
+    })
+    .setChat({
         getParameter(_, args) {
             let index = rngInt(0, quotes.length - 1);
             if(args && !isNaN(parseInt(args[0])))
@@ -74,7 +74,7 @@ const quote = new CommandBuilder<I_Quote>({
 
             message.channel.send({embeds});
         },
-    }
-})
+    })
+    .setMode("unavailable");
 
 export default quote;

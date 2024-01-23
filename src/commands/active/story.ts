@@ -1,31 +1,15 @@
 const debug = require("debug")("ChrezBot:story");
 
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
+import {CommandReturnTypes} from "@typings/customTypes";
 import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
 
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import stories from "@assets/messages/active/story.json";
 import { prefixes } from "@config";
 import { CommandBuilder } from "@modules/CommandBuilder";
 
-const run: runCommand = (message , args?: string[]) => {
-    let index: number|null = rngInt(0, stories.length - 1);
-
-    if(isChatInputCommandInteraction(message)){
-        let num = message.options.getInteger("index", false);
-        debug(`running command /story index: ${num ?? "null"}`);
-
-        if(num !== null)
-            index = num;
-    }
-    else{
-        debug(`running command ${prefixes[0]} story ${args !== undefined ? args.join(' '): ""}`);
-        if(args && args[0] !== undefined){
-            let num = parseInt(args[0]);
-            if(!isNaN(num))
-                index = num;
-        }
-    }
+const run = (args?: I_Story) => {
+    let index: number = args?.index ?? rngInt(0, stories.length - 1);
 
     if(index >= stories.length)
         throw new Error(`index out of bounds, please choose between 0 to ${stories.length - 1}`);
@@ -60,67 +44,52 @@ const run: runCommand = (message , args?: string[]) => {
     )
 
     return embeds;
-} 
+}
 
-// const dummyCommand: CommandBuilder = new CommandBuilder({
-//     name: "story",
-//     alias: ["s"],
-//     description: "Creates a random story",
-//     examples: [
-//         {command: `${prefixes[0]} story`, description: "give random story"},
-//         {command: `${prefixes[0]} story 3`, description: "give story #3"}
-//     ],
-//     execute: async (message, args) => {
-//         // command is from interaction (slash command)
-//         if(isChatInputCommandInteraction(message)){
-//             const embeds = run(message);
-//             if(embeds.length !== 1)
-//                 for(const embed of embeds)
-//                     await message.channel?.send({embeds: [embed]});
-//             else
-//                 await message.reply({embeds});
-//         }
+interface I_Story{
+    index: number;
+}
 
-//         // command is from regular chat
-//         else{
-//             const embeds = run(message, args);
-//             for(const embed of embeds)
-//                 await message.channel.send({embeds: [embed]});
-//         }
-//     },
-//     slash: new SlashCommandBuilder().setName("story")
-//             .setDescription("Creates a random story, you can specify which story you want using the option")
-//             .addIntegerOption(option => option.setName("index").setDescription("Index to target a story"))
-// })
-
-const command: CommandReturnTypes = {
-    name: "story",
-    alias: ["s"],
-    description: "Creates a random story",
-    examples: [
-        {command: `${prefixes[0]} story`, description: "give random story"},
-        {command: `${prefixes[0]} story 3`, description: "give story #3"}
-    ],
-    execute: async (message, args) => {
-        const embeds = run(message, args);
-        
-        for(const embed of embeds)
-            await message.channel.send({embeds: [embed]});
-    },
-    slash:{
-        slashCommand: new SlashCommandBuilder().setName("story")
-            .setDescription("Creates a random story, you can specify which story you want using the option")
-            .addIntegerOption(option => option.setName("index").setDescription("Index to target a story")),
-        interact: async (interaction) => {
-            const embeds = run(interaction);
+const story = new CommandBuilder<I_Story>()
+        .setName("story")
+        .setAlias(["s"])
+        .setDescription("Creates a random story")
+        .setExamples([
+            {command: `${prefixes[0]} story`, description: "give random story"},
+            {command: `${prefixes[0]} story 3`, description: "give story #3"}
+        ])
+        .setSlash({
+            slashCommand: new SlashCommandBuilder().setName("story")
+                .setDescription("Creates a random story, you can specify which story you want using the option")
+                .addIntegerOption(option => option.setName("index").setDescription("Index to target a story")),
+            interact: async (interaction, args) => {
+                const embeds = run(args);
     
-            if(embeds.length !== 1)
-                for(const embed of embeds)
-                    await interaction.channel?.send({embeds: [embed]});
-            else
                 await interaction.reply({embeds});
-        }
-    }
-};
+            },
+            getParameter: (interaction) => {
+                const index = interaction.options.getInteger("index", false) ?? rngInt(0, stories.length - 1);
+    
+                return {index};
+            }
+        })
+        .setChat({
+            getParameter: (_, args) => {
+                let index = rngInt(0, stories.length - 1);
+                if(args && args[0] !== undefined){
+                    let num = parseInt(args[0]);
+                    if(!isNaN(num))
+                        index = num;
+                }
+    
+                return {index};
+            },
+            execute: async (message, args) => {
+                const embeds = run(args);
+    
+                for(const embed of embeds)
+                    await message.channel.send({embeds: [embed]});
+            },
+        })
 
-export default command;
+export default story;

@@ -1,33 +1,26 @@
-// import on from "./on";
-// import once from "./once";
-// import { Awaitable, ClientEvents } from "discord.js";
+import on from "./on";
+import once from "./once";
+import { Awaitable, ClientEvents } from "discord.js";
 
-// export const discordEventKeys = createEnum({
-//     applicationCommandPermissionsUpdate: "applicationCommandPermissionsUpdate",
-//     autoModerationActionExecution: "autoModerationActionExecution",
-//     autoModerationRuleCreate: "autoModerationRuleCreate",
-//     autoModerationRuleDelete: "autoModerationRuleDelete",
-//     autoModerationRuleUpdate: "autoModerationRuleUpdate",
-//     inviteCreate: "inviteCreate",
-//     inviteDelete: "inviteDelete",
-//     messageCreate: "messageCreate",
-//     messageDelete: "messageDelete",
-//     messageReactionRemoveAll: "messageReactionRemoveAll",
-//     interactionCreate: "interactionCreate"
+export type AllClientEvents = "on" | "once" | "off";
+export type EventArguments<K extends keyof ClientEvents> = [event: K, listener: (...args: ClientEvents[K]) => Awaitable<void>];
+
+export interface EventReturnType{
+    name: AllClientEvents;
+    execute: EventArguments<keyof ClientEvents>[]
+}
+
+// const client = new Client({
+//     intents: []
 // })
 
-// type DiscordEventKeys = keyof typeof discordEventKeys;
+export const botEvents: EventReturnType[] = [
+    on, once
+]
 
-// interface EventReturnType{
-//     name: DiscordEventKeys;
-//     execute: (...args: [DiscordEventKeys]) => Awaitable<void>;
-// }
+export default botEvents;
 
-// function createEnum<T extends { [P in keyof T]: P }>(o: T) {
-//     return o
-// }
-
-// export const botEvents: Record<"on" | "once", EventReturnType[]> = {
-//     on: on.events,
-//     once: once.events
+// for(const botEvent of botEvents){
+//     const fcn = client[botEvent.name];
+//     fcn(...botEvent.execute[0]);
 // }

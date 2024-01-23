@@ -1,11 +1,14 @@
-import { EventReturnType } from "@typings/customTypes";
-import { Events, version } from "discord.js";
+import { ClientEvents, version } from "discord.js";
+import { EventArguments} from "../";
+import { MODE, botVersion } from "@config";
+import debug from "debug";
 
-const event: EventReturnType<Events.ClientReady> = {
-    name: Events.ClientReady,
-    execute: (client) => {
-        console.log(`Bot ready! Running on Discord ${version}`);
+const event: EventArguments<"ready"> = [
+    "ready", 
+    () => {
+        console.log(`Bot ready! running on mode ${MODE}`);
+        debug(`discord.js version: ${version}\nbot version: ${botVersion}`);
     }
-}
+]
 
 export default event;
