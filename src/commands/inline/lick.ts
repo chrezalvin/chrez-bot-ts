@@ -1,8 +1,9 @@
 import {inlineCommandReturnTypes} from "@typings/customTypes";
 import { AttachmentBuilder, MessageCreateOptions, MessagePayload } from "discord.js";
+import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
+
 import path from "path";
 import fs from "fs";
-import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
 
 const licks_dir = path.resolve("./images/licks");
 const licks = fs.readdirSync(licks_dir);
