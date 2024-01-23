@@ -101,7 +101,8 @@
     "news": [
     ],
     "bugfix": [
-        "- improves chrez bulkdelete feedback"
+        "- improves chrez bulkdelete feedback",
+        "- fix bug on /help"
     ]
 }
 ]
