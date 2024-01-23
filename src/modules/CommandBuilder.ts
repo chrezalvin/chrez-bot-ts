@@ -263,6 +263,8 @@ export class CommandBuilder<_T> implements CommandData<_T>{
             if(this.m_slash === undefined) return new Cause(false, "slash option is not available for this command");
 
             params = this.m_slash.getParameter?.(message);
+            debug(`slash params: ${params}`);
+
             return await this.m_slash.interact(message, params);
         }
         else{
@@ -271,6 +273,8 @@ export class CommandBuilder<_T> implements CommandData<_T>{
             if(this.m_chat === undefined) return new Cause(false, "chat option is not available for this command");
 
             params = this.m_chat.getParameter?.(message, args);
+            debug(`chat params: ${JSON.stringify(params)}`);
+            
             return await this.m_chat.execute(message, params);
         }
     }
