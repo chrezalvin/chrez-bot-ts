@@ -5,22 +5,19 @@ import laugh from "./laugh";
 import agree from "./agree";
 import disagree from "./disagree";
 import mute from "./setmute";
-import notifyRaid from "./notifyRaid";
+// import notifyRaid from "./notifyRaid";
 import { CommandBuilder } from "@modules/CommandBuilder";
 
-export const commands: (CommandReturnTypes | CommandBuilder<any>)[] = [
+export const commands: (CommandBuilder<any>)[] = [
     bulkDelete,
     why,
     laugh,
     agree,
     disagree,
     mute,
-    notifyRaid
-].filter(command => {
-    if(command instanceof CommandBuilder)
-        return command;
-    else
-        return !command.unavailable;
-});
+    // notifyRaid
+]
+.filter(command => command.mode !== "unavailable")
+.map(command => command.setStatus("private"));
 
 export default commands;

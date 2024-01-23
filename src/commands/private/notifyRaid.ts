@@ -56,4 +56,4 @@ const command: CommandReturnTypes = {
     }
 };
 
-export default command;
+// export default command;

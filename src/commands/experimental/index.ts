@@ -1,7 +1,6 @@
-import { CommandReturnTypes, inlineCommandReturnTypes, isCommandReturnType, isInline } from "@typings/customTypes";
+import { inlineCommandReturnTypes } from "@typings/customTypes";
 
 import event from "./event";
-import dyePrice from "./dyePrice";
 import { CommandBuilder } from "@modules/CommandBuilder";
 
 const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
@@ -17,7 +16,7 @@ for(const unknownCommand of commandDump){
     if(CommandBuilder.isCommandBuilder(unknownCommand)){
         if(unknownCommand.mode === "unavailable") continue;
 
-        commands.push(unknownCommand);
+        commands.push(unknownCommand.setMode("experimental"));
     }
     else{
         if(unknownCommand.unavailable) continue;

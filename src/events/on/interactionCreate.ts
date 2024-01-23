@@ -20,16 +20,6 @@ async (interaction) => {
     debug(`received interaction: /${interaction.commandName} from ${interaction.member?.user.username}`);
     
     try{
-        if(sharedCommands.slashCommands.has(interaction.commandName))
-            await sharedCommands.slashCommands.get(interaction.commandName)?.interact(interaction);
-        else if(sharedCommands.privateSlashCommands.has(interaction.commandName)){
-        if(!interaction.member) return;
-            if(interaction.member.user.id === ownerID || userIsAdmin(interaction.member.user.id))
-                await sharedCommands.privateSlashCommands.get(interaction.commandName)?.interact(interaction);
-        else
-            throw new Error("This command is for private members only!");
-        }
-
         if(sharedCommands.allCommands.has(interaction.commandName)){
             const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
 
