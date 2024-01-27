@@ -1,7 +1,7 @@
-import { inlineCommandReturnTypes } from "@typings/customTypes";
+import { inlineCommandReturnTypes } from "library/customTypes";
 
 import event from "./event";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
     event,

@@ -1,8 +1,8 @@
-import {CommandReturnTypes} from "@typings/customTypes";
+import {CommandReturnTypes} from "library/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 
 import {Event} from "@database";
-import { MyEmbedBuilder } from "@modules/basicFunctions";
+import { MyEmbedBuilder } from "@library/basicFunctions";
 
 const command: CommandReturnTypes = {
     name: "remind",

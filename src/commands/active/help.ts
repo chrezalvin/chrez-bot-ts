@@ -1,12 +1,10 @@
-const debug = require("debug")("ChrezBot:help");
-
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
+import {CommandReturnTypes, isChatInputCommandInteraction} from "library/customTypes";
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
 
-import { MyEmbedBuilder } from "@modules/basicFunctions";
+import { MyEmbedBuilder } from "@library/basicFunctions";
 import { prefixes } from "@config";
-import { userIsAdmin } from "@modules/profiles";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { userIsAdmin } from "library/profiles";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 // , privateCommands: CommandReturnTypes[]
 function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: (CommandReturnTypes | CommandBuilder<any>)[]){
@@ -17,8 +15,8 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
         if(command === null){
             // displays all active commands
             embed.setTitle("Chrez-Bot active command help menu")
-            .setDescription("here are the list of commands that chrezbot can use")
-            .setFields(index.map(idx => {return {name: `\`${prefixes[0]} ${idx.name}\``, value: idx.description, inline: true}}));
+                .setDescription("here are the list of commands that chrezbot can use")
+                .setFields(index.map(idx => {return {name: `\`${prefixes[0]} ${idx.name}\``, value: idx.description, inline: true}}));
         }
         else if(command === "private"){
             let user: User;

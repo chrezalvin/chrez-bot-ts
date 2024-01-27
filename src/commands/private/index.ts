@@ -1,4 +1,4 @@
-import { CommandReturnTypes } from "@typings/customTypes";
+import { CommandReturnTypes } from "library/customTypes";
 import bulkDelete from "./bulkdelete";
 import why from "./why";
 import laugh from "./laugh";
@@ -6,7 +6,7 @@ import agree from "./agree";
 import disagree from "./disagree";
 import mute from "./setmute";
 // import notifyRaid from "./notifyRaid";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 export const commands: (CommandBuilder<any>)[] = [
     bulkDelete,

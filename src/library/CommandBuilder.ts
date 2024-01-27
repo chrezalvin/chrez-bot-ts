@@ -1,5 +1,6 @@
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
-import { Cause, isChatInputCommandInteraction } from "@typings/customTypes";
+import { Cause, isChatInputCommandInteraction } from "library/customTypes";
+import { ErrorValidation } from "./ErrorValidation";
 const debug = require("debug")("ChrezBot:command");
 
 export interface ExampleField{
@@ -10,6 +11,7 @@ export interface ExampleField{
 enum CommandStatuses{
     public,
     private,
+    hidden,
 }
 
 enum Modes{
@@ -21,18 +23,18 @@ enum Modes{
 export type CommandStatus = keyof typeof CommandStatuses;
 export type Mode = keyof typeof Modes;
 
-interface I_SlashCommand<_T> {
+export interface I_SlashCommand<_T> {
     slashCommand: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
-    interact: (interaction: ChatInputCommandInteraction<CacheType>, args?: _T) => Promise<Cause | void>;
-    getParameter?: (interaction: ChatInputCommandInteraction<CacheType>) => _T;
+    interact: (interaction: ChatInputCommandInteraction<CacheType>, args?: _T) => Promise<ErrorValidation | void>;
+    getParameter?: (interaction: ChatInputCommandInteraction<CacheType>) => (_T | ErrorValidation);
 }
 
-interface I_ChatCommand<_T> {
-    execute: (message: Message<boolean>, args?: _T) => Promise<Cause | void>;
-    getParameter?: (message: Message<boolean>, args: string[]) => _T;
+export interface I_ChatCommand<_T> {
+    execute: (message: Message<boolean>, args?: _T) => Promise<ErrorValidation | void>;
+    getParameter?: (message: Message<boolean>, args: string[]) => (_T | ErrorValidation);
 }
 
-interface CommandData<_T>{
+export interface CommandData<_T>{
     name: string;
     alias: string[]; 
     description: string;
@@ -51,7 +53,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
         return object instanceof CommandBuilder;
     }
 
-    private m_mode: CommandData<_T>["mode"] = "experimental";
+    private m_mode: CommandData<_T>["mode"] = "available";
     private m_name: CommandData<_T>["name"] = "";
     private m_alias: CommandData<_T>["alias"] = [];
     private m_description: CommandData<_T>["description"] = "";
@@ -231,9 +233,9 @@ export class CommandBuilder<_T> implements CommandData<_T>{
      * @returns this
      */
     setSlash(slash: {
-        slashCommand?: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
-        interact: (interaction: ChatInputCommandInteraction<CacheType>, args?: _T) => Promise<Cause | void>;
-        getParameter?: (interaction: ChatInputCommandInteraction<CacheType>) => _T;
+        slashCommand?: I_SlashCommand<_T>["slashCommand"];
+        interact: I_SlashCommand<_T>["interact"];
+        getParameter?: I_SlashCommand<_T>["getParameter"];
     }){
         // if there's no slash command, then make new one
         // this only works when there's no parameter for the slash command
@@ -260,26 +262,38 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     }
 
     // methods
-    async execute(message: ChatInputCommandInteraction<CacheType>): Promise<void | Cause | undefined>;
-    async execute(message: Message<boolean>, args: string[]): Promise<void | Cause | undefined>
+    async execute(message: ChatInputCommandInteraction<CacheType>): Promise<void | ErrorValidation | undefined>;
+    async execute(message: Message<boolean>, args: string[]): Promise<void | ErrorValidation | undefined>
     async execute(message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: string[]){
-        let params: _T | undefined = undefined;
+        let params: _T | undefined | ErrorValidation = undefined;
         if(isChatInputCommandInteraction(message)){
             debug(`running command /${this.name}`);
 
-            if(this.m_slash === undefined) return new Cause(false, "slash option is not available for this command");
+            if(this.m_slash === undefined) return new ErrorValidation("slash_command_option_unavailable");
 
             params = this.m_slash.getParameter?.(message);
+
+            if(ErrorValidation.isErrorValidation(params)){
+                debug(`received an error from ${this.name}: ${params.name} - ${params.description}`);
+                return params;
+            }
+
             debug(`slash params: ${JSON.stringify(params)}`);
 
             return await this.m_slash.interact(message, params);
         }
         else{
             debug(`running command ${this.name}`);
-            if(args === undefined) return new Cause(false, "command arguments are not provided");
-            if(this.m_chat === undefined) return new Cause(false, "chat option is not available for this command");
+            if(args === undefined) return new ErrorValidation("no_argument_provided"); 
+            if(this.m_chat === undefined) return new ErrorValidation("chat_command_option_unavailable");
 
             params = this.m_chat.getParameter?.(message, args);
+
+            if(ErrorValidation.isErrorValidation(params)){
+                debug(`received an error from ${this.name}: ${params.name} - ${params.description}`);
+                return params;
+            }
+
             debug(`chat params: ${JSON.stringify(params)}`);
             
             return await this.m_chat.execute(message, params);

@@ -1,21 +1,20 @@
-const debug = require("debug")("ChrezBot:quote");
+import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
-
-import { getProfileByID } from "@modules/profiles";
+import { getProfileByID } from "library/profiles";
 
 import { SlashCommandBuilder } from "discord.js";
 import quotes from "@assets/messages/active/quote.json";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
+import { ErrorValidation } from "@library/ErrorValidation";
 
 const run = (args?: I_Quote) => {
     let index: number = args?.index ?? rngInt(0, quotes.length - 1);
 
     if(index >= quotes.length)
-        throw new Error(`index out of bounds, please choose between 0 to ${quotes.length - 1}`);
+        return new ErrorValidation("index_out_of_bounds", 0, quotes.length - 1);
     if(index < 0)
-        throw new Error(`index cannot be negative`);
+        return new ErrorValidation("index_negative");
 
     const embed = new MyEmbedBuilder();
     const quote = quotes[index];
@@ -50,9 +49,19 @@ const quote = new CommandBuilder<I_Quote>()
     .setSlash({
         slashCommand: new SlashCommandBuilder().setName("quote")
             .setDescription("Creates a random quote, you can specify which quote you want using the option")
-            .addIntegerOption(option => option.setName("index").setDescription("Index to target a quote")),
+            .addIntegerOption(option => 
+                option
+                .setName("index")
+                .setDescription("Index to target a quote")
+                .setMinValue(0)
+                .setMaxValue(quotes.length - 1)
+                ),
         interact: async (interaction, args) => {
             const embeds = run(args);
+
+            if(ErrorValidation.isErrorValidation(embeds))
+                return embeds;
+
             await interaction.reply({embeds});
         },
         getParameter(interaction) {
@@ -72,9 +81,11 @@ const quote = new CommandBuilder<I_Quote>()
         execute: async (message, args) => {
             const embeds = run(args);
 
-            message.channel.send({embeds});
+            if(ErrorValidation.isErrorValidation(embeds))
+                return embeds;
+
+            await message.channel.send({embeds});
         },
     })
-    .setMode("unavailable");
 
 export default quote;

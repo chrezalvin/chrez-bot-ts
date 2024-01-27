@@ -1,53 +1,52 @@
 const debug = require("debug")("ChrezBot:interactionCreate");
 
 import { sendError } from "@bot";
-import { CommandBuilder } from "@modules/CommandBuilder";
-import { MyEmbedBuilder } from "@modules/basicFunctions";
-import { userIsAdmin } from "@modules/profiles";
-import { Cause, isDiscordAPIError } from "@typings/customTypes";
+import { MyEmbedBuilder } from "@library/basicFunctions";
+import { userIsAdmin } from "library/profiles";
+import { isDiscordAPIError } from "library/customTypes";
 import {EventArguments} from "../"
 
 import errorMessages from "@assets/data/error.json";
 
 import * as sharedCommands from "shared/commands";
-import { Events } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
+import { ErrorValidation } from "@library/ErrorValidation";
+import { CommandBuilder } from "@library/CommandBuilder";
+
+function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): ErrorValidation | CommandBuilder<any>{
+    if(sharedCommands.allCommands.has(interaction.commandName)){
+        const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
+
+        if(slashCommand.status === "private"){
+            const userId = interaction.member?.user.id;
+            if(userId === undefined)
+                return new ErrorValidation("command_user_not_found");
+            else if(!userIsAdmin(userId))
+                return new ErrorValidation("command_is_private");
+        }
+
+        return slashCommand;
+    }
+    else
+        return new ErrorValidation("slash_command_unavailable", interaction.commandName);
+}
 
 const event: EventArguments<Events.InteractionCreate> = [
-Events.InteractionCreate, 
-async (interaction) => {
-    if(!interaction.isChatInputCommand()) return;
-    debug(`received interaction: /${interaction.commandName} from ${interaction.member?.user.username}`);
-    
-    try{
-        if(sharedCommands.allCommands.has(interaction.commandName)){
-            const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
-
-            if(CommandBuilder.isCommandBuilder(slashCommand)){
-                if(slashCommand.status === "private"){
-                    const userId = interaction.member?.user.id;
-                    if(userId === undefined){
-                        await sendError(interaction, "Cannot verify the sender of this command!");
-                        return;
-                    }
-                    else if(!userIsAdmin(userId)){
-                        await sendError(interaction, "This command is only available for private members!");
-                        return;
-                    }
-                }
-            }
+    Events.InteractionCreate,
+    async (interaction) => {
+        if(!interaction.isChatInputCommand()) return;
+        debug(`received interaction: /${interaction.commandName} from ${interaction.member?.user.username}`);
+        
+        try{
+            const slashCommand = slashCommandValidation(interaction);
+            if(ErrorValidation.isErrorValidation(slashCommand))
+                return await ErrorValidation.sendErrorValidation(interaction, slashCommand);
 
             const res = await slashCommand.execute(interaction);
-            if(Cause.isCause(res) && !res.ok)
-                sendError(interaction, res.message);
+            if(ErrorValidation.isErrorValidation(res))
+                return await ErrorValidation.sendErrorValidation(interaction, res);
         }
-        else{
-            const embed = new MyEmbedBuilder();
-            embed.setError({description: `The slash command is still unavailable!`, footer: "please wait for upcoming release to use this command"});
-            await interaction.reply({embeds: [embed]});
-        }
-    }
-    catch(e: unknown){
-        try{
+        catch(e: unknown){
             const embed = new MyEmbedBuilder();
             const deleteTime = 10;
 
@@ -94,11 +93,7 @@ async (interaction) => {
                 }
             }
         }
-        catch(e: unknown){
-            // this catch is last resport if fatal error occured
-            console.log(`fatal error: ${JSON.stringify(e)}`);
-        }    
     }
-}]
+]
 
 export default event;

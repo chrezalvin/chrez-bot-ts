@@ -2,18 +2,16 @@
 const debug = require("debug")("ChrezBot:sharedcommands");
 
 import {MODE} from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 import commands from "../commands";
 import { Collection } from "discord.js";
-import { CommandReturnTypes, inlineCommandReturnTypes } from "@typings/customTypes";
+import { inlineCommandReturnTypes } from "library/customTypes";
 
 const allCommandList = new Collection<string, CommandBuilder<any>>();
 
 for(const command of [...commands.active, ...commands.c_private]){
-    if(CommandBuilder.isCommandBuilder(command)){
-        allCommandList.set(command.name, command);
-        debug(`successfully created command ${command.name}`);
-    }
+    allCommandList.set(command.name, command);
+    debug(`successfully created command ${command.name}`);
 }
 
 const _aliasCriteriaMap = new Collection<string|RegExp, string>();
@@ -44,12 +42,6 @@ if(MODE === "development"){
     }
     debug("Done loading experimental commands");
 }
-
-// debug("======= list of commands =======");
-// debug(`create Message: ${_command.map((_, key) => key)}`);
-// debug(`slash Commands: ${_slashCommands.map((_, key) => `/${key} `)}`);
-// debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
-// debug(`private Commands: ${_privateCommands.map((_, key) => key)}`);
 
 debug("======= list of commands =======");
 debug(`create Message: ${allCommandList.filter(command => command.chat).map((_, key) => key)}`);

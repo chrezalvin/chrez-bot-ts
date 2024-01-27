@@ -1,9 +1,9 @@
-import {CommandReturnTypes} from "@typings/customTypes";
+import {CommandReturnTypes} from "library/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 
 import laughs from "@assets/messages/private/laugh.json";
-import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = (args?: I_Laugh) => {
     const laugh = laughs[rngInt(0, laughs.length - 1)];

@@ -1,9 +1,9 @@
-import {CommandReturnTypes} from "@typings/customTypes";
+import {CommandReturnTypes} from "library/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 
 import whys from "@assets/messages/private/why.json";
-import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = (args?: I_Why) => {
     const why = whys[rngInt(0, whys.length - 1)];

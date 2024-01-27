@@ -102,5 +102,18 @@
         "- improves chrez bulkdelete feedback",
         "- fix bug on /help"
     ]
+},
+{
+    "version": "1.3.2",
+    "news": [
+        "- added more command",
+        "- known error now will be labeled in orange color",
+        "- performance update"
+    ],
+    "bugfix": [
+        "- fix Chrez quote command unavailable",
+        "- fix command alias not working",
+        "- fix all command labeled experimental on \"Chrez help\""
+    ]
 }
 ]

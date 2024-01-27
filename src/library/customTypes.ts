@@ -1,4 +1,4 @@
-import { MyEmbedBuilder } from "@modules/basicFunctions";
+import { MyEmbedBuilder } from "@library/basicFunctions";
 import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
 
 export interface Command{
@@ -103,9 +103,9 @@ export function isChatInputCommandInteraction(val: unknown): val is ChatInputCom
 /**
  * run command type so it can deal with slash command and message command at the same time
  */
-export type runCommand = {
-    (message: Message<boolean>, args: string[]): MyEmbedBuilder[];
-    (message: ChatInputCommandInteraction<CacheType>): MyEmbedBuilder[];
+export type runCommand<_T> = {
+    (args?: _T, message?: Message<boolean> | ChatInputCommandInteraction<CacheType>): MyEmbedBuilder[];
+    (args?: _T): MyEmbedBuilder[];
 }
 
 export async function importModule<_T>(path: string, ensureType?: (x: any) => x is _T){

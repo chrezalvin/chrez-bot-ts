@@ -3,10 +3,12 @@ import { EventArguments, EventReturnType} from "../";
 
 import interactionCreate from "./interactionCreate";
 import messageCreate from "./messageCreate";
+import error from "./error";
 
 const executeList = [
     interactionCreate,
-    messageCreate
+    messageCreate,
+    error,
 ] as EventArguments<keyof ClientEvents>[];
 
 const once: EventReturnType = {
