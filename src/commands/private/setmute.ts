@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "discord.js";
 
-import { MyEmbedBuilder } from "@modules/basicFunctions";
+import { MyEmbedBuilder } from "@library/basicFunctions";
 import { muted, setMute } from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = (args?: I_Mute) => {
     let flagMute: boolean = args?.mute ?? true;

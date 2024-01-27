@@ -4,10 +4,30 @@ import {max_message_allowed, muted, prefixes} from "@config";
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
-import { CommandBuilder } from "@modules/CommandBuilder";
-import { userIsAdmin } from "@modules/profiles";
-import { Cause } from "@typings/customTypes";
+import { CommandBuilder } from "@library/CommandBuilder";
+import { userIsAdmin } from "library/profiles";
 import { sendError } from "@bot";
+import { Message } from "discord.js";
+import { ErrorValidation } from "@library/ErrorValidation";
+
+function commandValidation(message: Message<boolean>, command: string): CommandBuilder<any> | ErrorValidation{
+    let chatCommand: CommandBuilder<any> | undefined = sharedCommands
+            .allCommands
+            .find((commandBuilder) => commandBuilder.checkIfCommand(command));
+
+    if(chatCommand === undefined)
+        return new ErrorValidation("chat_command_unavailable", command);
+
+    if(chatCommand.status === "private"){
+        const userId = message.author.id;
+        if(userId === undefined)
+            return new ErrorValidation("command_user_not_found");
+        else if(!userIsAdmin(userId))
+            return new ErrorValidation("command_is_private");
+    }
+
+    return chatCommand;
+}
 
 const event: EventArguments<"messageCreate"> = ["messageCreate", async (message) => {
     if(!message.guild) return;
@@ -19,23 +39,24 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     if(message.author.bot || message.content.length > max_message_allowed) return;
     
     // inline command handling
+    // ignore inline command if chrezbot is muted
     if(!muted)
-    for(const [v, k] of sharedCommands.aliasCriteriaMap){
-        if(typeof v === "string")
-        if(message.content === v){
-            sharedCommands.inlineCommands.get(k)?.execute(message);
-            return;
+        for(const [v, k] of sharedCommands.aliasCriteriaMap){
+            if(typeof v === "string")
+            if(message.content === v){
+                sharedCommands.inlineCommands.get(k)?.execute(message);
+                return;
+            }
+            if(v instanceof RegExp)
+            if(message.content.match(v) !== null){
+                sharedCommands.inlineCommands.get(k)?.execute(message);
+                return;
+            }
         }
-        if(v instanceof RegExp)
-        if(message.content.match(v) !== null){
-            sharedCommands.inlineCommands.get(k)?.execute(message);
-            return;
-        }
-    }
     
-    // check if command is directed to chrezbot (e.g "Chrez" math)
+    // check if command is directed to chrezbot (e.g "Chrez" math) and its aliases
     if(prefixes.find(prefix => message.content.startsWith(prefix)) === undefined) 
-    return;
+        return;
     
     /**
      * argument variables, guaranteed lowercase and command removed
@@ -53,52 +74,29 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     if(command === undefined) return;
 
     try{
-        if(sharedCommands.allCommands.has(command)){
-            const chatCommand = sharedCommands.allCommands.get(command)!;
+        const chatCommand = commandValidation(message, command);
+        if(ErrorValidation.isErrorValidation(chatCommand))
+            return await ErrorValidation.sendErrorValidation(message, chatCommand);
 
-            if(CommandBuilder.isCommandBuilder(chatCommand)){
-                if(chatCommand.status === "private"){
-                    const userId = message.author.id;
-                    if(userId === undefined){
-                        await sendError(message, "Cannot verify the sender of this command!");
-                        return;
-                    }
-                    else if(!userIsAdmin(userId)){
-                        await sendError(message, "This command is only available for private members!");
-                        return;
-                    }
-                }
-
-                const res = await chatCommand.execute(message, args);
-                if(Cause.isCause(res) && !res.ok)
-                    sendError(message, res.message);
-                        
-            }
-        }
-        else
-            throw new Error("Your command is not available in Chrez Command List");
+        const res = await chatCommand.execute(message, args);
+        if(ErrorValidation.isErrorValidation(res))
+            return await ErrorValidation.sendErrorValidation(message, res);
     }
     catch(e: unknown){
-        try{
-            debug(`error: ${e}`);
+        debug(`error: ${e}`);
 
-            // check if error can be send through discord
-            if(!message.channel) return;
+        // check if error can be send through discord
+        if(!message.channel) return;
 
-            if(e != null && typeof e === "object")
-                if("message" in e && typeof e.message === "string")
-                    sendError(message, e.message);
-                else if(typeof e == "string")
-                    sendError(message, e);
-                else
-                    sendError(message, "Unknown error occured");
+        if(e != null && typeof e === "object")
+            if("message" in e && typeof e.message === "string")
+                sendError(message, e.message);
+            else if(typeof e == "string")
+                sendError(message, e);
             else
                 sendError(message, "Unknown error occured");
-        }
-        catch(e: unknown){
-            // this catch is last resport if fatal error occured
-            console.log(`fatal error: ${JSON.stringify(e)}`);
-        }
+        else
+            sendError(message, "Unknown error occured");
     }
 }]
 

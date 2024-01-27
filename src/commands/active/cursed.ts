@@ -1,13 +1,11 @@
-const debug = require("debug")("ChrezBot:cursed");
-
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
 import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
+import { ErrorValidation } from "@library/ErrorValidation";
 // import curseds from "./memes";
 
 const cursedDir = path.resolve("./images/cursed");
@@ -21,12 +19,12 @@ const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType>,
     if(message.channel)
         if(message.channel.type === ChannelType.GuildText)
             if(!message.channel.nsfw)
-                throw new Error("I can only send cursed image in age restricted channel");
+                return new ErrorValidation("command_restricted", "cursed image", "age restricted channel");
 
   if(args.index >= curseds.length)
-      throw new Error(`index out of bounds, please choose between 0 to ${curseds.length - 1}`);
+    return new ErrorValidation("index_out_of_bounds", 0,  curseds.length - 1);
   if(args.index < 0)
-      throw new Error(`index cannot be negative`);
+    return new ErrorValidation("index_negative");
 
   const meme = curseds[args.index];
   attachment = new AttachmentBuilder(`${cursedDir}/${meme}`, {name: `cursed.jpg`})
@@ -87,6 +85,9 @@ const cursed = new CommandBuilder<I_Cursed>({
         interact: async (interaction, args) => {
             const embeds = run(interaction, args);
 
+            if(ErrorValidation.isErrorValidation(embeds))
+                return embeds;
+
             await interaction.reply({embeds, files: [attachment]});
         },
         getParameter(interaction) {
@@ -98,6 +99,10 @@ const cursed = new CommandBuilder<I_Cursed>({
     chat: {
         execute: async (message, args) => {
             const embeds = run(message, args);
+
+            if(ErrorValidation.isErrorValidation(embeds))
+                return embeds;
+
             await message.channel.send({embeds, files: [attachment]});
         },
         getParameter(_, args) {
