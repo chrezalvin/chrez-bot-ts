@@ -4,8 +4,8 @@ import { Request, Router } from "express";
 import profiles from "@assets/data/profiles.json";
 import { CLIENT_ID, CLIENT_SECRET } from "@config";
 import { OAuth2Scopes, RESTPostOAuth2AccessTokenResult, DiscordjsError, User, APIUser } from "discord.js";
-import { generateRandomString } from "server/sessions";
-import {SessionStore} from "../sessions";
+import { generateRandomString } from "@library/sessions";
+import {SessionStore} from "../../library/sessions";
 
 
 import {request} from "undici";

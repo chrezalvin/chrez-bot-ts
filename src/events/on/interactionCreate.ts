@@ -50,48 +50,29 @@ const event: EventArguments<Events.InteractionCreate> = [
             const embed = new MyEmbedBuilder();
             const deleteTime = 10;
 
-            if(interaction.channel){
-                interaction.deferred ? await interaction.editReply({embeds: [embed]}) : await interaction.reply({embeds: [embed]});
-                setTimeout(async () => {
-                    interaction.deleteReply();
-                }, deleteTime * 1000);
-            }
-            else console.log("Can't find any channel to send the message");
+            let errorMsg: string = "";
+            if(typeof e === "string")
+                errorMsg = e;
+            else if(e && typeof e === "object" && "message" in e && typeof e.message === "string")
+                errorMsg = e.message;
+            else if(isDiscordAPIError(e))
+                errorMsg = e.message;
+            else
+                errorMsg = "unknown error";
 
-            if(isDiscordAPIError(e)){
-                debug(`got DiscordAPIError code ${e.code}: ${e.message}`);
-                const discordAPIError = e;
-                const found = errorMessages.find(err => discordAPIError.code == err.errorcode);
-                
-                if(found === undefined)
-                    embed.setError({
-                        description: "Encountered an unknown error!",
-                        footer: "this message will be deleted in 10 seconds"
-                    });
-                else
-                    embed.setError({
-                        description: `${found.description}\ncode: ${found.errorcode}`,
-                        title: `error: ${found.errorInfo}`,
-                        footer: "this message will be deleted in 10 seconds"
-                    });
-            }
-            else{
-                if(typeof e === "object" && 
-                    e !== null &&
-                    "message" in e &&
-                    typeof e.message === "string"
-                ){
-                    // check if error can be send through discord
-                    if(!interaction.channel) return;
-                    
-                    sendError(interaction, e.message);
-                    return;
-                }
-                else{
-                    console.log(`Unknown error ${e}`);
-                    return;
-                }
-            }
+            embed.setError({
+                description: errorMsg,
+                footer: `this message will be deleted in ${deleteTime} seconds`
+            });
+
+            if(interaction.deferred)
+                await interaction.editReply({embeds: [embed]});
+            else
+                await interaction.reply({embeds: [embed]});
+
+            setTimeout(async () => {
+                interaction.deleteReply();
+            }, deleteTime * 1000);
         }
     }
 ]

@@ -1,7 +1,7 @@
 import { prefixes } from "@config";
 import { CommandReturnTypes} from "library/customTypes";
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
-import {getEventByMonth} from "../../server/services/events";
+import {getEventByMonth} from "../../services/events";
 import { MyEmbedBuilder } from "@library/basicFunctions";
 import { CommandBuilder } from "@library/CommandBuilder";
 
