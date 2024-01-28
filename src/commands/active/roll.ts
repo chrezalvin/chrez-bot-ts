@@ -1,11 +1,8 @@
-const debug = require("debug")("ChrezBot:roll");
+import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
-import {CommandReturnTypes, isChatInputCommandInteraction, runCommand} from "@typings/customTypes";
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
-
-import { Message, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = (args: I_Roll) => {
     const rng = rngInt(args.first, args.second);

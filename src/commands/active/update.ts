@@ -1,11 +1,11 @@
 const debug = require("debug")("ChrezBot:update");
 
-import {MyEmbedBuilder} from "../../modules/basicFunctions";
+import {MyEmbedBuilder} from "@library/basicFunctions";
 
 import { SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
 import { prefixes, botVersion } from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = ( args?: I_Update) => {
     // defaulted to latest version

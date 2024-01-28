@@ -1,4 +1,4 @@
-import { rngInt } from "@modules/basicFunctions";
+import { rngInt } from "@library/basicFunctions";
 
 
 export interface SessionStore_t<_T>{

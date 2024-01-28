@@ -1,20 +1,18 @@
-const debug = require("debug")("ChrezBot:story");
-
-import {CommandReturnTypes} from "@typings/customTypes";
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
 import { SlashCommandBuilder } from "discord.js";
 import stories from "@assets/messages/active/story.json";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
+import { ErrorValidation } from "@library/ErrorValidation";
 
 const run = (args?: I_Story) => {
     let index: number = args?.index ?? rngInt(0, stories.length - 1);
 
     if(index >= stories.length)
-        throw new Error(`index out of bounds, please choose between 0 to ${stories.length - 1}`);
+        return new ErrorValidation("index_out_of_bounds", 0, stories.length - 1);
     if(index < 0)
-        throw new Error(`index cannot be negative`);
+        return new ErrorValidation("index_negative");
 
     const story = stories[index];
     const embeds: MyEmbedBuilder[] = [];
@@ -64,6 +62,9 @@ const story = new CommandBuilder<I_Story>()
                 .addIntegerOption(option => option.setName("index").setDescription("Index to target a story")),
             interact: async (interaction, args) => {
                 const embeds = run(args);
+
+                if(ErrorValidation.isErrorValidation(embeds))
+                    return embeds;
     
                 await interaction.reply({embeds});
             },
@@ -86,7 +87,10 @@ const story = new CommandBuilder<I_Story>()
             },
             execute: async (message, args) => {
                 const embeds = run(args);
-    
+   
+                if(ErrorValidation.isErrorValidation(embeds))
+                    return embeds;
+                
                 for(const embed of embeds)
                     await message.channel.send({embeds: [embed]});
             },

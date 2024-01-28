@@ -1,5 +1,5 @@
-import { MyEmbedBuilder } from "@modules/basicFunctions";
-import {CommandReturnTypes} from "@typings/customTypes";
+import { MyEmbedBuilder } from "@library/basicFunctions";
+import {CommandReturnTypes} from "library/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 
 const command: CommandReturnTypes = {

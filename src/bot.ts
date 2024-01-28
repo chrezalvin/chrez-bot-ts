@@ -4,8 +4,8 @@ const debug = require("debug")("ChrezBot:bot");
 import {DISCORD_TOKEN} from "@config";
 import {CacheType, ChatInputCommandInteraction, Client, GatewayIntentBits, Message } from "discord.js";
 
-import { isChatInputCommandInteraction } from "@typings/customTypes";
-import { MyEmbedBuilder } from "@modules/basicFunctions";
+import { isChatInputCommandInteraction } from "library/customTypes";
+import { MyEmbedBuilder } from "@library/basicFunctions";
 
 import events from "./events";
 

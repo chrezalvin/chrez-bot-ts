@@ -1,10 +1,11 @@
-import {MyEmbedBuilder, rngInt} from "../../modules/basicFunctions";
+import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
 import { SlashCommandBuilder, AttachmentBuilder, ChannelType, EmbedBuilder, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import fs from "fs";
 import path from "path";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import { CommandBuilder } from "@library/CommandBuilder";
 import { prefixes } from "@config";
+import { ErrorValidation } from "@library/ErrorValidation";
 
 const sfw_memesDir = path.resolve("./images/meme/sfw");
 const nsfw_memesDir = path.resolve("./images/meme/nsfw");
@@ -25,14 +26,15 @@ const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType>,
         if(message.channel){
             if(message.channel.type === ChannelType.GuildText){
                 if(!message.channel.nsfw)
-                    throw new Error("I can only send nsfw memes in age restricted channel");
+                    return new ErrorValidation("command_restricted", "nsfw meme", "age restricted channel");
                 if(index >= nsfw_memes.length)
-                    throw new Error(`index out of bounds, please choose between 0 to ${nsfw_memes.length - 1}`);
+                    return new ErrorValidation("index_out_of_bounds", 0, nsfw_memes.length - 1);
             }
             else if(message.channel.type === ChannelType.DM){
                 // continue
             }
-            else throw new Error("I can only send nsfw memes in DM or nsfw channel");
+            else 
+                return new ErrorValidation("command_restricted", "nsfw meme", "DM or nsfw channel");
         }
         else throw new Error("interaction received is not within a valid channel");
     }
@@ -40,11 +42,11 @@ const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType>,
         if(index === null)
             index = rngInt(0, sfw_memes.length - 1);
         if(index >= sfw_memes.length)
-            throw new Error(`index out of bounds, please choose between 0 to ${sfw_memes.length - 1}`);
+            return new ErrorValidation("index_out_of_bounds", 0, sfw_memes.length - 1);
     }
 
     if(index < 0)
-        throw new Error(`index cannot be negative`);
+        return new ErrorValidation("index_negative");
  
     const meme = nsfw ? nsfw_memes[index] : sfw_memes[index];
     attachment = new AttachmentBuilder(`${nsfw ? nsfw_memesDir : sfw_memesDir}/${meme}`, {name: `memes.jpg`});
@@ -91,6 +93,10 @@ const memes = new CommandBuilder<I_Memes>()
         },
         interact: async (interaction, args) => {
             const embeds = run(interaction, args);
+
+            if(ErrorValidation.isErrorValidation(embeds))
+                return embeds;
+
             await interaction.reply({embeds, files: [attachment]});
         },
     })
@@ -121,6 +127,10 @@ const memes = new CommandBuilder<I_Memes>()
         },
         execute: async (message, args) => {
             const embeds = run(message, args);
+
+            if(ErrorValidation.isErrorValidation(embeds))
+                return embeds;
+
             await message.channel.send({embeds, files: [attachment]});
         },
     })

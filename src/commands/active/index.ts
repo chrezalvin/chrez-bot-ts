@@ -12,7 +12,9 @@ import cursed from "./cursed";
 import help from "./help";
 import update from "./update";
 import roshambo from "./roshambo";
-import { CommandBuilder } from "@modules/CommandBuilder";
+import cry from "./cry";
+import weirdThing from "./weirdThing";
+import { CommandBuilder } from "@library/CommandBuilder";
 
 const c: (CommandBuilder<any>)[] = [
     hello, 
@@ -26,10 +28,16 @@ const c: (CommandBuilder<any>)[] = [
     cursed,
     update,
     roshambo,
+    cry,
+    weirdThing
 ].filter(command => command.mode !== "unavailable");
 
+// hidden command will not shown on Chrez help
+const commandForHelp = c.filter(command => command.status !== "hidden");
+const privateCommandForHelp = privateCommands.filter(command => command.status !== "hidden")
+
 // workaround for help command
-c.push(help(c, privateCommands));
+c.push(help(commandForHelp, privateCommandForHelp));
 export const commands = c;
 
 export default commands;

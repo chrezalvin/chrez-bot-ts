@@ -1,6 +1,6 @@
-import {inlineCommandReturnTypes} from "@typings/customTypes";
+import {inlineCommandReturnTypes} from "library/customTypes";
 import { AttachmentBuilder, MessageCreateOptions, MessagePayload } from "discord.js";
-import { MyEmbedBuilder, rngInt } from "@modules/basicFunctions";
+import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
 
 import path from "path";
 import fs from "fs";
@@ -17,20 +17,17 @@ const arrayOfFunctions: (string | (() => (MessagePayload | MessageCreateOptions)
     "ahh.....",
     "nghh...",
     "ahh... so good...",
-    "tasty~",
-    "yum~"
+    "tasty",
+    "yum"
 ]
 
 const command: inlineCommandReturnTypes = {
     name: "lick",
-    searchCriteria: ["lick", /^lick(s) \w{1,6}$/, /^(licks? ?){1,3}/],
+    searchCriteria: ["lick", /^lick(s) \w{1,6}$/i, /^(licks? ?){1,3}/i],
     description: "lick stuffs",
     execute: async (message) => {
-        const strOrFunc = arrayOfFunctions[0];
-        if(typeof strOrFunc === "string")
-            await message.channel.send(strOrFunc);
-        else
-            await message.channel.send(strOrFunc());
+        const strOrFunc = arrayOfFunctions[rngInt(0, arrayOfFunctions.length - 1)];
+        message.channel.send(typeof strOrFunc === "string" ? strOrFunc : strOrFunc());
     }
 };
 
