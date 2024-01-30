@@ -1,7 +1,7 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:bot");
 
-import {DISCORD_TOKEN} from "@config";
+import {DISCORD_TOKEN, message_delete_time} from "@config";
 import {CacheType, ChatInputCommandInteraction, Client, GatewayIntentBits, Message } from "discord.js";
 
 import { isChatInputCommandInteraction } from "library/customTypes";
@@ -27,7 +27,7 @@ for(const botEvent of events){
 export async function sendError(
         message: Message<boolean> | ChatInputCommandInteraction<CacheType>,
         errorMessage: string,
-        deleteTime: number | null = 10,
+        deleteTime: number | null = message_delete_time,
     ){
     const embed = new MyEmbedBuilder();
     embed.setError({description: `**${errorMessage}**`, footer: `this message will be deleted in ${deleteTime} seconds`});

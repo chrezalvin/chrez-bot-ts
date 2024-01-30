@@ -48,6 +48,7 @@ debug(`create Message: ${allCommandList.filter(command => command.chat).map((_, 
 debug(`slash Commands: ${allCommandList.filter(command => command.slash).map((_, key) => `/${key} `)}`);
 debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
 debug(`private Commands: ${allCommandList.filter(command => command.status === "private").map((_, key) => key)}`);
+debug(`hidden Commands: ${allCommandList.filter(command => command.status === "hidden").map((_, key) => key)}`);
 
 export const aliasCriteriaMap = _aliasCriteriaMap;
 export const inlineCommands = _inlineCommands;

@@ -1,34 +1,31 @@
 const debug = require("debug")("ChrezBot:interactionCreate");
 
-import { sendError } from "@bot";
 import { MyEmbedBuilder } from "@library/basicFunctions";
 import { userIsAdmin } from "library/profiles";
 import { isDiscordAPIError } from "library/customTypes";
 import {EventArguments} from "../"
 
-import errorMessages from "@assets/data/error.json";
-
 import * as sharedCommands from "shared/commands";
 import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
 import { ErrorValidation } from "@library/ErrorValidation";
 import { CommandBuilder } from "@library/CommandBuilder";
+import { message_delete_time } from "@config";
 
 function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): ErrorValidation | CommandBuilder<any>{
-    if(sharedCommands.allCommands.has(interaction.commandName)){
-        const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
-
-        if(slashCommand.status === "private"){
-            const userId = interaction.member?.user.id;
-            if(userId === undefined)
-                return new ErrorValidation("command_user_not_found");
-            else if(!userIsAdmin(userId))
-                return new ErrorValidation("command_is_private");
-        }
-
-        return slashCommand;
-    }
-    else
+    if(!sharedCommands.allCommands.has(interaction.commandName))
         return new ErrorValidation("slash_command_unavailable", interaction.commandName);
+
+    const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
+
+    if(slashCommand.status === "private"){
+        const userId = interaction.member?.user.id;
+        if(userId === undefined)
+            return new ErrorValidation("command_user_not_found");
+        else if(!userIsAdmin(userId))
+            return new ErrorValidation("command_is_private");
+    }
+
+    return slashCommand;
 }
 
 const event: EventArguments<Events.InteractionCreate> = [
@@ -47,9 +44,6 @@ const event: EventArguments<Events.InteractionCreate> = [
                 return await ErrorValidation.sendErrorValidation(interaction, res);
         }
         catch(e: unknown){
-            const embed = new MyEmbedBuilder();
-            const deleteTime = 10;
-
             let errorMsg: string = "";
             if(typeof e === "string")
                 errorMsg = e;
@@ -60,10 +54,11 @@ const event: EventArguments<Events.InteractionCreate> = [
             else
                 errorMsg = "unknown error";
 
-            embed.setError({
-                description: errorMsg,
-                footer: `this message will be deleted in ${deleteTime} seconds`
-            });
+            const embed = new MyEmbedBuilder()
+                .setError({
+                    description: errorMsg,
+                    footer: `this message will be deleted in ${message_delete_time} seconds`
+                });
 
             if(interaction.deferred)
                 await interaction.editReply({embeds: [embed]});
@@ -72,7 +67,7 @@ const event: EventArguments<Events.InteractionCreate> = [
 
             setTimeout(async () => {
                 interaction.deleteReply();
-            }, deleteTime * 1000);
+            }, message_delete_time * 1000);
         }
     }
 ]

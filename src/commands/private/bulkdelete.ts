@@ -115,13 +115,14 @@ const bulkDelete = new CommandBuilder<I_BulkDelete>()
                     return {
                         amount,
                         channel,
-                        filterMessage: (message: Message<boolean>) => {
-                            return message.id !== message.id;
+                        filterMessage: (msg: Message<boolean>) => {
+                            return msg.id !== message.id;
                         }
                     };
                 },
                 execute: async (message, args) => {
-                    const msg = await message.channel.send(await run(message, args))
+                    const res = await run(message, args);
+                    const msg = await message.channel.send(res);
 
                     setTimeout(async () => {
                         if(msg.deletable)

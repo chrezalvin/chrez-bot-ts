@@ -1,4 +1,3 @@
-
 [{    
     "version": "1.0.0",
     "news":[
@@ -114,6 +113,18 @@
         "- fix Chrez quote command unavailable",
         "- fix command alias not working",
         "- fix all command labeled experimental on \"Chrez help\""
+    ]
+},
+{
+    "version": "1.3.3",
+    "news": [
+        "- added Chrez unmute",
+        "- added more commands",
+        "- chrezbot will now ignore messages longer than 100 words (previously 300)",
+        "- minor system improvements"
+    ],
+    "bugfix": [
+        "- fix bug chat command for bulkdelete not working"
     ]
 }
 ]
