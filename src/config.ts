@@ -6,7 +6,10 @@ import {getFirestore} from "firebase/firestore/lite";
 
 // basic configs
 // max character bot can allow, if message word count is higher then the message will be ignored
-export const max_message_allowed = 300;
+export const max_message_allowed = 100;
+
+// time for error message to be deleted (in seconds)
+export const message_delete_time = 10;
 
 export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
 export const botVersion = "1.3.2";

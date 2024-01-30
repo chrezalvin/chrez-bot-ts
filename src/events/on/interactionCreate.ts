@@ -1,34 +1,31 @@
 const debug = require("debug")("ChrezBot:interactionCreate");
 
-import { sendError } from "@bot";
 import { MyEmbedBuilder } from "@library/basicFunctions";
 import { userIsAdmin } from "library/profiles";
 import { isDiscordAPIError } from "library/customTypes";
 import {EventArguments} from "../"
 
-import errorMessages from "@assets/data/error.json";
-
 import * as sharedCommands from "shared/commands";
 import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
 import { ErrorValidation } from "@library/ErrorValidation";
 import { CommandBuilder } from "@library/CommandBuilder";
+import { message_delete_time } from "@config";
 
 function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): ErrorValidation | CommandBuilder<any>{
-    if(sharedCommands.allCommands.has(interaction.commandName)){
-        const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
-
-        if(slashCommand.status === "private"){
-            const userId = interaction.member?.user.id;
-            if(userId === undefined)
-                return new ErrorValidation("command_user_not_found");
-            else if(!userIsAdmin(userId))
-                return new ErrorValidation("command_is_private");
-        }
-
-        return slashCommand;
-    }
-    else
+    if(!sharedCommands.allCommands.has(interaction.commandName))
         return new ErrorValidation("slash_command_unavailable", interaction.commandName);
+
+    const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
+
+    if(slashCommand.status === "private"){
+        const userId = interaction.member?.user.id;
+        if(userId === undefined)
+            return new ErrorValidation("command_user_not_found");
+        else if(!userIsAdmin(userId))
+            return new ErrorValidation("command_is_private");
+    }
+
+    return slashCommand;
 }
 
 const event: EventArguments<Events.InteractionCreate> = [
@@ -47,51 +44,30 @@ const event: EventArguments<Events.InteractionCreate> = [
                 return await ErrorValidation.sendErrorValidation(interaction, res);
         }
         catch(e: unknown){
-            const embed = new MyEmbedBuilder();
-            const deleteTime = 10;
+            let errorMsg: string = "";
+            if(typeof e === "string")
+                errorMsg = e;
+            else if(e && typeof e === "object" && "message" in e && typeof e.message === "string")
+                errorMsg = e.message;
+            else if(isDiscordAPIError(e))
+                errorMsg = e.message;
+            else
+                errorMsg = "unknown error";
 
-            if(interaction.channel){
-                interaction.deferred ? await interaction.editReply({embeds: [embed]}) : await interaction.reply({embeds: [embed]});
-                setTimeout(async () => {
-                    interaction.deleteReply();
-                }, deleteTime * 1000);
-            }
-            else console.log("Can't find any channel to send the message");
+            const embed = new MyEmbedBuilder()
+                .setError({
+                    description: errorMsg,
+                    footer: `this message will be deleted in ${message_delete_time} seconds`
+                });
 
-            if(isDiscordAPIError(e)){
-                debug(`got DiscordAPIError code ${e.code}: ${e.message}`);
-                const discordAPIError = e;
-                const found = errorMessages.find(err => discordAPIError.code == err.errorcode);
-                
-                if(found === undefined)
-                    embed.setError({
-                        description: "Encountered an unknown error!",
-                        footer: "this message will be deleted in 10 seconds"
-                    });
-                else
-                    embed.setError({
-                        description: `${found.description}\ncode: ${found.errorcode}`,
-                        title: `error: ${found.errorInfo}`,
-                        footer: "this message will be deleted in 10 seconds"
-                    });
-            }
-            else{
-                if(typeof e === "object" && 
-                    e !== null &&
-                    "message" in e &&
-                    typeof e.message === "string"
-                ){
-                    // check if error can be send through discord
-                    if(!interaction.channel) return;
-                    
-                    sendError(interaction, e.message);
-                    return;
-                }
-                else{
-                    console.log(`Unknown error ${e}`);
-                    return;
-                }
-            }
+            if(interaction.deferred)
+                await interaction.editReply({embeds: [embed]});
+            else
+                await interaction.reply({embeds: [embed]});
+
+            setTimeout(async () => {
+                interaction.deleteReply();
+            }, message_delete_time * 1000);
         }
     }
 ]

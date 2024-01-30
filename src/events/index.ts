@@ -10,17 +10,8 @@ export interface EventReturnType{
     execute: EventArguments<keyof ClientEvents>[]
 }
 
-// const client = new Client({
-//     intents: []
-// })
-
 export const botEvents: EventReturnType[] = [
     on, once
 ]
 
 export default botEvents;
-
-// for(const botEvent of botEvents){
-//     const fcn = client[botEvent.name];
-//     fcn(...botEvent.execute[0]);
-// }

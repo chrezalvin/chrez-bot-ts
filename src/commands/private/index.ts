@@ -5,6 +5,7 @@ import laugh from "./laugh";
 import agree from "./agree";
 import disagree from "./disagree";
 import mute from "./setmute";
+import unmute from "./unmute";
 // import notifyRaid from "./notifyRaid";
 import { CommandBuilder } from "@library/CommandBuilder";
 
@@ -15,6 +16,7 @@ export const commands: (CommandBuilder<any>)[] = [
     agree,
     disagree,
     mute,
+    unmute,
     // notifyRaid
 ]
 .filter(command => command.mode !== "unavailable")

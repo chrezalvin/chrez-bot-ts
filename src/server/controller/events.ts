@@ -1,7 +1,7 @@
 const debug = require("debug")("ChrezBot:server:events");
 
 import { Request, Response } from 'express';
-import { addEventByMonth, getEventByMonth } from 'server/services/events';
+import { addEventByMonth, getEventByMonth } from 'services/events';
 
 const monthNames = [
     "january", "february", "march", "april", "may", "june", 

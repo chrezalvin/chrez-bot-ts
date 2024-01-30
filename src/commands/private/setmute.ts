@@ -36,7 +36,7 @@ const slashCommand = new SlashCommandBuilder()
 const mute = new CommandBuilder<I_Mute>()
         .setName("mute")
         .setDescription("mutes chrezbot")
-        .setAlias(["stfu", "shutup", "off"])
+        .setAlias(["stfu", "shutup", "off", "shoo", "sshh"])
         .setSlash({
             slashCommand,
             getParameter: (interaction) => {
@@ -57,6 +57,7 @@ const mute = new CommandBuilder<I_Mute>()
         })
         .setChat({
             getParameter: (message, args) => {
+                
                 const muted = args[0] === "false" ? false : true;
                 const onUnmuted = () => {
                     message.channel.send({embeds: [new MyEmbedBuilder({description: "Chrezbot is now unmuted"})]});

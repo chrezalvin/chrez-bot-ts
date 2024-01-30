@@ -88,15 +88,15 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
         // check if error can be send through discord
         if(!message.channel) return;
 
-        if(e != null && typeof e === "object")
-            if("message" in e && typeof e.message === "string")
-                sendError(message, e.message);
-            else if(typeof e == "string")
-                sendError(message, e);
-            else
-                sendError(message, "Unknown error occured");
+        let errorMsg: string = "";
+        if(typeof e === "string")
+            errorMsg = e;
+        else if(e && typeof e === "object" && "message" in e && typeof e.message === "string")
+            errorMsg = e.message;
         else
-            sendError(message, "Unknown error occured");
+            errorMsg = "unknown error occured";
+
+        await sendError(message, errorMsg);
     }
 }]
 
