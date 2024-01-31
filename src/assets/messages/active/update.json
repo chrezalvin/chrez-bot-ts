@@ -126,5 +126,15 @@
     "bugfix": [
         "- fix bug chat command for bulkdelete not working"
     ]
+},
+{
+    "version": "1.3.4",
+    "news": [
+        "- added Chrez recommend",
+        "- you can add a new recommendation via /addrecommend (private members only)"
+    ],
+    "bugfix": [
+        "- fixed bug on Chrez unmute not working"
+    ]
 }
 ]

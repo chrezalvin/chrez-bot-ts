@@ -1,70 +1,65 @@
 import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
-import { SlashCommandBuilder } from "discord.js";
-import yomamas from "@assets/messages/active/yomama.json";
-import { prefixes } from "@config";
+import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 import { CommandBuilder } from "@library/CommandBuilder";
+import { ErrorValidation } from "@library/ErrorValidation";
+import { getAllRecommend } from "services/recommend";
 
-const run = (args?: I_Yomama) => {
-    let index: number = args?.index ?? rngInt(0, yomamas.length - 1);
-
-    if(index >= yomamas.length)
-        throw new Error(`index out of bounds, please choose between 0 to ${yomamas.length - 1}`);
-    if(index < 0)
-        throw new Error(`index cannot be negative`);
-
+const run = async (args?: I_Recommend): Promise<MessageCreateOptions> => {
     const embed = new MyEmbedBuilder();
-    const yomama = yomamas[index];
 
-    embed.setDescription(yomama)
-            .setTitle(`Yomama #${index}`);
+    // highly inneficient, but will do for now
+    const recommends = await getAllRecommend();
+    const recommend = recommends[rngInt(0, recommends.length - 1)];
 
-    return [embed];
+    console.log(recommend.data.category);
+
+    embed
+        .setTitle(recommend.data.title)
+        .setDescription(recommend.data.description);
+
+    if(recommend.data.imgUrl)
+        embed.setThumbnail(recommend.data.imgUrl);
+    if(recommend.data.link)
+        embed.setURL(recommend.data.link);
+    if(recommend.data.category)
+        embed.setFooter({text: `category: ${recommend.data.category.join(", ")}`});
+
+    return {embeds: [embed]};
 }
 
-interface I_Yomama{
-    index: number | null;
+interface I_Recommend{
+
 }
 
-const slashCommand = new SlashCommandBuilder().setName("yomama")
-        .setDescription("Creates a random yo mama joke, you can specify which joke you want using the option")
-        .addIntegerOption(option => option.setName("index").setDescription("Index to target a joke"));
+const slashCommand = new SlashCommandBuilder().setName("recommend")
+        .setDescription("Recommends a random stuff");
 
-const yomama = new CommandBuilder<I_Yomama>()
-        .setName("yomama")
-        .setAlias(["yo", "mama"])
-        .setDescription("Creates a random yo mama joke")
-        .setExamples([
-            {command: `${prefixes[0]} yomama`, description: "give random yo mama joke"},
-            {command: `${prefixes[0]} yomama 19`, description: "give yo mama jokes #19"}
-        ])
+const yomama = new CommandBuilder<I_Recommend>()
+        .setName("recommend")
+        .setDescription("Recommend a random thing")
         .setSlash({
             slashCommand,
             interact: async (interaction, args) => {
-                const embeds = run(args);
+                const embeds = await run(args);
+
+                if(ErrorValidation.isErrorValidation(embeds))
+                    return embeds;
     
-                await interaction.reply({embeds});
-            },
-            getParameter: (interaction) => {
-                const index = interaction.options.getInteger("index", false);
-    
-                return {index};
+                await interaction.reply({
+                    embeds: embeds.embeds,
+                    files: embeds.files
+                });
             }
         })
         .setChat({
-            getParameter: (_, args) => {
-                let index = rngInt(0, yomamas.length - 1);
-                if(args && args[0] !== undefined){
-                    if(!isNaN(parseInt(args[0])))
-                        index = parseInt(args[0]);
-                }
-    
-                return {index};
-            },
             execute: async (message, args) => {
-                const embeds = run(args);
+                const embeds = await run(args);
+
+                if(ErrorValidation.isErrorValidation(embeds))
+                    return embeds;
     
-                message.channel.send({embeds});
+                message.channel.send(embeds);
             },
         })
 

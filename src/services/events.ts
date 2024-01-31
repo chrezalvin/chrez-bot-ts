@@ -1,4 +1,4 @@
-const debug = require('debug')('ChrezBot:server:events');
+const debug = require('debug')('Server:events');
 
 import {firebaseApp} from "@config";
 import { getFirestore, collection, getDocs, query, where, updateDoc, doc, arrayUnion } from 'firebase/firestore/lite';

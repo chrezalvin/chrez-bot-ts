@@ -24,7 +24,7 @@ const slashCommand = new SlashCommandBuilder()
         .setDescription("unmutes chrezbot");
 
 const unmute = new CommandBuilder<I_Mute>()
-        .setName("mute")
+        .setName("unmute")
         .setDescription("mutes chrezbot")
         .setAlias(["rise", "on"])
         .setSlash({

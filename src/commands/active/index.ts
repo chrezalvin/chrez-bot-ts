@@ -12,6 +12,7 @@ import cursed from "./cursed";
 import help from "./help";
 import update from "./update";
 import roshambo from "./roshambo";
+import recommend from "./recommend";
 import { CommandBuilder } from "@library/CommandBuilder";
 
 const c: (CommandBuilder<any>)[] = [
@@ -26,6 +27,7 @@ const c: (CommandBuilder<any>)[] = [
     cursed,
     update,
     roshambo,
+    recommend,
 ].filter(command => command.mode !== "unavailable");
 
 // hidden command will not shown on Chrez help
