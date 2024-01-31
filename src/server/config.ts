@@ -1,3 +1,5 @@
+const debug = require("debug")("Server:events");
+
 import Express, { NextFunction, Response, Request } from "express";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
@@ -14,6 +16,22 @@ express.use(logger("dev"));
 express.use(Express.json());
 express.use(Express.urlencoded());
 express.use(cookieParser());
+
+const session_store: string[] = ["1000"];
+// middlware to check if user session is valid
+express.use(async (req, res, next) => {
+    // continue if method is get
+    if(req.method === "GET"){
+        next();
+        return;
+    }
+
+    const session = req.body.cookie;
+    if(session && session_store.includes(session))
+        next();
+    else
+        res.status(401).send({error: 401, message: "Unauthorized!"});
+});
 
 for(const route of routes){
     express.use(route);

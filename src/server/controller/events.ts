@@ -1,4 +1,4 @@
-const debug = require("debug")("ChrezBot:server:events");
+const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
 import { addEventByMonth, getEventByMonth } from 'services/events';

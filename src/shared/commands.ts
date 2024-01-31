@@ -10,6 +10,10 @@ import { inlineCommandReturnTypes } from "library/customTypes";
 const allCommandList = new Collection<string, CommandBuilder<any>>();
 
 for(const command of [...commands.active, ...commands.c_private]){
+    if(allCommandList.has(command.name)){
+        console.log(`command with name ${command.name} already exists, skipping this command creation`);
+        continue;
+    }
     allCommandList.set(command.name, command);
     debug(`successfully created command ${command.name}`);
 }
