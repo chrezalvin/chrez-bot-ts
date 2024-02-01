@@ -143,6 +143,9 @@
         "- added coldown timer for inline command for each user",
         "- increasing the criteria for some inline command to trigger",
         "- Chrez agree, Chrez disagree, and Chrez laugh has been moved to public commands"
+    ],
+    "bugfix": [
+        "- fix Chrez calculate unit issue"
     ]
 }
 ]

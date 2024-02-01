@@ -58,7 +58,7 @@ function replaceZeroWithUnit(num: number){
     }
 
     if(res === "")
-        res = `${num} \* 10^${count}`;
+        res = `${num}`;
 
     return res;
 }
@@ -88,11 +88,14 @@ const run = (args?: I_Calculate) => {
     let expressionSend = expression.replaceAll('*', '\\*'); 
     const embed = new MyEmbedBuilder();
 
-    for(const [key, val] of replaceable)
+    for(const [key, val] of replaceable){
         if(typeof val === "string")
-            expression = args.expression.replaceAll(key, val);
+            expression = expression.replaceAll(key, val);
         else
-            expression = args.expression.replaceAll(key, val);
+            expression = expression.replaceAll(key, val);
+
+        debug(`replace ${key} with ${val} | expression: ${expression}`);
+    }
 
     debug(`end expression: ${expression}`);
     let result = evaluatex(expression)();
