@@ -60,7 +60,6 @@ const disagree = new CommandBuilder<I_Disagree>()
     .setName("disagree")
     .setAlias(["reject", "diagreed", "nope", "nah"])
     .setDescription("disagrees with you")
-    .setStatus("private")
     .setSlash({
         slashCommand,
         getParameter: (interaction) => {
