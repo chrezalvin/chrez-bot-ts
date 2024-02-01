@@ -10,9 +10,10 @@ export const max_message_allowed = 100;
 
 // time for error message to be deleted (in seconds)
 export const message_delete_time = 10;
+export const inline_command_coldown_time = 30;
 
 export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
-export const botVersion = "1.3.4";
+export const botVersion = "1.3.5";
 
 // Note: production mode removes use of debug tools but some log (console) will still be used whenever error happen
 export let MODE: "development" | "production";
