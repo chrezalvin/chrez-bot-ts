@@ -136,5 +136,12 @@
     "bugfix": [
         "- fixed bug on Chrez unmute not working"
     ]
+},
+{
+    "version": "1.3.5",
+    "news": [
+        "- added coldown timer for inline command for each user",
+        "- increasing the criteria for some inline command to trigger"
+    ]
 }
 ]

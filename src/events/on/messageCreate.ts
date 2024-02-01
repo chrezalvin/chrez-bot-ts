@@ -1,6 +1,6 @@
 const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
-import {max_message_allowed, muted, prefixes} from "@config";
+import {inline_command_coldown_time, max_message_allowed, muted, prefixes} from "@config";
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
@@ -9,6 +9,9 @@ import { userIsAdmin } from "library/profiles";
 import { sendError } from "@bot";
 import { Message } from "discord.js";
 import { ErrorValidation } from "@library/ErrorValidation";
+import { TemporaryArray } from "@library/TemporaryArray";
+
+const holdUser = new TemporaryArray<string>([], (stra, strb) => stra === strb);
 
 function commandValidation(message: Message<boolean>, command: string): CommandBuilder<any> | ErrorValidation{
     let chatCommand: CommandBuilder<any> | undefined = sharedCommands
@@ -40,16 +43,18 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     
     // inline command handling
     // ignore inline command if chrezbot is muted
-    if(!muted)
+    if(!muted && !holdUser.has(message.author.id))
         for(const [v, k] of sharedCommands.aliasCriteriaMap){
             if(typeof v === "string")
             if(message.content === v){
                 sharedCommands.inlineCommands.get(k)?.execute(message);
+                holdUser.addData(message.author.id);
                 return;
             }
             if(v instanceof RegExp)
             if(message.content.match(v) !== null){
                 sharedCommands.inlineCommands.get(k)?.execute(message);
+                holdUser.addData(message.author.id);
                 return;
             }
         }

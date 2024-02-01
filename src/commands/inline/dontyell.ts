@@ -13,7 +13,7 @@ const dontYellMessages = [
 const command: inlineCommandReturnTypes = {
     name: "dontyell",
     // checks if all the text is in caps
-    searchCriteria: [/([A-Z]('| |!|\?)?){10,}/],
+    searchCriteria: [/([A-Z]('| |!|\?)?){20,}/],
     description: "Asks the user to not yell",
     execute: async (message) => {
         let dontyell: string  = dontYellMessages[rngInt(0, dontYellMessages.length - 1)];

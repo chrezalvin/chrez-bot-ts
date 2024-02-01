@@ -1,11 +1,11 @@
 import {inlineCommandReturnTypes} from "library/customTypes";
 import yayData from "@assets/data/yays.json";
-import { rng, rngInt } from "@library/basicFunctions";
+import { rngInt } from "@library/basicFunctions";
 
 const command: inlineCommandReturnTypes = {
     name: "yay",
     description: "yays whenever users says yay",
-    searchCriteria: [/^y(a|e)*y/i, /yeeee+s/i],
+    searchCriteria: [/^y(a|e)*y/i, /^yeeee+s/i],
     execute: (message) => {
         message.channel.send(yayData.yays[rngInt(0, yayData.yays.length - 1)]);
     },
