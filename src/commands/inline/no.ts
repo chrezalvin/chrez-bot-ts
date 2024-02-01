@@ -23,7 +23,7 @@ const command: inlineCommandReturnTypes = {
         if(message.type === MessageType.Reply){
             const repliedMessage = await message.fetchReference();
             if(repliedMessage.author.id === message.client.user?.id)
-                await repliedMessage.reply(no);
+                await message.reply(no);
         }
     }
 };

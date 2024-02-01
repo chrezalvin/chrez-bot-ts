@@ -26,7 +26,6 @@ const agree = new CommandBuilder<I_Agree>()
         .setName("agree")
         .setAlias(["agrees", "agreed", "approve", "youagree?", "agree?"])
         .setDescription("Agrees with you")
-        .setStatus("private")
         .setSlash({
             slashCommand,
             getParameter: (interaction) => {

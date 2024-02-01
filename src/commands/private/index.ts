@@ -1,9 +1,6 @@
 import { CommandReturnTypes } from "library/customTypes";
 import bulkDelete from "./bulkdelete";
 import why from "./why";
-import laugh from "./laugh";
-import agree from "./agree";
-import disagree from "./disagree";
 import mute from "./setmute";
 import unmute from "./unmute";
 import addRecommend from "./addRecommend";
@@ -13,9 +10,6 @@ import { CommandBuilder } from "@library/CommandBuilder";
 export const commands: (CommandBuilder<any>)[] = [
     bulkDelete,
     why,
-    laugh,
-    agree,
-    disagree,
     mute,
     unmute,
     addRecommend,
