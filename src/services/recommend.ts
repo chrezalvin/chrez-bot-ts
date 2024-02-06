@@ -1,8 +1,8 @@
 const debug = require('debug')('Server:recommend');
 
 import {firebaseApp} from "@config";
-import { getFirestore, collection, getDocs, query, limit, startAt, addDoc, deleteDoc, updateDoc, doc, getDoc } from 'firebase/firestore/lite';
-import { where } from "sequelize";
+import { FirebaseApp } from "firebase/app";
+import { getFirestore, collection, getDocs, query, limit, startAt, addDoc, deleteDoc, updateDoc, doc, getDoc, Firestore } from 'firebase/firestore/lite';
 
 export interface Recommend{
     title: string;
@@ -18,6 +18,7 @@ export interface RecommendDoc{
 }
 
 const dbName = "recommend";
+const db = getFirestore(firebaseApp);
 
 export async function getAllRecommend(){
     const q = query(collection(db, dbName));
@@ -44,8 +45,6 @@ export function isRecommend(obj: unknown): obj is Recommend{
 
     return obj.title !== undefined && obj.description !== undefined;
 }
-
-const db = getFirestore(firebaseApp);
 
 export async function getRecommend(page: number = 0): Promise<RecommendDoc[]>{
     const q = query(collection(db, dbName), startAt(page * 5), limit(5));
@@ -116,8 +115,4 @@ export async function updateCommandById(id: string, recommend: Recommend){
     }
     else
         throw new Error("Recommend not found!");
-}
-
-export async function deleteRecommendByTitle(title: string){
-    // TODO
 }

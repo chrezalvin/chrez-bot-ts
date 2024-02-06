@@ -4,6 +4,7 @@ import Express, { NextFunction, Response, Request } from "express";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import {sessions} from "@shared/UserSessions";
 
 import routes from "./routes";
 
@@ -17,17 +18,22 @@ express.use(Express.json());
 express.use(Express.urlencoded());
 express.use(cookieParser());
 
-const session_store: string[] = ["1000"];
 // middlware to check if user session is valid
 express.use(async (req, res, next) => {
+    // special case for authentication, in this case we dont need to check the session
+    if(req.path === "/authenticate"){
+        next();
+        return;
+    }
+
     // continue if method is get
     if(req.method === "GET"){
         next();
         return;
     }
 
-    const session = req.body.cookie;
-    if(session && session_store.includes(session))
+    const session = req.body.cookie || req.body.SESSION_KEY;
+    if(session && sessions.has(session))
         next();
     else
         res.status(401).send({error: 401, message: "Unauthorized!"});

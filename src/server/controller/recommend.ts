@@ -1,10 +1,22 @@
 const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
-import { addRecommend, deleteRecommendById, getRecommend, isRecommend, updateCommandById } from 'services/recommend';
+import { addRecommend, deleteRecommendById, getAllRecommend, getRecommend, getRecommendById, isRecommend, updateCommandById } from 'services/recommend';
 
 export const recommend_get_default = async (req: Request, res: Response) => {
-    const recommend = await getRecommend();
+    const recommend = await getAllRecommend();
+
+    res.json(recommend);
+}
+
+export const recommend_get_by_id = async (req: Request, res: Response) => {
+    debug("GET /recommend/:id");
+    const id = req.params.id;
+
+    if(typeof id !== "string")
+        throw new Error("Invalid id!");
+
+    const recommend = await getRecommendById(id);
 
     res.json(recommend);
 }
