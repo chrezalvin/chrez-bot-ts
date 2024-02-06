@@ -29,17 +29,30 @@ const run = async (args?: I_Recommend): Promise<MessageCreateOptions> => {
 }
 
 interface I_Recommend{
-
+    tag: string | null;
 }
 
 const slashCommand = new SlashCommandBuilder().setName("recommend")
-        .setDescription("Recommends a random stuff");
+        .setDescription("Recommends a random stuff")
+        .addStringOption(opt => 
+            opt
+            .setName("tag")
+            .setDescription("The tag of the recommend")
+            .setRequired(false)
+        );
 
 const yomama = new CommandBuilder<I_Recommend>()
         .setName("recommend")
         .setDescription("Recommend a random thing")
         .setSlash({
             slashCommand,
+            getParameter: (interaction) => {
+                const tag = interaction.options.getString("tag");
+
+                return {
+                    tag
+                };
+            },
             interact: async (interaction, args) => {
                 const embeds = await run(args);
 

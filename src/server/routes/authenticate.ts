@@ -1,24 +1,16 @@
 const debug = require("debug")("Server:authenticate");
 
 import { Request, Router } from "express";
-import profiles from "@assets/data/profiles.json";
 import { CLIENT_ID, CLIENT_SECRET } from "@config";
-import { OAuth2Scopes, RESTPostOAuth2AccessTokenResult, DiscordjsError, User, APIUser } from "discord.js";
-import { generateRandomString } from "@library/sessions";
+import { OAuth2Scopes, RESTPostOAuth2AccessTokenResult, APIUser } from "discord.js";
 import {SessionStore} from "../../library/sessions";
+import {sessions} from "@shared/UserSessions";
 
 
 import {request} from "undici";
+import { userIsAdmin } from "@library/profiles";
 
 const router = Router();
-
-interface My_User{
-    username: string;
-    discordID: string;
-    avatarURL?: string;
-}
-
-const sessions = new SessionStore<My_User>();
 
 async function requestOauth2(
     opt:{
@@ -56,6 +48,7 @@ async function requestOauth2(
   }
   
   async function collectUserData(opt: {token_type: string, access_token: string}): Promise<APIUser>{
+    debug(`received a userdata ${opt}`);
       const userResult = await request('https://discord.com/api/users/@me', {
                 headers: {
                   authorization: `${opt.token_type} ${opt.access_token}`,
@@ -107,6 +100,11 @@ router.get("/authenticate", async (req: Request, res, next) => {
         });
     
         const user = await collectUserData(oauth2Response);
+
+        if(!userIsAdmin(user.id)){
+          debug(`user ${user.username} tried to login but is not admin`);
+          throw new Error("User is not admin");
+        }
 
         debug(`collected user ${user.username} - ${user.id}`);
         const SESSION_KEY = sessions.add({username: user.username, discordID: user.id, avatarURL: user.avatar ?? undefined});
