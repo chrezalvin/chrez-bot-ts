@@ -61,18 +61,14 @@ function discordError(err: unknown): err is {error: string, error_description: s
 // error handler
 express.use(function(err: any, _req: Request, res: Response, _next: NextFunction) {
     res.status(err.status || 400);
-    if(MODE === "development"){
-        if(err instanceof Error){
-            return res.send({error: 0, message: err.message});
-        }
-        if(discordError(err)){
-            return res.send({...err})
-        }
-
-        return res.send({message: "Unknown Error!", error: err});
+    if(err instanceof Error){
+        return res.send({error: 0, message: err.message});
     }
-    else
-        res.send({message: "Unknown Error!"});
+    if(discordError(err)){
+        return res.send({...err})
+    }
+
+    return res.send({message: "Unknown Error!", error: err});
 });
 
 export default express;
