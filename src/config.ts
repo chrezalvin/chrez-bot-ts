@@ -46,6 +46,10 @@ if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .
 
 export const port = process.env.PORT ?? "3000";
 
+export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
+
+if(OAUTH2_REDIRECT_URL === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL in .env");
+
 // muted variable to share across all modules
 export let muted = false;
 

@@ -1,7 +1,7 @@
 const debug = require("debug")("Server:authenticate");
 
 import { Request, Router } from "express";
-import { CLIENT_ID, CLIENT_SECRET } from "@config";
+import { CLIENT_ID, CLIENT_SECRET, OAUTH2_REDIRECT_URL } from "@config";
 import { OAuth2Scopes, RESTPostOAuth2AccessTokenResult, APIUser } from "discord.js";
 import {SessionStore} from "../../library/sessions";
 import {sessions} from "@shared/UserSessions";
@@ -95,7 +95,7 @@ router.get("/authenticate", async (req: Request, res, next) => {
         debug(`got accessCode ${accessCode}`);
         const oauth2Response = await requestOauth2({
           code: accessCode,
-          redirect_uri: `http://localhost:3001/Authenticate`,
+          redirect_uri: OAUTH2_REDIRECT_URL,
           scope: "Identify"
         });
     
