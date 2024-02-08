@@ -18,7 +18,7 @@ function replaceUnit(match: string, p1: string, p2: string){
 
     for(const [unit, num] of units){
         if(p2 === unit)
-            return `${p1}${"0".repeat(num)}`;
+            return `(${p1} * 1${"0".repeat(num)})`;
     }
     return match;
 }
@@ -67,7 +67,7 @@ type V = ((match: string, p1: string, p2: string) => string) | ((match: string, 
 
 // here's the character that will be replaced
 const replaceable = new Map<RegExp | string, V>([
-    [/(\d+)(\w)/g, replaceUnit], // change k, m, b, t to 000, 000000, 000000000, 000000000000
+    [/(\d*\.?\d*)(\w)/g, replaceUnit], // change k, m, b, t to 000, 000000, 000000000, 000000000000
     [/(sum|mult|multiply|sub|subtract)\(([0-9,]*)\)/g, replaceFunction], // sum(1,2,3,1,2,3) -> (1+2+3+1+2+3)
     ['x', '*'],
     [/[÷|:]/g, '/'],
@@ -89,12 +89,15 @@ const run = (args?: I_Calculate) => {
     const embed = new MyEmbedBuilder();
 
     for(const [key, val] of replaceable){
-        if(typeof val === "string")
+        if(typeof val === "string"){
             expression = expression.replaceAll(key, val);
-        else
+            debug(`replace ${key} with ${val} | expression: ${expression}`);
+        }
+        else{
             expression = expression.replaceAll(key, val);
+            debug(`replace ${key} with ${val.name} | expression: ${expression}`);
+        }
 
-        debug(`replace ${key} with ${val} | expression: ${expression}`);
     }
 
     debug(`end expression: ${expression}`);
