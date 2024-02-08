@@ -53,13 +53,13 @@ export class CommandBuilder<_T> implements CommandData<_T>{
         return object instanceof CommandBuilder;
     }
 
-    private m_mode: CommandData<_T>["mode"] = "available";
-    private m_name: CommandData<_T>["name"] = "";
-    private m_alias: CommandData<_T>["alias"] = [];
-    private m_description: CommandData<_T>["description"] = "";
-    private m_slash: CommandData<_T>["slash"] = undefined;
-    private m_chat: CommandData<_T>["chat"] = undefined;
-    private m_commandStatus: CommandData<_T>["status"] = "public";
+    protected m_mode: CommandData<_T>["mode"] = "available";
+    protected m_name: CommandData<_T>["name"] = "";
+    protected m_alias: CommandData<_T>["alias"] = [];
+    protected m_description: CommandData<_T>["description"] = "";
+    protected m_slash: CommandData<_T>["slash"] = undefined;
+    protected m_chat: CommandData<_T>["chat"] = undefined;
+    protected m_commandStatus: CommandData<_T>["status"] = "public";
 
     public examples: ExampleField[] = [];
 
@@ -99,17 +99,13 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     get description(){ return `${this.m_mode !== "available" ? `(${this.m_mode})` : ""} ${this.m_description}`; }
 
     /**
-     * the status of the command
-     */
-    get status(){ return this.m_commandStatus; }
-
-    /**
      * command status
      * experimental: only available on development mode
      * public: available on both development and production mode
      * private: only available on several members
+     * hidden: will not be shown on Chrez help or slash command
      */
-    get commandStatus(){ return this.m_commandStatus; }
+    get status(){ return this.m_commandStatus; }
 
     /**
      * slash JSON data
@@ -142,6 +138,10 @@ export class CommandBuilder<_T> implements CommandData<_T>{
         return this;
     }
 
+    /**
+     * replaces the examples with a new one
+     * @param examples array of new example data
+     */
     setExamples(examples: ExampleField[]){
         this.examples = examples;
 
@@ -230,7 +230,6 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     /**
      * sets a new slash command
      * @param slash slash command
-     * @returns this
      */
     setSlash(slash: {
         slashCommand?: I_SlashCommand<_T>["slashCommand"];
@@ -253,7 +252,6 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     /**
      * sets a new chat command
      * @param chat chat command
-     * @returns this
      */
     setChat(chat: I_ChatCommand<_T>){
         this.m_chat = chat;
@@ -303,7 +301,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     /**
      * checks if the string given is the command name or alias
      * @param commandName a string command or alias
-     * @returns boolean
+     * @returns true or false if the commandName is the command name or alias of this command
      */
     checkIfCommand(commandName: string){
         return this.m_name === commandName || this.m_alias.find((x) => x === commandName) !== undefined;
