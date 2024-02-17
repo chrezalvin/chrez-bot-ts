@@ -81,7 +81,7 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
 
     const chrezHelp = new CommandBuilder<I_Help>()
         .setName("help")
-        .setAlias(["h"])
+        .setAlias(["h", "manual"])
         .setDescription("give all commands for chrezbot")
         .setSlash({
             slashCommand,

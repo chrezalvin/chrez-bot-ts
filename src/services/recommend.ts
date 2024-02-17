@@ -1,7 +1,6 @@
 const debug = require('debug')('Server:recommend');
 
 import {firebaseApp} from "@config";
-import { FirebaseApp } from "firebase/app";
 import { getFirestore, collection, getDocs, query, limit, startAt, addDoc, deleteDoc, updateDoc, doc, getDoc, Firestore } from 'firebase/firestore/lite';
 
 export interface Recommend{
@@ -106,13 +105,10 @@ export async function deleteRecommendById(id: string){
 }
 
 export async function updateCommandById(id: string, recommend: Recommend){
-    const q = query(collection(db, dbName), limit(1), startAt(id));
-    const querySnapshot = await getDocs(q);
+    const resDoc = await getDoc(doc(db, dbName, id));
 
-    if(!querySnapshot.empty){
-        const doc = querySnapshot.docs[0];
-        updateDoc(doc.ref, {...recommend});
-    }
-    else
+    if(!resDoc.exists())
         throw new Error("Recommend not found!");
+
+    updateDoc(resDoc.ref, {...recommend});
 }
