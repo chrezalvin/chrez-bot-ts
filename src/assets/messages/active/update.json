@@ -147,5 +147,12 @@
     "bugfix": [
         "- fix Chrez calculate unit issue"
     ]
+},
+{
+    "version": "1.3.6",
+    "news": [
+        "- API Improvement",
+        "- Added new alias for Chrez help, Chrez manual"
+    ]
 }
 ]

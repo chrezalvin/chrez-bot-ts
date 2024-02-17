@@ -1,35 +1,26 @@
 import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
 
-import { SlashCommandBuilder, AttachmentBuilder, ChannelType, EmbedBuilder, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
-import fs from "fs";
-import path from "path";
+import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { CommandBuilder } from "@library/CommandBuilder";
 import { prefixes } from "@config";
 import { ErrorValidation } from "@library/ErrorValidation";
-
-const sfw_memesDir = path.resolve("./images/meme/sfw");
-const nsfw_memesDir = path.resolve("./images/meme/nsfw");
-
-const sfw_memes = fs.readdirSync(sfw_memesDir);
-const nsfw_memes = fs.readdirSync(nsfw_memesDir);
+import { getMemeUrl, memeListNsfw, memeListSfw } from "services/memes";
 
 // global attachment because it needs to be included when sending too
 let attachment: AttachmentBuilder;
 
-const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Memes) => {
-    let index: number | null = args?.index ?? rngInt(0, sfw_memes.length - 1);
-    let nsfw: boolean = args?.nsfw ?? false;
-    
+const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Memes) => {
+    const sfw_memes_length = memeListSfw.length;
+    const nsfw_memes_length = memeListNsfw.length;
+
+    const nsfw: boolean = args?.nsfw ?? false;
+    let index: number | null = args?.index ?? (nsfw ? rngInt(0, nsfw_memes_length - 1) : rngInt(0, sfw_memes_length - 1));
+
+    // checks if the channel is nsfw
     if(nsfw){
-        if(index === null)
-            index = rngInt(0, nsfw_memes.length - 1);
         if(message.channel){
-            if(message.channel.type === ChannelType.GuildText){
-                if(!message.channel.nsfw)
-                    return new ErrorValidation("command_restricted", "nsfw meme", "age restricted channel");
-                if(index >= nsfw_memes.length)
-                    return new ErrorValidation("index_out_of_bounds", 0, nsfw_memes.length - 1);
-            }
+            if(message.channel.type === ChannelType.GuildText && !message.channel.nsfw)
+                return new ErrorValidation("command_restricted", "nsfw meme", "age restricted channel");
             else if(message.channel.type === ChannelType.DM){
                 // continue
             }
@@ -38,20 +29,20 @@ const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType>,
         }
         else throw new Error("interaction received is not within a valid channel");
     }
-    else{
-        if(index === null)
-            index = rngInt(0, sfw_memes.length - 1);
-        if(index >= sfw_memes.length)
-            return new ErrorValidation("index_out_of_bounds", 0, sfw_memes.length - 1);
-    }
 
+    // checks for out of bounds error
     if(index < 0)
         return new ErrorValidation("index_negative");
- 
-    const meme = nsfw ? nsfw_memes[index] : sfw_memes[index];
-    attachment = new AttachmentBuilder(`${nsfw ? nsfw_memesDir : sfw_memesDir}/${meme}`, {name: `memes.jpg`});
+    if(nsfw && index >= nsfw_memes_length)
+        return new ErrorValidation("index_out_of_bounds", 0, nsfw_memes_length - 1);
+    else if(index >= sfw_memes_length)
+        return new ErrorValidation("index_out_of_bounds", 0, sfw_memes_length - 1);
 
-    const embed = new MyEmbedBuilder({title: `memes #${index}`, footer: {text: ""}}).setImage(`attachment://memes.jpg`);
+    const url = await getMemeUrl(index, nsfw);
+
+    attachment = new AttachmentBuilder(url, {name: `memes.jpg`});
+
+    const embed = new MyEmbedBuilder({title: `meme#${index}`}).setImage(`attachment://memes.jpg`);
 
     return [embed];
 }
@@ -87,12 +78,12 @@ const memes = new CommandBuilder<I_Memes>()
         slashCommand,
         getParameter: (interaction) => {
             const nsfw = interaction.options.getBoolean("nsfw", false) ?? false;
-            const index = interaction.options.getInteger("index", false) ?? nsfw ? rngInt(0, nsfw_memes.length - 1) : rngInt(0, sfw_memes.length - 1);
+            const index = interaction.options.getInteger("index", false) ?? nsfw ? rngInt(0, memeListNsfw.length - 1) : rngInt(0, memeListSfw.length - 1);
 
             return {index, nsfw};
         },
         interact: async (interaction, args) => {
-            const embeds = run(interaction, args);
+            const embeds = await run(interaction, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
@@ -121,12 +112,12 @@ const memes = new CommandBuilder<I_Memes>()
             });
 
             if(index === -1)
-                index = rngInt(0, (nsfw ? nsfw_memes.length : sfw_memes.length) - 1);
+                index = rngInt(0, (nsfw ? memeListNsfw.length : memeListSfw.length) - 1);
 
             return {index, nsfw};
         },
         execute: async (message, args) => {
-            const embeds = run(message, args);
+            const embeds = await run(message, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;

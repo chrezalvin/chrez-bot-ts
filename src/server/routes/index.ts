@@ -1,17 +1,17 @@
 import { Router } from "express";
 
-import home from "./home";
-import base from "./base";
 import event from "./events";
 import authenticate from "./authenticate";
 import recommend from "./recommend";
+import memes from "./memes";
+import cursed from "./cursed";
 
 export const routes: Router[] = [
-    home,
-    base,
     event,
     authenticate,
     recommend,
+    memes,
+    cursed,
 ];
 
 export default routes;
