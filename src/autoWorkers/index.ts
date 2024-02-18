@@ -1,7 +1,9 @@
 import birthday from "./birthday";
+import recommend from "./recommend";
 
 const autoWorkersList = [
-    birthday
+    birthday,
+    recommend
 ];
 
 export default autoWorkersList;
