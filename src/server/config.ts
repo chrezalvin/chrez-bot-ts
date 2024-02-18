@@ -20,14 +20,14 @@ express.use(cookieParser());
 
 // middlware to check if user session is valid
 express.use(async (req, res, next) => {
-    // special case for authentication, in this case we dont need to check the session
-    if(req.path === "/authenticate"){
+    if(MODE === "development"){
+        debug("dev mode, skipping session check");
         next();
         return;
     }
 
-    // continue if method is get
-    if(req.method === "GET"){
+    // special case for authentication, in this case we dont need to check the session
+    if(req.path === "/authenticate" || req.method === "GET"){
         next();
         return;
     }

@@ -6,18 +6,14 @@ import { SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
 import { prefixes, botVersion } from "@config";
 import { CommandBuilder } from "@library/CommandBuilder";
+import { getUpdate } from "services/update";
 
-const run = ( args?: I_Update) => {
+const run = async ( args?: I_Update) => {
     // defaulted to latest version
     let version: string = args?.version ?? botVersion;
 
-    let update = updates[updates.length - 1];
+    const update = await getUpdate(version);
     const embed = new MyEmbedBuilder();
-
-    const find = updates.find(update => update.version === version);
-    if(find === undefined)
-        throw new Error(`version ${version} cannot be found!`);
-    update = find;
 
     embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
     if(update.news)
@@ -58,7 +54,7 @@ const update = new CommandBuilder<I_Update>()
             return {version};
         },
         interact: async (interaction, args) => {
-            const embeds = run(args);
+            const embeds = await run(args);
 
             await interaction.reply({embeds});
         }
@@ -73,7 +69,7 @@ const update = new CommandBuilder<I_Update>()
             return {version};
         },
         execute: async (message, args) => {
-            const embeds = run(args);
+            const embeds = await run(args);
 
             message.channel.send({embeds});
         },
