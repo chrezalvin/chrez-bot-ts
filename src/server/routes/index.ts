@@ -5,6 +5,7 @@ import authenticate from "./authenticate";
 import recommend from "./recommend";
 import memes from "./memes";
 import cursed from "./cursed";
+import update from "./update";
 
 export const routes: Router[] = [
     event,
@@ -12,6 +13,7 @@ export const routes: Router[] = [
     recommend,
     memes,
     cursed,
+    update
 ];
 
 export default routes;

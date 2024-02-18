@@ -4,17 +4,6 @@ import {config} from "dotenv"; config();
 import { initializeApp } from "firebase/app";
 import {getFirestore} from "firebase/firestore/lite";
 
-// basic configs
-// max character bot can allow, if message word count is higher then the message will be ignored
-export const max_message_allowed = 100;
-
-// time for error message to be deleted (in seconds)
-export const message_delete_time = 10;
-export const inline_command_coldown_time = 30;
-
-export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
-export const botVersion = "1.3.6";
-
 // Note: production mode removes use of debug tools but some log (console) will still be used whenever error happen
 export let MODE: "development" | "production";
 
@@ -24,6 +13,17 @@ else{
     console.warn("Cannot find either production or development mode, assuming development mode");
     MODE =  "development";
 }
+
+// basic configs
+// max character bot can allow, if message word count is higher then the message will be ignored
+export const max_message_allowed = 100;
+
+// time for error message to be deleted (in seconds)
+export const message_delete_time = 10;
+export const inline_command_coldown_time = MODE === "development" ? 5 : 30;
+
+export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
+export const botVersion = "1.3.6";
 
 if(process.env.DISCORD_TOKEN === ""){
     throw new Error("Couldn't find DISCORD_TOKEN in .env");
