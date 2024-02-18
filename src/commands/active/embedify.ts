@@ -91,10 +91,11 @@ const embedify = new CommandBuilder<I_CommandBuilder>()
             interact: async (interaction, args) => {
                 if(!args) throw new Error("argument is not provided");
 
-                const embed = new MyEmbedBuilder({
-                    description: args.description,
-                    title: args.title ?? "\u200B",
-                })
+                const embed = new MyEmbedBuilder()
+                    .setDescription(args.description);
+
+                if(args.title)
+                    embed.setTitle(args.title);
 
                 if(args.color)
                     embed.setColor(args.color);

@@ -1,7 +1,7 @@
 const debug = require('debug')('Server:recommend');
 
 import {firebaseApp} from "@config";
-import { getFirestore, collection, getDocs, query, limit, startAt, addDoc, deleteDoc, updateDoc, doc, getDoc, Firestore } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, query, limit, startAt, addDoc, deleteDoc, updateDoc, doc, getDoc, Firestore, count } from 'firebase/firestore/lite';
 
 export interface Recommend{
     title: string;

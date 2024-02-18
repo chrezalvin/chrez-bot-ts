@@ -7,7 +7,7 @@ export async function update_get(req: Request, res: Response, next: NextFunction
     const version = req.params.version;
 
     if(typeof version === "string"){
-        const update = await getUpdate(botVersion);
+        const update = await getUpdate(version);
         res.json(update);
     }
     else
