@@ -1,10 +1,8 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import stories from "@assets/messages/active/story.json";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { ErrorValidation } from "@library/ErrorValidation";
 
 const run = (args?: I_Story) => {
     let index: number = args?.index ?? rngInt(0, stories.length - 1);

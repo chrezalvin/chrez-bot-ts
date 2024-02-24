@@ -4,12 +4,9 @@ import {inline_command_coldown_time, max_message_allowed, muted, prefixes} from 
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
-import { CommandBuilder } from "@library/CommandBuilder";
-import { userIsAdmin } from "library/profiles";
+import { CommandBuilder, userIsAdmin, ErrorValidation, TemporaryArray } from "@library";
 import { sendError } from "@bot";
 import { Message } from "discord.js";
-import { ErrorValidation } from "@library/ErrorValidation";
-import { TemporaryArray } from "@library/TemporaryArray";
 
 const holdUser = new TemporaryArray<string>([], (stra, strb) => stra === strb);
 

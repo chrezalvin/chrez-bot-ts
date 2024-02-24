@@ -1,9 +1,6 @@
-import { prefixes } from "@config";
-import { CommandReturnTypes} from "library/customTypes";
+import { CommandReturnTypes, MyEmbedBuilder, CommandBuilder} from "@library";
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import {getEventByMonth} from "../../services/events";
-import { MyEmbedBuilder } from "@library/basicFunctions";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = async (args?: I_Event) => {
     const events = await getEventByMonth();

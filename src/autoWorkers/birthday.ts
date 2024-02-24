@@ -4,7 +4,7 @@ const debug = require("debug")("ChrezBot:birthday");
 import { CronJob } from "cron";
 
 import profiles from "@assets/data/profiles.json";
-import { MyEmbedBuilder } from "@library/basicFunctions";
+import { MyEmbedBuilder } from "@library";
 import { type TextChannel, Client } from "discord.js";
 
 // name of month

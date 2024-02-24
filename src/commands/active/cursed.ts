@@ -1,9 +1,7 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { ErrorValidation } from "@library/ErrorValidation";
 import { cursedList, getCursedUrl } from "services/cursed";
 
 let attachment: AttachmentBuilder;

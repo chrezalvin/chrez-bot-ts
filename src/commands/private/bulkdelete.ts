@@ -1,7 +1,5 @@
-import { MyEmbedBuilder } from "@library/basicFunctions";
+import { MyEmbedBuilder, CommandBuilder } from "@library";
 import { CacheType, ChannelType, ChatInputCommandInteraction, Collection, Message, NewsChannel, SlashCommandBuilder, TextBasedChannel, TextChannel, ThreadChannel } from "discord.js";
-
-import { CommandBuilder } from "@library/CommandBuilder";
 
 type GuildTextBasedChannel = TextChannel | NewsChannel | ThreadChannel;
 

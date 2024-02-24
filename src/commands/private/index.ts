@@ -1,11 +1,10 @@
-import { CommandReturnTypes } from "library/customTypes";
+import { CommandReturnTypes, CommandBuilder } from "@library";
 import bulkDelete from "./bulkdelete";
 import why from "./why";
 import mute from "./setmute";
 import unmute from "./unmute";
 import addRecommend from "./addRecommend";
 // import notifyRaid from "./notifyRaid";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 export const commands: (CommandBuilder<any>)[] = [
     bulkDelete,

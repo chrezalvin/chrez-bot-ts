@@ -1,7 +1,6 @@
 // this is the chrezcommand for weird words
 
-import { CommandBuilder } from "@library/CommandBuilder";
-import { rngInt } from "@library/basicFunctions";
+import { CommandBuilder, rngInt } from "@library";
 
 import weirdList from "@assets/messages/active/weird.json";
 

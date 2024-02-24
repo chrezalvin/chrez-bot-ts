@@ -1,8 +1,6 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, ErrorValidation, CommandBuilder} from "@library";
 
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { ErrorValidation } from "@library/ErrorValidation";
 import { getAllRecommend } from "services/recommend";
 
 const run = async (args?: I_Recommend): Promise<MessageCreateOptions> => {

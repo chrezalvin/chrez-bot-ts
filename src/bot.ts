@@ -5,7 +5,7 @@ import {DISCORD_TOKEN, message_delete_time} from "@config";
 import {CacheType, ChatInputCommandInteraction, Client, GatewayIntentBits, Message } from "discord.js";
 
 import { isChatInputCommandInteraction } from "library/customTypes";
-import { MyEmbedBuilder } from "@library/basicFunctions";
+import { MyEmbedBuilder } from "@library";
 
 import events from "./events";
 
@@ -29,8 +29,10 @@ export async function sendError(
         errorMessage: string,
         deleteTime: number | null = message_delete_time,
     ){
-    const embed = new MyEmbedBuilder();
-    embed.setError({description: `**${errorMessage}**`, footer: `this message will be deleted in ${deleteTime} seconds`});
+    const embed = MyEmbedBuilder.createError({
+        description: `**${errorMessage}**`, 
+        footer: `this message will be deleted in ${deleteTime} seconds`
+    });
 
     if(isChatInputCommandInteraction(message)){
         message.deferred ? await message.editReply({embeds: [embed]}) : await message.reply({embeds: [embed]});

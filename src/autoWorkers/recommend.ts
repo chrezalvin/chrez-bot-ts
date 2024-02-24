@@ -3,7 +3,7 @@ const debug = require("debug")("ChrezBot:birthday");
 
 import { CronJob } from "cron";
 
-import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
+import { MyEmbedBuilder, rngInt } from "@library";
 import { type TextChannel, Client } from "discord.js";
 import { getAllRecommend } from "services/recommend";
 

@@ -1,9 +1,8 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, CommandBuilder} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import yomamas from "@assets/messages/active/yomama.json";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = (args?: I_Yomama) => {
     let index: number = args?.index ?? rngInt(0, yomamas.length - 1);

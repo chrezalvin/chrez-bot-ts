@@ -1,9 +1,7 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { CommandBuilder } from "@library/CommandBuilder";
 import { prefixes } from "@config";
-import { ErrorValidation } from "@library/ErrorValidation";
 import { getMemeUrl, memeListNsfw, memeListSfw } from "services/memes";
 
 // global attachment because it needs to be included when sending too

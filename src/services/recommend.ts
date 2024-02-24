@@ -1,5 +1,6 @@
 const debug = require('debug')('Server:recommend');
 
+import recommendeds from "@shared/recommendeds";
 import {firebaseApp} from "@config";
 import { getFirestore, collection, getDocs, query, limit, startAt, addDoc, deleteDoc, updateDoc, doc, getDoc, Firestore, count } from 'firebase/firestore/lite';
 

@@ -1,4 +1,4 @@
-import { CommandBuilder } from "@library/CommandBuilder";
+import { CommandBuilder } from "@library";
 
 const hello = new CommandBuilder<undefined>()
     .setName("hello")

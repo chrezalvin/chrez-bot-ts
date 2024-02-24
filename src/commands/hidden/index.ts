@@ -2,7 +2,7 @@ import privateCommands from "../private";
 
 import cry from "./cry";
 import weirdThing from "./weirdThing";
-import { CommandBuilder } from "@library/CommandBuilder";
+import { CommandBuilder } from "@library";
 
 const c: (CommandBuilder<any>)[] = [
     cry,

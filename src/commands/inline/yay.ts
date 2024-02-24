@@ -1,6 +1,5 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
+import {inlineCommandReturnTypes, rngInt} from "@library";
 import yayData from "@assets/data/yays.json";
-import { rngInt } from "@library/basicFunctions";
 
 const command: inlineCommandReturnTypes = {
     name: "yay",

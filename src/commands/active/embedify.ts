@@ -1,7 +1,5 @@
-import { MyEmbedBuilder } from "@library/basicFunctions";
-import {CommandReturnTypes} from "library/customTypes";
+import { MyEmbedBuilder, CommandBuilder } from "@library";
 import { Attachment, ColorResolvable, SlashCommandBuilder } from "discord.js";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 const colorList: ColorResolvable[] = [
     "Default",

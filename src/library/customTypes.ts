@@ -1,4 +1,4 @@
-import { MyEmbedBuilder } from "@library/basicFunctions";
+import { MyEmbedBuilder } from "@library";
 import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
 
 export interface Command{

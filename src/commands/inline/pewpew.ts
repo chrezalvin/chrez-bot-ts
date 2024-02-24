@@ -1,7 +1,6 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
+import {inlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
 
 import pewpew from "@assets/messages/inline/pewpew.json";
-import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
 
 const command: inlineCommandReturnTypes = {
     name: "pewpew",

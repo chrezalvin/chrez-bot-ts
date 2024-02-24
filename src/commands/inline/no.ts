@@ -1,6 +1,5 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
+import {inlineCommandReturnTypes, rngInt} from "@library";
 import { MessageType } from "discord.js";
-import { rngInt } from "@library/basicFunctions";
 
 const nos = [
     ":(",

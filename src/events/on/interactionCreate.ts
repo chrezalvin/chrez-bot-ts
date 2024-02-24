@@ -1,14 +1,10 @@
 const debug = require("debug")("ChrezBot:interactionCreate");
 
-import { MyEmbedBuilder } from "@library/basicFunctions";
-import { userIsAdmin } from "library/profiles";
-import { isDiscordAPIError } from "library/customTypes";
+import { MyEmbedBuilder, isDiscordAPIError, ErrorValidation, CommandBuilder, userIsAdmin } from "@library";
 import {EventArguments} from "../"
 
 import * as sharedCommands from "shared/commands";
 import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
-import { ErrorValidation } from "@library/ErrorValidation";
-import { CommandBuilder } from "@library/CommandBuilder";
 import { message_delete_time } from "@config";
 
 function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): ErrorValidation | CommandBuilder<any>{
@@ -54,8 +50,7 @@ const event: EventArguments<Events.InteractionCreate> = [
             else
                 errorMsg = "unknown error";
 
-            const embed = new MyEmbedBuilder()
-                .setError({
+            const embed = MyEmbedBuilder.createError({
                     description: errorMsg,
                     footer: `this message will be deleted in ${message_delete_time} seconds`
                 });

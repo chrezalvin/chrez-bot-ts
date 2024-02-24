@@ -1,12 +1,8 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
-
-import { getProfileByID } from "library/profiles";
+import {MyEmbedBuilder, rngInt, getProfileByID, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import quotes from "@assets/messages/active/quote.json";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { ErrorValidation } from "@library/ErrorValidation";
 
 const run = (args?: I_Quote) => {
     let index: number = args?.index ?? rngInt(0, quotes.length - 1);

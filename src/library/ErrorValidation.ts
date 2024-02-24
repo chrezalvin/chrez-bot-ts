@@ -1,7 +1,6 @@
 import error2 from "@assets/data/error2.json";
 import { Message, ChatInputCommandInteraction, CacheType, Colors } from "discord.js";
-import { MyEmbedBuilder } from "./basicFunctions";
-import { isChatInputCommandInteraction } from "./customTypes";
+import { MyEmbedBuilder, isChatInputCommandInteraction } from "@library";
 
 export interface ErrorValidationData{
     code: number;

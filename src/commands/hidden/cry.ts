@@ -1,5 +1,4 @@
-import { CommandBuilder } from "@library/CommandBuilder";
-import { rngInt } from "@library/basicFunctions";
+import { CommandBuilder, rngInt } from "@library";
 import cryList from "@assets/messages/active/cry.json";
 
 const hello = new CommandBuilder<undefined>()

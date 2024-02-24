@@ -10,12 +10,13 @@
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
     "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
     "build": "tsc && tsc-alias",
-    "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand"
+    "loadSlashCommands": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
   },
   "author": "Chrez. A",
   "license": "ISC",
   "dependencies": {
     "@types/express-session": "^1.17.7",
+    "convert-units": "^2.3.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cron": "^2.3.0",
@@ -36,6 +37,7 @@
     "undici": "^5.21.2"
   },
   "devDependencies": {
+    "@types/convert-units": "^2.3.9",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/cron": "^2.0.1",
