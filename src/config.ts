@@ -4,8 +4,33 @@ import {config} from "dotenv"; config();
 import { initializeApp } from "firebase/app";
 import {getFirestore} from "firebase/firestore/lite";
 
+type Mode = "development" | "production";
 // Note: production mode removes use of debug tools but some log (console) will still be used whenever error happen
-export let MODE: "development" | "production";
+export let MODE: Mode = process.env.MODE as Mode | undefined ?? "development";
+
+// basic configs
+// max character bot can allow, if message word count is higher then the message will be ignored
+export const max_message_allowed = 100;
+
+// time for error message to be deleted (in seconds)
+export const message_delete_time = 10;
+
+export const inline_command_coldown_time = MODE === "development" ? 5 : 30;
+export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
+export const botVersion = "1.3.6";
+
+// still string | undefined so i put null coalescing
+export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";
+
+// still string | undefined so i put null coalescing
+export const CLIENT_ID = process.env.CLIENT_ID ?? "";
+
+export const CLIENT_SECRET = process.env.CLIENT_SECRET ?? "";
+export const port = process.env.PORT ?? "3000";
+export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
+export const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
+
+// FROM HERE IS THE CHECKING FOR .env
 
 if(process.env.MODE === "production" || process.env.MODE === "development")
     MODE = process.env.MODE;
@@ -14,41 +39,21 @@ else{
     MODE =  "development";
 }
 
-// basic configs
-// max character bot can allow, if message word count is higher then the message will be ignored
-export const max_message_allowed = 100;
-
-// time for error message to be deleted (in seconds)
-export const message_delete_time = 10;
-export const inline_command_coldown_time = MODE === "development" ? 5 : 30;
-
-export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
-export const botVersion = "1.3.6";
-
 if(process.env.DISCORD_TOKEN === ""){
     throw new Error("Couldn't find DISCORD_TOKEN in .env");
 }
 
-// still string | undefined so i put null coalescing
-export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";
-
 if(process.env.APPLICATION_ID === "")
     throw new Error("Couldn't find Bot ID in .env");
 
-// still string | undefined so i put null coalescing
-export const CLIENT_ID = process.env.CLIENT_ID ?? "";
+if(SESSION_SECRET === "") throw new Error("Couldn't find SESSION_SECRET in .env");
 
 if(CLIENT_ID === "") console.warn("Warning: Couldn't find CLIENT_ID in .env");
 
-export const CLIENT_SECRET = process.env.CLIENT_SECRET ?? "";
-
 if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .env");
 
-export const port = process.env.PORT ?? "3000";
-
-export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
-
 if(OAUTH2_REDIRECT_URL === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL in .env");
+
 
 // muted variable to share across all modules
 export let muted = false;
@@ -90,6 +95,3 @@ if(Object.keys(firebase_config).length === 0)
 
 export const firebaseApp = initializeApp(firebase_config);
 export const firestore = getFirestore(firebaseApp);
-
-
-// all exports

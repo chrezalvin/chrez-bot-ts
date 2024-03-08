@@ -1,4 +1,4 @@
-export default class Score{
+export class Score{
     private m_win: number = 0;
     private m_lose: number = 0;
     private m_draw: number = 0;
@@ -46,3 +46,5 @@ export default class Score{
     get loseStreakCount(){ return this.m_loseStreak; }
     get drawSteakCount(){ return this.m_drawStreak; }
 }
+
+export default Score;

@@ -2,13 +2,15 @@ import privateCommands from "../private";
 
 import cry from "./cry";
 import weirdThing from "./weirdThing";
-import { CommandBuilder } from "@library/CommandBuilder";
+import rice from "./rice";
+import { CommandBuilder } from "@library";
 
-const c: (CommandBuilder<any>)[] = [
+const commandList: (CommandBuilder<any>)[] = [
     cry,
-    weirdThing
+    rice,
+    weirdThing,
 ]
 .filter(command => command.mode !== "unavailable")
 .map(command => command.setStatus("hidden"));
 
-export default c;
+export default commandList;

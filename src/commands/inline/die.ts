@@ -1,8 +1,7 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
+import {inlineCommandReturnTypes, rngInt} from "@library";
 import { MessageType } from "discord.js";
 
 import dieMessages from "@assets/messages/inline/die.json";
-import { rngInt } from "@library/basicFunctions";
 import { ownerID } from "@config";
 
 const command: inlineCommandReturnTypes = {

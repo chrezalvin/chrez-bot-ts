@@ -16,8 +16,10 @@ import recommend from "./recommend";
 import agree from "./agree";
 import disagree from "./disagree";
 import laugh from "./laugh";
+import convert from "./convert";
 import { CommandBuilder } from "@library/CommandBuilder";
 import embedify from "./embedify";
+import hug from "./hug";
 
 const c: (CommandBuilder<any>)[] = [
     hello, 
@@ -36,6 +38,8 @@ const c: (CommandBuilder<any>)[] = [
     disagree,
     laugh,
     embedify,
+    convert,
+    hug
 ].filter(command => command.mode !== "unavailable");
 
 // hidden command will not shown on Chrez help

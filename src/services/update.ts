@@ -1,4 +1,5 @@
 import { firebaseApp } from "@config";
+import { Service } from "@library/Service";
 import { 
     collection, 
     doc, 
@@ -29,47 +30,31 @@ export function isUpdate(obj: unknown): obj is I_Update{
         return false;
 }
 
-export async function getAllUpdate(): Promise<I_Update[]>{
-    const q = query(collection(db, dbName));
-    const snapShot = await getDocs(q);
+export class UpdateService{
+    protected static dbName = "update";
 
-    const updates: I_Update[] = snapShot.docs
-                .filter(doc => isUpdate(doc.data()))
-                .map(doc => {
-                    return {
-                        version: doc.id,
-                        news: doc.data().news,
-                        bugfix: doc.data().bugfix
-                    };
-                });
-
-    return updates;
-}
-
-export async function getUpdate(version: string): Promise<I_Update>{
-    const docRef = doc(db, dbName, version);
-    const docSnap = await getDoc(docRef);
-
-    if(docSnap.exists() && isUpdate(docSnap.data()))
-        return {
-            version,
-            news: docSnap.data().news,
-            bugfix: docSnap.data().bugfix
-        };
-
-    throw new Error("version not found");
-}
-
-export async function addNewUpdate(update: I_Update): Promise<boolean>{
-    const docRef = doc(db, dbName, update.version);
-    const docSnap = await getDoc(docRef);
-
-    if(docSnap.exists())
-        return false;
-
-    await setDoc(docRef, {
-        ...update
+    public static service: Service<I_Update> = new Service<I_Update>({
+        dbName,
+        typeGuard: isUpdate
     });
 
-    return true;
+    public static getUpdate(version: string): I_Update{
+        const find = UpdateService.service.findFirst((update) => update.version === version);
+
+        if(!find)
+            throw new Error("version not found");
+
+        // return first occurence
+        return find.data;
+    }
+
+    public static async getAllUpdate(): Promise<I_Update[]>{
+        const allData = await UpdateService.service.getAllData();
+        const arr = Array.from(allData.values());
+
+        return arr;
+    }
 }
+
+// load the data then cache it at the start of the server
+UpdateService.service.getAllData();

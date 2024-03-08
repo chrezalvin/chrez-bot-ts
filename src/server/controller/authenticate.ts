@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { OAUTH2_REDIRECT_URL } from "@config";
 import { sessions } from "@shared/UserSessions";
 
-import { userIsAdmin } from "@library/profiles";
+import { userIsAdmin } from "@library";
 import { requestOauth2, collectUserData } from "services/authenticate";
 
 export async function authenticate_get(req: Request, res: Response, next: NextFunction){

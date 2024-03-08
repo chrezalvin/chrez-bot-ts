@@ -1,8 +1,7 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, CommandBuilder} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 const run = (args: I_Roll) => {
     const rng = rngInt(args.first, args.second);

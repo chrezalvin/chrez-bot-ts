@@ -1,9 +1,7 @@
-import {CommandReturnTypes} from "library/customTypes";
 import { SlashCommandBuilder } from "discord.js";
 
-import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
+import { MyEmbedBuilder, rngInt, CommandBuilder, CommandReturnTypes } from "@library";
 import {disagrees} from "@assets/data/disagrees.json";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 function run(args?: I_Disagree){
     if(args?.description !== undefined && args?.description !== ""){

@@ -1,6 +1,5 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
+import {inlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
 import { AttachmentBuilder, MessageCreateOptions, MessagePayload } from "discord.js";
-import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
 
 import { getRandomLickUrl } from "services/lick";
 

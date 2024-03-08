@@ -1,7 +1,5 @@
-import {CommandReturnTypes} from "library/customTypes";
+import {CommandReturnTypes, MyEmbedBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
-
-import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
 
 function convertTimezone(date: Date, timezone: string){
     const time = date.toLocaleString("en-US", {timeZone: timezone});

@@ -1,4 +1,4 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
+import {inlineCommandReturnTypes} from "@library";
 
 const command: inlineCommandReturnTypes = {
     name: "sad",

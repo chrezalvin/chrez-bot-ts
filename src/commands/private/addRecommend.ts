@@ -1,34 +1,35 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { ErrorValidation } from "@library/ErrorValidation";
-import { Recommend, addRecommend, getAllRecommend, getRecommendById } from "services/recommend";
+import { Recommend, RecommendService } from "services/recommend";
 
 const run = async (args?: Recommend): Promise<MessageCreateOptions | ErrorValidation> => {
     if(!args)
         return new ErrorValidation("no_argument_provided");
 
-    const id = await addRecommend(args);
-    const resRec = await getRecommendById(id);
+    const id = await RecommendService.createNewrecommend(args, args.imgUrl);
+
+    const resRec = await RecommendService.service.getById(id);
 
     const embed = new MyEmbedBuilder();
 
     // highly inneficient, but will do for now
     const recommend = resRec;
 
-    console.log(recommend.data.category);
-
     embed
-        .setTitle(recommend.data.title)
-        .setDescription(recommend.data.description);
+        .setTitle(recommend.title)
+        .setDescription(recommend.description);
 
-    if(recommend.data.imgUrl)
-        embed.setThumbnail(recommend.data.imgUrl);
-    if(recommend.data.link)
-        embed.setURL(recommend.data.link);
-    if(recommend.data.category)
-        embed.setFooter({text: `category: ${recommend.data.category.join(", ")}`});
+    if(resRec.imgUrl){
+        const downloadUrl = await RecommendService.fileManger.getUrlFromPath(resRec.imgUrl);
+        embed.setThumbnail(downloadUrl);
+    }
+
+    if(recommend.link)
+        embed.setURL(recommend.link);
+
+    if(recommend.category)
+        embed.setFooter({text: `category: ${recommend.category.join(", ")}`});
 
     return {embeds: [embed]};
 }
@@ -62,7 +63,7 @@ const slashCommand = new SlashCommandBuilder()
             .setRequired(false)
         );
 
-const yomama = new CommandBuilder<Recommend>()
+const addrecommend = new CommandBuilder<Recommend>()
         .setName("addrecommend")
         .setDescription("Recommend a random thing")
         .setSlash({
@@ -103,4 +104,4 @@ const yomama = new CommandBuilder<Recommend>()
             }
         });
 
-export default yomama;
+export default addrecommend;

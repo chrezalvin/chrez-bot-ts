@@ -1,4 +1,4 @@
-import { inlineCommandReturnTypes } from "library/customTypes";
+import { inlineCommandReturnTypes } from "@library";
 import pewpew from "./pewpew";
 import greet from "./greet";
 import die from "./die";

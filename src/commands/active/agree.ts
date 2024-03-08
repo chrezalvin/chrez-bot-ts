@@ -1,8 +1,7 @@
 import { MessageCreateOptions, MessagePayload, SlashCommandBuilder } from "discord.js";
 
-import { MyEmbedBuilder, rngInt } from "@library/basicFunctions";
+import { rngInt, CommandBuilder, MyEmbedBuilder } from "@library";
 import {agrees} from "@assets/data/agrees.json";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 function run(args?: I_Agree): MessageCreateOptions | string{
     if(args?.description !== undefined && args?.description !== ""){

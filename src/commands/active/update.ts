@@ -1,18 +1,17 @@
 const debug = require("debug")("ChrezBot:update");
 
-import {MyEmbedBuilder} from "@library/basicFunctions";
+import {MyEmbedBuilder, CommandBuilder} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
 import { prefixes, botVersion } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { getUpdate } from "services/update";
+import { UpdateService } from "services/update";
 
 const run = async ( args?: I_Update) => {
     // defaulted to latest version
     let version: string = args?.version ?? botVersion;
 
-    const update = await getUpdate(version);
+    const update = UpdateService.getUpdate(version);
     const embed = new MyEmbedBuilder();
 
     embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)

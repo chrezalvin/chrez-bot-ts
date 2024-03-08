@@ -1,10 +1,7 @@
-import {CommandReturnTypes, isChatInputCommandInteraction} from "library/customTypes";
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
+import { CommandBuilder, MyEmbedBuilder, CommandReturnTypes, isChatInputCommandInteraction, userIsAdmin } from "@library";
 
-import { MyEmbedBuilder } from "@library/basicFunctions";
 import { prefixes } from "@config";
-import { userIsAdmin } from "library/profiles";
-import { CommandBuilder } from "@library/CommandBuilder";
 
 // , privateCommands: CommandReturnTypes[]
 function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: (CommandReturnTypes | CommandBuilder<any>)[]){

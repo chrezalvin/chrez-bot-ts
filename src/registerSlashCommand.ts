@@ -1,3 +1,5 @@
+const debug = require("debug")("Bot:registerSlashCommand");
+
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes, SlashCommandBuilder } from 'discord.js';
 import { CLIENT_ID, guildIDs, DISCORD_TOKEN, MODE} from './config';
 import commands from "./commands";
@@ -28,15 +30,15 @@ const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 	try {
 		// The put method is used to fully refresh all commands in the guild with the current set
         for(const guildID of guildIDs ){
-            console.log(`Started refreshing ${slashCommands.length} application (/) commands.`);
+            debug(`Started refreshing ${slashCommands.length} application (/) commands.`);
 
             const data = await rest.put(
                 Routes.applicationGuildCommands(CLIENT_ID, guildID),
                 { body: slashCommands },
             ) as any[];
 
-            console.log(`Successfully reloaded ${data.length} application (/) commands in guild ${guildID}.`);
-            console.log(`List of all commands: ${slashCommands.map(cmd => cmd.name).join(" | ")}`);
+            debug(`Successfully reloaded ${data.length} application (/) commands in guild ${guildID}.`);
+            debug(`List of all commands: ${slashCommands.map(cmd => cmd.name).join(" | ")}`);
         }
         console.log("All commands were registered sucessfuly!");
 	} catch (error) {

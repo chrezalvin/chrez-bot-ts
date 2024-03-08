@@ -1,5 +1,4 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
-import { rngInt } from "@library/basicFunctions";
+import {inlineCommandReturnTypes, rngInt} from "@library";
 
 const dontYellMessages = [
     "Don't yell D:",

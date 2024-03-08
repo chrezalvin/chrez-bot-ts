@@ -1,11 +1,7 @@
-import {MyEmbedBuilder, rngInt} from "@library/basicFunctions";
+import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation, Score} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
-
-import Score from "@library/Score";
-import { ErrorValidation } from "@library/ErrorValidation";
 
 const roshambo = [
     {name: "rock", weakness: "paper", advantage:"scissor"},

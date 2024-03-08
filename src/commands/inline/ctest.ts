@@ -1,5 +1,4 @@
-import {inlineCommandReturnTypes} from "library/customTypes";
-import { MyEmbedBuilder} from "@library/basicFunctions";
+import {inlineCommandReturnTypes, MyEmbedBuilder} from "@library";
 
 const command: inlineCommandReturnTypes = {
     name: "test",

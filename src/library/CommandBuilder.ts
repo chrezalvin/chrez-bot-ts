@@ -1,6 +1,5 @@
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
-import { Cause, isChatInputCommandInteraction } from "library/customTypes";
-import { ErrorValidation } from "./ErrorValidation";
+import { Cause, isChatInputCommandInteraction, ErrorValidation } from "@library";
 const debug = require("debug")("ChrezBot:command");
 
 export interface ExampleField{

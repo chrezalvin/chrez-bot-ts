@@ -1,8 +1,7 @@
 const debug = require("debug")("ChrezBot:calculate");
 
 import { prefixes } from "@config";
-import { CommandBuilder } from "@library/CommandBuilder";
-import { MyEmbedBuilder } from "@library/basicFunctions";
+import { MyEmbedBuilder, CommandBuilder } from "@library";
 import { SlashCommandBuilder } from "discord.js";
 const evaluatex = require("evaluatex");
 
