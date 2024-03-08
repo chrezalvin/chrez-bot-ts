@@ -28,9 +28,13 @@ function run(args?: I_Convert){
 
     const result = convert(value).from(fromUnit).to(toUnit);
 
+    // round to 2 decimal places
+    // found some bugs but eh whatever cm -> km
+    const resultRound = Math.round(result * 100) / 100;
+
     const embed = new MyEmbedBuilder();
         embed.setTitle(`Conversion from ${fromUnit} to ${toUnit}`);
-        embed.setDescription(`${value}${fromUnit} equals to ${result}${toUnit}`);
+        embed.setDescription(`${value}${fromUnit} equals to ${resultRound}${toUnit}`);
 
     return {embeds: [embed]};
 }
