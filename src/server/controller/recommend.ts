@@ -1,10 +1,11 @@
 const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
-import { addRecommend, deleteRecommendById, getAllRecommend, getRecommend, getRecommendById, isRecommend, updateCommandById } from 'services/recommend';
+import { RecommendService, isRecommend } from 'services/recommend';
 
 export const recommend_get_default = async (req: Request, res: Response) => {
-    const recommend = await getAllRecommend();
+    const recommend = Array.from(await RecommendService.service.getAllData())
+                    .map(([id, rec]) => ({id, ...rec}));
 
     res.json(recommend);
 }
@@ -16,22 +17,22 @@ export const recommend_get_by_id = async (req: Request, res: Response) => {
     if(typeof id !== "string")
         throw new Error("Invalid id!");
 
-    const recommend = await getRecommendById(id);
+    const recommend = await RecommendService.service.getById(id);
 
     res.json(recommend);
 }
 
-export const recommend_get_by_page = async (req: Request, res: Response) => {
-    debug("GET /recommend");
-    const page = parseInt(req.params.page);
+// export const recommend_get_by_page = async (req: Request, res: Response) => {
+//     debug("GET /recommend");
+//     const page = parseInt(req.params.page);
 
-    if(isNaN(page))
-        throw new Error("Invalid page number!");    
+//     if(isNaN(page))
+//         throw new Error("Invalid page number!");    
 
-    const recommend = await getRecommend(page);
+//     const recommend = await getRecommend(page);
 
-    res.json(recommend);
-}
+//     res.json(recommend);
+// }
 
 export const recommend_post_add = async (req: Request, res: Response) => {
     debug("POST /recommend/add");
@@ -46,7 +47,8 @@ export const recommend_post_add = async (req: Request, res: Response) => {
     if(!isRecommend(recommend))
         throw new Error("Invalid recommend object!");
 
-    await addRecommend(recommend);
+    // TODO: add image parameter on post request
+    await RecommendService.createNewrecommend(recommend, /* recommend.imgUrl */);
 
     res.status(200);
 }
@@ -59,7 +61,7 @@ export const recommend_post_delete = async (req: Request, res: Response) => {
     if(typeof id !== "string")
         throw new Error("Invalid id!");
 
-    await deleteRecommendById(id);
+    await RecommendService.service.deleteData(id);
 }
 
 export const recommend_post_update = async (req: Request, res: Response) => {
@@ -73,5 +75,5 @@ export const recommend_post_update = async (req: Request, res: Response) => {
     if(typeof id !== "string")
         throw new Error("Invalid id!");
 
-    await updateCommandById(id, recommend);
+    await RecommendService.service.updateData(id, recommend);
 }

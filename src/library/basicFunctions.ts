@@ -1,31 +1,16 @@
-import { prefixes } from "@config";
-import { APIEmbed, Embed, EmbedBuilder, EmbedData } from "discord.js";
+const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
 
-// export class MyEmbedBuilder extends EmbedBuilder{
-//     constructor(data?: EmbedData | APIEmbed | undefined){
-//         super(data);
+/**
+ * check if the file name is an image
+ * @param filename the filename of the image (including the extension)
+ * @returns boolean whether the file is an image or not
+ */
+export function isFileImage(filename: string): boolean{
+    const extension = filename.split(/[#?]/)[0].split('.').pop()?.trim();
+    if(!extension) return false;
 
-//         if(!this.data.color)
-//             this.setColor("Yellow");
-//     }
-
-//     /**
-//      * a function factory for error embed
-//      * @param data embed data
-//      */
-//     setError(data: {
-//         description: string, 
-//         title?: string, 
-//         footer?: string
-//     }){
-//         this.data.title = data.title ?? ":warning:     error   :warning:";
-//         this.data.description = data.description;
-//         this.data.footer = {text: data.footer ?? `for command list, type ${prefixes[0]} help!`};
-//         this.setColor("Red");
-
-//         return this;
-//     }
-// }
+    return imageExtensions.includes(extension);
+}
 
 /**
  * returns a random integer between min and max (max included)

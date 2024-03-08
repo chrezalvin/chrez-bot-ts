@@ -1,27 +1,24 @@
 import {MyEmbedBuilder, rngInt, ErrorValidation, CommandBuilder} from "@library";
+import {RecommendService} from "@services/recommend";
 
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
-import { getAllRecommend } from "services/recommend";
 
 const run = async (args?: I_Recommend): Promise<MessageCreateOptions> => {
     const embed = new MyEmbedBuilder();
 
-    // highly inneficient, but will do for now
-    const recommends = await getAllRecommend();
-    const recommend = recommends[rngInt(0, recommends.length - 1)];
-
-    console.log(recommend.data.category);
+    const recommendeds = Array.from(RecommendService.service.cache.values());
+    const recommend = recommendeds[rngInt(0, recommendeds.length - 1)];
 
     embed
-        .setTitle(recommend.data.title)
-        .setDescription(recommend.data.description);
+        .setTitle(recommend.title)
+        .setDescription(recommend.description);
 
-    if(recommend.data.imgUrl)
-        embed.setThumbnail(recommend.data.imgUrl);
-    if(recommend.data.link)
-        embed.setURL(recommend.data.link);
-    if(recommend.data.category)
-        embed.setFooter({text: `category: ${recommend.data.category.join(", ")}`});
+    if(recommend.imgUrl)
+        embed.setThumbnail(recommend.imgUrl);
+    if(recommend.link)
+        embed.setURL(recommend.link);
+    if(recommend.category)
+        embed.setFooter({text: `category: ${recommend.category.join(", ")}`});
 
     return {embeds: [embed]};
 }

@@ -1,14 +1,15 @@
 const debug = require("debug")("Server:events");
-
 import Express, { NextFunction, Response, Request } from "express";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import {sessions} from "@shared/UserSessions";
+import session, {Session} from "express-session";
+import {MemoryStore} from "express-session";
 
 import routes from "./routes";
 
-import {MODE} from "@config";
+import {MODE, SESSION_SECRET} from "@config";
 
 const express = Express();
 
@@ -17,6 +18,13 @@ express.use(logger("dev"));
 express.use(Express.json());
 express.use(Express.urlencoded());
 express.use(cookieParser());
+// express.use(session({
+//     secret: SESSION_SECRET,
+//     // resave: false,
+//     // saveUninitialized: true,
+//     cookie: {secure: true, maxAge: 60},
+//     store: new MemoryStore(),
+// }))
 
 // middlware to check if user session is valid
 express.use(async (req, res, next) => {
@@ -34,9 +42,9 @@ express.use(async (req, res, next) => {
 
     const session = req.body.cookie || req.body.SESSION_KEY;
     if(session && sessions.has(session))
-        next();
+        return next();
     else
-        res.status(401).send({error: 401, message: "Unauthorized!"});
+        return res.status(401).send({error: 401, message: "Unauthorized!"});
 });
 
 for(const route of routes){

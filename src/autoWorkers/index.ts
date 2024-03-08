@@ -3,7 +3,7 @@ import recommend from "./recommend";
 
 const autoWorkersList = [
     birthday,
-    // recommend
+    recommend
 ];
 
 export default autoWorkersList;

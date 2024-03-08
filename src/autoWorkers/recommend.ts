@@ -1,35 +1,37 @@
 // birthday responder
-const debug = require("debug")("ChrezBot:birthday");
+const debug = require("debug")("ChrezBot:recommend");
 
 import { CronJob } from "cron";
 
 import { MyEmbedBuilder, rngInt } from "@library";
 import { type TextChannel, Client } from "discord.js";
-import { getAllRecommend } from "services/recommend";
+import { RecommendService } from "services/recommend";
 
 export default function recommend(client: Client<boolean>){
     // send recommendation to crystal phoenix every 12:00 am and pm
-    new CronJob("0 0,12 * * *", async () => {
+    new CronJob("0 0 * * *", async () => {
         // send to crystal phoenix
         const ch = await client.channels.fetch("739696962097512452");
 
-        const recommends = await getAllRecommend();
+        const recommends = Array.from(await RecommendService.service.getAllData());
 
-        const recommend = recommends[rngInt(0, recommends.length - 1)];
+        const recommend = recommends[rngInt(0, recommends.length - 1)][1];
 
         const embed = new MyEmbedBuilder({
-            title: recommend.data.title,
-            description: recommend.data.description
+            title: recommend.title,
+            description: recommend.description
         });
 
-        if(recommend.data.link)
-            embed.setURL(recommend.data.link);
+        if(recommend.imgUrl){
+            const downloadUrl = await RecommendService.fileManger.getUrlFromPath(recommend.imgUrl);
+            embed.setThumbnail(downloadUrl);
+        }
 
-        if(recommend.data.imgUrl)
-            embed.setImage(recommend.data.imgUrl);
+        if(recommend.link)
+            embed.setURL(recommend.link);
 
-        if(recommend.data.category)
-            embed.setFooter({text: `Category: ${recommend.data.category.join(", ")}`});
+        if(recommend.category)
+            embed.setFooter({text: `Category: ${recommend.category.join(", ")}`});
 
         if(ch)
             await (ch as TextChannel).send({content: `recommendation of the day`, embeds: [embed]});
