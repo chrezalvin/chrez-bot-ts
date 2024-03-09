@@ -10,7 +10,8 @@
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
     "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
     "build": "tsc && tsc-alias",
-    "loadSlashCommands": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
+    "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand",
+    "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
   },
   "author": "Chrez. A",
   "license": "ISC",
