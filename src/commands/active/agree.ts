@@ -19,7 +19,9 @@ interface I_Agree{
 const slashCommand = new SlashCommandBuilder()
     .setName("agree")
     .setDescription("Agrees with you")
-    .addStringOption(str => str.setDescription("your message for chrezbot to agree with").setRequired(false).setName("description"))
+    .addStringOption(str => str.setDescription("your message for chrezbot to agree with")
+    .setRequired(false)
+    .setName("description"))
 
 const agree = new CommandBuilder<I_Agree>()
         .setName("agree")

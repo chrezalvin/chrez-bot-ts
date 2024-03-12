@@ -20,7 +20,6 @@
         "memberRef": "Hidan",
         "criteria": ["india", "indian",  "ind"],
         "timezone": "Asia/Kolkata"
-
     },
     {
         "name": "Philippine/Manila",
@@ -32,7 +31,7 @@
         "name": "Canada",
         "memberRef": "Gyatop",
         "criteria": ["cad", "canada", "kanada"],
-        "timezone": "Canada/Central"
+        "timezone": "Canada/Pacific"
     },
     {
         "name": "Taiwan/Taipei",

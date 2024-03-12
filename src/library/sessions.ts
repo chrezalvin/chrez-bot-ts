@@ -1,6 +1,5 @@
 import { rngInt } from "@library/basicFunctions";
 
-
 export interface SessionStore_t<_T>{
     key: string,
     dateExpired: number;

@@ -1,34 +1,17 @@
-import {firebaseApp} from "@config";
-import { rngInt } from "@library";
-import { getStorage, ref, getDownloadURL, listAll, ListResult, StorageReference, list} from "firebase/storage";
+import { FileManager, rngInt } from "@library";
 
-const storage = getStorage(firebaseApp);
+export class CursedService{
+    static imgPath = "images/cursed";
+    static fileManager = new FileManager(CursedService.imgPath);
 
-const cursedPath = "images/cursed";
+    static getCursedList(){
+        return CursedService.fileManager.cache;
+    }
 
-export const cursedList: StorageReference[] = [];
+    static async getCursedUrl(index?: number){
+        const cache = CursedService.fileManager.cache;
+        let rand = index ?? rngInt(0, cache.length - 1);
 
-async function getCursedList(): Promise<ListResult> {
-    const list = await listAll(ref(storage, cursedPath));
-    return list;
+        return await CursedService.fileManager.getUrlFromPath(cache[rand].fullPath);
+    }
 }
-
-export async function getCursedUrl(index: number = 0): Promise<string>{
-    const url = await getDownloadURL(cursedList[index]);
-
-    return url;
-}
-
-export async function getRandomCursedUrl(): Promise<string>{
-    const index = rngInt(0, cursedList.length);
-    const ref = cursedList[index];
-    const url = await getDownloadURL(ref);
-
-    return url;
-}
-
-(async () => {
-    const list = await getCursedList();
-
-    cursedList.push(...list.items);
-})();

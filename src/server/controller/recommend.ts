@@ -1,7 +1,7 @@
 const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
-import { RecommendService, isRecommend } from 'services/recommend';
+import { RecommendService } from 'services/recommend';
 
 export const recommend_get_default = async (req: Request, res: Response) => {
     const recommend = Array.from(await RecommendService.service.getAllData())
@@ -44,7 +44,7 @@ export const recommend_post_add = async (req: Request, res: Response) => {
 
     const recommend = JSON.parse(param);
 
-    if(!isRecommend(recommend))
+    if(!RecommendService.isRecommend(recommend))
         throw new Error("Invalid recommend object!");
 
     // TODO: add image parameter on post request
@@ -70,7 +70,7 @@ export const recommend_post_update = async (req: Request, res: Response) => {
     const id = req.body.id as unknown;
     const recommend = req.body.recommend as unknown;
 
-    if(!isRecommend(recommend))
+    if(!RecommendService.isRecommend(recommend))
         throw new Error("Invalid recommend object!");
     if(typeof id !== "string")
         throw new Error("Invalid id!");

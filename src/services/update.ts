@@ -1,14 +1,4 @@
-import { firebaseApp } from "@config";
 import { Service } from "@library/Service";
-import { 
-    collection, 
-    doc, 
-    getDoc, 
-    getDocs, 
-    getFirestore, 
-    query, 
-    setDoc,
-} from "firebase/firestore/lite";
 
 export interface I_Update{
     version: string;
@@ -16,26 +6,22 @@ export interface I_Update{
     bugfix?: string[];
 }
 
-const dbName = "update";
-const db = getFirestore(firebaseApp);
-
-export function isUpdate(obj: unknown): obj is I_Update{
-    if(typeof obj !== "object" || obj === null) return false;
-
-    // update can have either news or bugfix or both
-    if("news" in obj && "bugfix" in obj) return true;
-    else if("news" in obj && !("bugfix" in obj)) return true;
-    else if(!("news" in obj) && "bugfix" in obj) return true;
-    else
-        return false;
-}
-
 export class UpdateService{
     protected static dbName = "update";
+    static isUpdate(obj: unknown): obj is I_Update{
+        if(typeof obj !== "object" || obj === null) return false;
+    
+        // update can have either news or bugfix or both
+        if("news" in obj && "bugfix" in obj) return true;
+        else if("news" in obj && !("bugfix" in obj)) return true;
+        else if(!("news" in obj) && "bugfix" in obj) return true;
+        else
+            return false;
+    }
 
     public static service: Service<I_Update> = new Service<I_Update>({
-        dbName,
-        typeGuard: isUpdate
+        dbName: UpdateService.dbName,
+        typeGuard: UpdateService.isUpdate
     });
 
     public static getUpdate(version: string): I_Update{
@@ -55,6 +41,3 @@ export class UpdateService{
         return arr;
     }
 }
-
-// load the data then cache it at the start of the server
-UpdateService.service.getAllData();

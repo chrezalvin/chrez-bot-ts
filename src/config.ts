@@ -17,7 +17,7 @@ export const message_delete_time = 10;
 
 export const inline_command_coldown_time = MODE === "development" ? 5 : 30;
 export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
-export const botVersion = "1.4.0";
+export const botVersion = "1.4.1";
 
 // still string | undefined so i put null coalescing
 export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";

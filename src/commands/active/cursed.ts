@@ -2,11 +2,10 @@ import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library"
 
 import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { prefixes } from "@config";
-import { cursedList, getCursedUrl } from "services/cursed";
-
-let attachment: AttachmentBuilder;
+import { CursedService } from "services/cursed";
 
 const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Cursed) => {
+    const cursedListLength = CursedService.getCursedList().length;
 
     if(args === undefined) throw new Error("no argument provided");
 
@@ -15,14 +14,13 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
             if(!message.channel.nsfw)
                 return new ErrorValidation("command_restricted", "cursed image", "age restricted channel");
 
-    if(args.index >= cursedList.length)
-        return new ErrorValidation("index_out_of_bounds", 0,  cursedList.length - 1);
+    if(args.index >= cursedListLength)
+        return new ErrorValidation("index_out_of_bounds", 0,  cursedListLength - 1);
     if(args.index < 0)
         return new ErrorValidation("index_negative");
 
-    const cursedUrl = await getCursedUrl(args.index);
-    attachment = new AttachmentBuilder(cursedUrl, {name: `cursed.jpg`})
-    const embed = new MyEmbedBuilder({title: `cursed #${args.index}`}).setImage(`attachment://cursed.jpg`);
+    const cursedUrl = await CursedService.getCursedUrl(args.index);
+    const embed = new MyEmbedBuilder({title: `cursed #${args.index}`}).setImage(cursedUrl);
 
     return [embed];
 }
@@ -47,15 +45,16 @@ const cursed = new CommandBuilder<I_Cursed>({
               .setDescription("Index to specify which cursed image you want to see")
               .setMinValue(0)),
         interact: async (interaction, args) => {
+            await interaction.deferReply();
             const embeds = await run(interaction, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
 
-            await interaction.reply({embeds, files: [attachment]});
+            await interaction.editReply({embeds});
         },
         getParameter(interaction) {
-            const index = interaction.options.getInteger("index", false) ?? rngInt(0, cursedList.length - 1);
+            const index = interaction.options.getInteger("index", false) ?? rngInt(0, CursedService.getCursedList().length - 1);
 
             return {index};
         }
@@ -67,10 +66,10 @@ const cursed = new CommandBuilder<I_Cursed>({
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
 
-            await message.channel.send({embeds, files: [attachment]});
+            await message.channel.send({embeds});
         },
         getParameter(_, args) {
-            let index = rngInt(0, cursedList.length - 1);
+            let index = rngInt(0, CursedService.getCursedList().length - 1);
 
             if(args.length != 0){
                 let num = parseInt(args[0]);

@@ -1,9 +1,11 @@
-const debug = require("debug")("app:service");
+const debug = require("debug")("Server:Service");
 
 import { firebaseApp } from "@config";
-import { DocumentData, DocumentReference, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, writeBatch } from "firebase/firestore/lite";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, updateDoc, writeBatch } from "firebase/firestore/lite";
 
 export class Service<T extends { [x: string]: any; }>{
+    public static s_services: Service<any>[] = [];
+
     protected static db = getFirestore(firebaseApp);
 
     protected m_cache: Map<string, T> = new Map();
@@ -17,6 +19,12 @@ export class Service<T extends { [x: string]: any; }>{
     }){
         this.m_typeGuard = settings.typeGuard;
         this.m_dbName = settings.dbName;
+
+        // fills the cache when created
+        this.getAllData();
+
+        // put the instance into the static array
+        Service.s_services.push(this);
     }
 
 

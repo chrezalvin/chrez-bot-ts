@@ -54,7 +54,9 @@ export async function sendError(
 debug("adding autoWorkers...");
 for(const autoWorker of autoWorkersList)
     try{
+        debug(`registering autoworker ${autoWorker.name}`);
         autoWorker(client);
+        debug(`autoworker ${autoWorker.name} has been registered successfully`);
     }
     catch(e: unknown){
         if(typeof e === "object" && e !== null)

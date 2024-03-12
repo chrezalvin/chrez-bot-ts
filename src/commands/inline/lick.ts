@@ -1,11 +1,11 @@
 import {inlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
 import { AttachmentBuilder, MessageCreateOptions, MessagePayload } from "discord.js";
 
-import { getRandomLickUrl } from "services/lick";
+import { LickService } from "services/lick";
 
 const arrayOfFunctions: (string | (() => Promise<(MessagePayload | MessageCreateOptions)>))[] = [
     async () => {
-        const lickUrl = await getRandomLickUrl();
+        const lickUrl = await LickService.getLickUrl();
 
         const attachment = new AttachmentBuilder(lickUrl, {name: "licks.jpg"});
         const embed = new MyEmbedBuilder({title: "licks", footer: {text: ""}}).setImage("attachment://licks.jpg");

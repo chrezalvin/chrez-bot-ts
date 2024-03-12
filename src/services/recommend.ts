@@ -1,7 +1,6 @@
 const debug = require('debug')('Server:recommend');
 
-import { Service } from "@library/Service";
-import { FileManager } from "@library/FileManager";
+import { Service, FileManager } from "@library";
 
 export interface Recommend{
     title: string;
@@ -11,21 +10,21 @@ export interface Recommend{
     category?: string[];
 }
 
-export function isRecommend(obj: unknown): obj is Recommend{
-    if(typeof obj !== "object" || obj === null) return false;
-
-    if(!("title" in obj) || !("description" in obj)) return false;
-
-    return obj.title !== undefined && obj.description !== undefined;
-}
-
 export class RecommendService{
     protected static recommendedPath = "images/recommend";
     protected static recommend = "recommend";
 
+    public static isRecommend(obj: unknown): obj is Recommend{
+        if(typeof obj !== "object" || obj === null) return false;
+    
+        if(!("title" in obj) || !("description" in obj)) return false;
+    
+        return obj.title !== undefined && obj.description !== undefined;
+    }
+
     public static service: Service<Recommend> = new Service<Recommend>({
         dbName: RecommendService.recommend,
-        typeGuard: isRecommend
+        typeGuard: RecommendService.isRecommend
     });
 
     public static fileManger: FileManager = new FileManager(RecommendService.recommendedPath);
@@ -54,6 +53,3 @@ export class RecommendService{
         return id;
     }
 }
-
-// load the data then cache it at the start of the server
-RecommendService.service.getAllData();

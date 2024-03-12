@@ -4,7 +4,7 @@ import { MyEmbedBuilder, rngInt, CommandBuilder, CommandReturnTypes } from "@lib
 import {disagrees} from "@assets/data/disagrees.json";
 
 function run(args?: I_Disagree){
-    if(args?.description !== undefined && args?.description !== ""){
+    if(args?.description){
         const embed = new MyEmbedBuilder({
             title: args.description, 
             description: disagrees[rngInt(0, disagrees.length - 1)]
@@ -32,7 +32,11 @@ const command: CommandReturnTypes = {
         slashCommand: new SlashCommandBuilder()
             .setName("disagree")
             .setDescription("disagrees with you")
-            .addStringOption(str => str.setDescription("your message for chrezbot to disagree with").setRequired(false).setName("description")),
+            .addStringOption(str => str
+                .setDescription("your message for chrezbot to disagree with")
+                .setRequired(false)
+                .setName("description")
+            ),
         interact: async (interaction) => {        
             const description = interaction.options.getString("description", false);
             if(description){
