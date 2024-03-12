@@ -58,10 +58,10 @@
       "alias": ["gya", "goya", "gyatop"],
       "birthday": {
         "day": 12,
-        "month": 3,
+        "month": 4,
         "year": null
       },
-      "timezone": "Canada/Central"
+      "timezone": "Canada/Pacific"
     },
     {
       "discordID": "345651346504024068",

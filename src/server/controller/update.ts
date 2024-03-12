@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { isUpdate, UpdateService } from "services/update";
+import { UpdateService } from "services/update";
 
 import {botVersion} from "@config";
 

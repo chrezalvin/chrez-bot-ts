@@ -4,8 +4,10 @@ import logger from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import {sessions} from "@shared/UserSessions";
-import session, {Session} from "express-session";
-import {MemoryStore} from "express-session";
+import session from "express-session";
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
 
 import routes from "./routes";
 
@@ -18,22 +20,27 @@ express.use(logger("dev"));
 express.use(Express.json());
 express.use(Express.urlencoded());
 express.use(cookieParser());
-// express.use(session({
-//     secret: SESSION_SECRET,
-//     // resave: false,
-//     // saveUninitialized: true,
-//     cookie: {secure: true, maxAge: 60},
-//     store: new MemoryStore(),
-// }))
+express.use(session({
+    secret: SESSION_SECRET,
+    // resave: false,
+    // saveUninitialized: true,
+    cookie: {secure: true, maxAge: 60},
+    store: new MemoryStore({
+        checkPeriod: 8640000,
+    }),
+    resave: false
+}))
+
+// logger
+if(MODE === "development"){
+    debug("dev mode, skipping session check");
+    express.use((_req, _res, next) => {
+        next();
+    });
+}
 
 // middlware to check if user session is valid
 express.use(async (req, res, next) => {
-    if(MODE === "development"){
-        debug("dev mode, skipping session check");
-        next();
-        return;
-    }
-
     // special case for authentication, in this case we dont need to check the session
     if(req.path === "/authenticate" || req.method === "GET"){
         next();

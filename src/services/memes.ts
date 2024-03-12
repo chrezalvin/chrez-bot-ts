@@ -1,39 +1,22 @@
-import {firebaseApp} from "@config";
-import { rngInt } from "@library";
-import { getStorage, ref, getDownloadURL, listAll, ListResult, StorageReference, list} from "firebase/storage";
+import { FileManager, rngInt } from "@library";
 
-const storage = getStorage(firebaseApp);
+export class MemeService{
+    protected static readonly memePathSfw = "images/memes/sfw";
+    protected static readonly memePathNsfw = "images/memes/nsfw";
 
-const memePathSfw = "images/memes/sfw";
-const memePathNsfw = "images/memes/nsfw";
+    public static fileManagerNsfw = new FileManager(MemeService.memePathNsfw);
+    public static fileManagerSfw = new FileManager(MemeService.memePathSfw);
 
-export const memeListSfw: StorageReference[] = [];
-export const memeListNsfw: StorageReference[] = [];
+    static getMemeList(nsfw: boolean = false){
+        if(nsfw)
+            return MemeService.fileManagerNsfw.cache;
+        else return MemeService.fileManagerSfw.cache;
+    }
 
+    static async getMemeUrl(nsfw: boolean = false, index?: number): Promise<string>{
+        const service: FileManager = nsfw ? MemeService.fileManagerNsfw : MemeService.fileManagerSfw;
+        const rand = service.cache[index ?? rngInt(0, service.cache.length - 1)];
 
-async function getMemeList(nsfw: boolean = false): Promise<ListResult> {
-    const list = await listAll(ref(storage, nsfw ? memePathNsfw : memePathSfw));
-    return list;
+        return await service.getUrlFromPath(rand.fullPath);
+    }
 }
-
-export async function getMemeUrl(index: number = 0, nsfw: boolean = false): Promise<string>{
-    const url = await getDownloadURL(nsfw ? memeListNsfw[index] : memeListSfw[index]);
-
-    return url;
-}
-
-export async function getRandomMemeUrl(nsfw: boolean = false): Promise<string>{
-    const index = rngInt(0, nsfw ? memeListNsfw.length : memeListSfw.length);
-    const ref = nsfw ? memeListNsfw[index] : memeListSfw[index];
-    const url = await getDownloadURL(ref);
-
-    return url;
-}
-
-(async () => {
-    const listSfw = await getMemeList(false);
-    const listNsfw = await getMemeList(true);
-
-    memeListSfw.push(...listSfw.items);
-    memeListNsfw.push(...listNsfw.items);
-})();

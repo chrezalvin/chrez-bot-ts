@@ -2,17 +2,14 @@ import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library"
 
 import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { prefixes } from "@config";
-import { getMemeUrl, memeListNsfw, memeListSfw } from "services/memes";
-
-// global attachment because it needs to be included when sending too
-let attachment: AttachmentBuilder;
+import { MemeService } from "@services";
 
 const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Memes) => {
-    const sfw_memes_length = memeListSfw.length;
-    const nsfw_memes_length = memeListNsfw.length;
+    const sfw_memes_length = MemeService.fileManagerSfw.cache.length;
+    const nsfw_memes_length = MemeService.fileManagerNsfw.cache.length;
 
     const nsfw: boolean = args?.nsfw ?? false;
-    let index: number | null = args?.index ?? (nsfw ? rngInt(0, nsfw_memes_length - 1) : rngInt(0, sfw_memes_length - 1));
+    let index: number = args?.index ?? rngInt(0, (nsfw ? nsfw_memes_length : sfw_memes_length) - 1);
 
     // checks if the channel is nsfw
     if(nsfw){
@@ -36,16 +33,15 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
     else if(index >= sfw_memes_length)
         return new ErrorValidation("index_out_of_bounds", 0, sfw_memes_length - 1);
 
-    const url = await getMemeUrl(index, nsfw);
+    const url = await MemeService.getMemeUrl(nsfw, index);
 
-    attachment = new AttachmentBuilder(url, {name: `memes.jpg`});
-
-    const embed = new MyEmbedBuilder({title: `meme#${index}`}).setImage(`attachment://memes.jpg`);
+    const embed = new MyEmbedBuilder({title: `meme#${index}`}).setImage(url);
 
     return [embed];
 }
 
-const slashCommand = new SlashCommandBuilder().setName("meme")
+const slashCommand = new SlashCommandBuilder()
+    .setName("meme")
     .setDescription("Sends you a meme")
     .addIntegerOption(opt => opt
         .setName("index")
@@ -75,24 +71,30 @@ const memes = new CommandBuilder<I_Memes>()
     .setSlash({
         slashCommand,
         getParameter: (interaction) => {
+            const sfw_memes_length = MemeService.fileManagerSfw.cache.length;
+            const nsfw_memes_length = MemeService.fileManagerNsfw.cache.length;
+
             const nsfw = interaction.options.getBoolean("nsfw", false) ?? false;
-            const index = interaction.options.getInteger("index", false) ?? nsfw ? rngInt(0, memeListNsfw.length - 1) : rngInt(0, memeListSfw.length - 1);
+            const index = interaction.options.getInteger("index", false) ?? rngInt(0, (nsfw ? nsfw_memes_length : sfw_memes_length) - 1);
 
             return {index, nsfw};
         },
         interact: async (interaction, args) => {
+            await interaction.deferReply();
             const embeds = await run(interaction, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
 
-            await interaction.reply({embeds, files: [attachment]});
+            await interaction.editReply({embeds});
         },
     })
     .setChat({
         getParameter: (_, args) => {
             let nsfw: boolean = false;
             let index: number = -1;
+            const sfw_memes_length = MemeService.fileManagerSfw.cache.length;
+            const nsfw_memes_length = MemeService.fileManagerNsfw.cache.length;
 
             // possible args:
             // Chrez meme 16 nsfw
@@ -110,7 +112,7 @@ const memes = new CommandBuilder<I_Memes>()
             });
 
             if(index === -1)
-                index = rngInt(0, (nsfw ? memeListNsfw.length : memeListSfw.length) - 1);
+                index = rngInt(0, (nsfw ? nsfw_memes_length : sfw_memes_length) - 1);
 
             return {index, nsfw};
         },
@@ -120,7 +122,7 @@ const memes = new CommandBuilder<I_Memes>()
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
 
-            await message.channel.send({embeds, files: [attachment]});
+            await message.channel.send({embeds});
         },
     })
     

@@ -1,19 +1,48 @@
-const debug = require("debug")("app:FileManager");
+const debug = require("debug")("Server:FileManager");
 
 import { firebaseApp } from "@config";
-import { getStorage, UploadResult, ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
+import { getStorage, UploadResult, uploadBytes, deleteObject, getDownloadURL, listAll, ref, StorageReference } from "firebase/storage";
 
 export class FileManager{
+    // map all FileManagers
+    public static s_filemanagers: FileManager[] = [];
+
     protected static readonly acceptedBlobTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     protected static storage = getStorage(firebaseApp);
 
     protected m_imgPath: string;
+    protected m_cache: StorageReference[] = [];
 
     constructor(imgPath: string){
         this.m_imgPath = imgPath;
+
+        // fills cache when instanitized, no need to await
+        this.getAllFiles();
+
+        // load the instance to the static array
+        FileManager.s_filemanagers.push(this);
+    }
+
+    // getter
+    /**
+     * the cache of the entire imgPath
+     */
+    get cache(): StorageReference[]{
+        return this.m_cache;
     }
 
     // private async base functions to only get data from database
+    /**
+     * get all files in the folder
+     * @returns list of data (might be limited per page)
+     */
+    protected async _getAllFiles(){
+        const imgRef = ref(FileManager.storage, this.m_imgPath);
+        const list = await listAll(imgRef);
+        
+        return list.items;
+    }
+
     /**
      * Uploads an image to the database, this function will only accept the extension that is in the acceptedBlobTypes
      * @param imgUrl url of the image to be uploaded
@@ -67,6 +96,15 @@ export class FileManager{
     }
 
     // public accessible functions that wraps the base functions
+    public async getAllFiles(): Promise<StorageReference[]>{
+        debug(`getting all files in ${this.m_imgPath}`);
+
+        const allFiles = await this._getAllFiles();
+        this.m_cache = allFiles;
+
+        return allFiles;
+    }
+
     public async uploadImage(imgUrl: string, filename: string): Promise<UploadResult | null>{
         debug(`Uploading ${filename}`);
         
