@@ -1,11 +1,22 @@
 import { MyEmbedBuilder } from "@library";
 import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
+import { NextFunction, RequestHandler, Request, Response } from "express";
 
 export interface Command{
     name: string;
     execute: (message: Message, args: string[]) => Awaitable<void>;
     unavailable?: boolean;
     description: string;
+}
+
+export interface RouterInterface{
+    path: string;
+    handler: RequestHandler;
+    // handler: ((req: Request, res: Response, next: NextFunction) => Promise<void> | ((req: Request, res: Response) => Promise<void>));
+    // handler: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    // handler: ((req: Request, res: Response, next: NextFunction) => Promise<void>) | ((req: Request, res: Response) => Promise<void>);
+    method: "get" | "post" | "put" | "delete" | "patch" | "options" | "head" | "connect" | "trace";
+    public?: boolean;
 }
 
 export interface EventReturnType<K extends keyof ClientEvents>{

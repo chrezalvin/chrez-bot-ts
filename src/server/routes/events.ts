@@ -1,11 +1,22 @@
-import { Router } from "express";
+import { RouterInterface } from "@library/customTypes";
 import { events_add_event, events_get } from "server/controller/events";
 
-const router = Router();
+const routes: RouterInterface[] = [
+    {
+        path: "/events",
+        handler: events_get,
+        method: "get",
+    },
+    {
+        path: "/events/:monthName",
+        handler: events_get,
+        method: "get",
+    },
+    {
+        path: "/events/add",
+        handler: events_add_event,
+        method: "post",
+    },
+];
 
-router.get("/events", events_get);
-router.get("/events/:monthName", events_get);
-
-router.post("/events/add", events_add_event);
-
-export default router;
+export default routes;

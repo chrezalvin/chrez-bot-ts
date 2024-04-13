@@ -36,9 +36,9 @@ export async function requestOauth2(
 
         throw errorJson;
       }
-  
+
       const res = await tokenResponseData.body.json();
-  
+
       return res as RESTPostOAuth2AccessTokenResult;
 }
   

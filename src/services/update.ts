@@ -40,4 +40,24 @@ export class UpdateService{
 
         return arr;
     }
+
+    public static async deleteUpdate(version: string): Promise<void>{
+        const find = UpdateService.service.findFirst((update) => update.version === version);
+
+        if(!find)
+            throw new Error("version not found");
+
+        await UpdateService.service.deleteData(find.id);
+    }
+
+    public static async editUpdate(version: string, update: I_Update): Promise<I_Update>{
+        const find = UpdateService.service.findFirst((update) => update.version === version);
+
+        if(!find)
+            throw new Error("version not found");
+
+        await UpdateService.service.updateData(find.id, update);
+
+        return update;
+    }
 }

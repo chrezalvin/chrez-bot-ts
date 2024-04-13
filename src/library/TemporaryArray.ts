@@ -47,12 +47,8 @@ export class TemporaryArray<_T> {
         return this;
     }
 
-    findData(data: _T): _T | undefined {
-        return this._data.find((d) => this._isEqual(d.data, data))?.data;
-    }
-
-    has(data: _T): boolean {
-        return this.findData(data) !== undefined;
+    find(pred: (data: _T) => boolean): _T | undefined {
+        return this._data.find((d) => pred(d.data))?.data;
     }
 
     removeData(data: _T): this {

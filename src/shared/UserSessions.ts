@@ -1,20 +1,8 @@
 // session stores for server (cached)
 
-import SessionStore from "@library/sessions";
+import { TemporaryMap } from "@library/TemporaryMap";
+import { I_User } from "@services/users";
 
-export interface I_User{
-    username: string;
-    discordID: string;
-    avatarURL?: string;
-}
-
-export function isUserSession(val: unknown): val is I_User{
-    if(val === null || typeof val !== "object") return false;
-    if(!("username" in val) || !("discordID" in val)) return false;
-
-    return typeof val.username === "string" && typeof val.discordID === "string";
-}
-
-export const sessions = new SessionStore<I_User>();
+export const sessions = new TemporaryMap<string, I_User>(60 * 60 * 1000);
 
 export default sessions;

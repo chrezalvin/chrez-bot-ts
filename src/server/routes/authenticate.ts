@@ -1,9 +1,27 @@
-import { Router } from "express";
-import { authenticate_get, authenticate_post } from "server/controller/authenticate";
+import { RouterInterface } from "@library/customTypes";
+import { authenticate_get, authenticate_post, authenticate_server, getUserProfile } from "server/controller/authenticate";
 
-const router = Router();
+export const routes: RouterInterface[] = [
+    {
+        path: "/authenticate",
+        handler: authenticate_get,
+        method: "get",
+    },
+    {
+        path: "/authenticate",
+        handler: authenticate_post,
+        method: "post",
+    },
+    {
+        path: "/authenticate_server",
+        handler: authenticate_server,
+        method: "get",
+    },
+    {
+        path: "/profile",
+        handler: getUserProfile,
+        method: "get",
+    }
+];
 
-router.get("/authenticate", authenticate_get);
-router.post("/authenticate", authenticate_post);
-
-export default router;
+export default routes;

@@ -10,13 +10,12 @@ export interface Options{
     expirationTime: number;
 }
 
-export function generateRandomString() {
+export function generateRandomString(length = 20) {
     let randomString = '';
     const randomNumber = rngInt(0, 10);
   
-    for (let i = 0; i < 20 + randomNumber; i++) {
+    for (let iii = 0; iii < length + randomNumber; iii++)
         randomString += String.fromCharCode(33 + rngInt(0, 93));
-    }
   
     return randomString;
 }
