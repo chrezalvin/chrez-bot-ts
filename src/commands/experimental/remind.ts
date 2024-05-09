@@ -1,3 +1,68 @@
+import { MessageCreateOptions, MessagePayload, SlashCommandBuilder } from "discord.js";
+
+import { rngInt, CommandBuilder, MyEmbedBuilder } from "@library";
+
+function run(args?: I_Agree): MessageCreateOptions | string{
+    if(args?.description !== undefined && args?.description !== ""){
+        const embed = new MyEmbedBuilder({title: args.description, description: "agrees[rngInt(0, agrees.length - 1)]"});
+        return {embeds: [embed]};
+    }
+    else 
+        return "agrees[rngInt(0, agrees.length - 1)]";
+}
+
+interface I_Agree{
+    description: string;
+}
+
+const slashCommand = new SlashCommandBuilder()
+    .setName("remind")
+    .setDescription("Remind people")
+    .addStringOption(str => str
+        .setDescription("the time to remind the user, format: hh:mm")
+        .setRequired(false)
+        .setName("time")
+    )
+    .addStringOption(str => str
+        .setDescription("the title of the message")
+        .setRequired(false)
+        .setName("title")
+    )
+    .addStringOption(str => str
+        .setDescription("the description of the message")
+        .setRequired(false)
+        .setName("description")
+    )
+    .addMentionableOption(mention => mention
+        .setDescription("the user to mention, if this is empty, it will mention you instead")
+        .setRequired(false)
+        .setName("mention")
+    );
+
+const remind = new CommandBuilder<I_Agree>()
+        .setName("remind")
+        .setAlias(["agrees", "agreed", "approve", "youagree?", "agree?"])
+        .setDescription("Agrees with you")
+        .setSlash({
+            slashCommand,
+            getParameter: (interaction) => {
+                const description = interaction.options.getString("description", false);
+
+                return {description: description ?? ""};
+            },
+            interact: async (interaction, args) => {
+                const get = run(args);
+                if(get instanceof MessagePayload)
+                    await interaction.reply(get);
+                else if(typeof get === "string")
+                    await interaction.reply({content: get});
+            }
+        });
+
+
+export default remind;
+
+
 // import {CommandReturnTypes} from "library/customTypes";
 // import { SlashCommandBuilder } from "discord.js";
 

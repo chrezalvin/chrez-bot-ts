@@ -69,6 +69,10 @@ export {
     FileManager,
 } from "./FileManager";
 
+export {
+    TemporaryMap
+} from './TemporaryMap';
+
 
 export {} from "";
 export {} from "";

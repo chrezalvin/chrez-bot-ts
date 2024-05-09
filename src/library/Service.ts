@@ -1,8 +1,11 @@
 const debug = require("debug")("Server:Service");
 
 import { firebaseApp } from "@config";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, updateDoc, writeBatch } from "firebase/firestore/lite";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, writeBatch } from "firebase/firestore/lite";
 
+/**
+ * Service class to handle the database operation, this class will cache the data to reduce the payload
+ */
 export class Service<T extends { [x: string]: any; }>{
     public static s_services: Service<any>[] = [];
 
@@ -21,12 +24,11 @@ export class Service<T extends { [x: string]: any; }>{
         this.m_dbName = settings.dbName;
 
         // fills the cache when created
-        this.getAllData();
+        this.getAllData(true);
 
         // put the instance into the static array
         Service.s_services.push(this);
     }
-
 
     // getter
     /**
@@ -51,11 +53,11 @@ export class Service<T extends { [x: string]: any; }>{
      * @param pred the search function
      * @returns data that matches the pred
      */
-    find(pred: (val: T) => boolean): Map<string, T> { 
-        const res = new Map<string, T>();
-        for(const [id, data]  of this.m_cache)
+    find(pred: (val: T) => boolean): {id: string, data: T}[] { 
+        const res = [];
+        for(const [id, data] of this.m_cache)
             if(pred(data))
-                res.set(id, data);
+                res.push({id, data});
         return res;
     }
 
@@ -139,11 +141,19 @@ export class Service<T extends { [x: string]: any; }>{
      * @param data the new data
      * @returns the id of the new data
      */
-    protected async _addData(data: T): Promise<string>{
-        const ref = collection(Service.db, this.m_dbName);
-        const res = await addDoc(ref, data);
+    protected async _addData(data: T, id?: string): Promise<string>{
+        if(id){
+            const docRef = doc(Service.db, this.m_dbName, id);
+            await setDoc(docRef, data);
 
-        return res.id;
+            return id;
+        }
+        else{
+            const ref = collection(Service.db, this.m_dbName);
+            const res = await addDoc(ref, data);
+    
+            return res.id;
+        }
     }
 
     /**
@@ -204,12 +214,17 @@ export class Service<T extends { [x: string]: any; }>{
     }
 
     /**
-     * gets all data from the database, if the data is already in the cache, it will return the data from the cache
+     * gets all data from the database, it will return the data from the cache
      * this operation will throw an error if the data is not found
+     * @param fetch if fetch sets to true, then fetching will occur regardless if the cache is filled
      * @returns all data from the database
      */
-    public async getAllData(): Promise<Map<string, T>>{
+    public async getAllData(fetch?: boolean): Promise<Map<string, T>>{
         debug(`gets all data from ${this.m_dbName}`);
+
+        // if not fetching then the cache will be used instead
+        if(!fetch)
+            return this.m_cache;
 
         // get all data from database
         const data = await this._getAllData();
@@ -243,15 +258,15 @@ export class Service<T extends { [x: string]: any; }>{
      * @param id id of the data
      * @param data the new data
      */
-    public async addData(data: T): Promise<string>{
+    public async addData(data: T, id?: string): Promise<string>{
         
-        const id = await this._addData(data);
-        debug(`added new data to ${this.m_dbName} with id: ${id}`);
+        const resId = await this._addData(data, id);
+        debug(`added new data to ${this.m_dbName} with id: ${resId}`);
         
         // update the cache
-        this.m_cache.set(id, data);
+        this.m_cache.set(resId, data);
 
-        return id;
+        return resId;
     }
 
     /**

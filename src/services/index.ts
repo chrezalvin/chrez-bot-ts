@@ -30,3 +30,9 @@ export {
     I_Update,
     UpdateService,
 } from "./update";
+
+export {
+    I_User,
+    Role,
+    UserService
+} from "./users";

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import {checkAccessType} from "../middlewares";
 
 import event from "./events";
 import authenticate from "./authenticate";
@@ -6,14 +7,28 @@ import recommend from "./recommend";
 import memes from "./memes";
 import cursed from "./cursed";
 import update from "./update";
+import users from "./users";
+import { RouterInterface } from "@library/customTypes";
+import { asyncErrorHandler } from "@library";
 
-export const routes: Router[] = [
+const router: Router = Router();
+
+const routes: RouterInterface[][] = [
     event,
     authenticate,
     recommend,
     memes,
     cursed,
-    update
+    update,
+    users,
 ];
 
-export default routes;
+for(const route of routes)
+    for(const routeElement of route)
+        router[routeElement.method](
+            routeElement.path, 
+            checkAccessType(routeElement.accessType),
+            asyncErrorHandler(routeElement.handler)
+        );
+
+export default router;

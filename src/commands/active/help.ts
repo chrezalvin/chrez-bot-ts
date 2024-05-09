@@ -2,10 +2,11 @@ import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, U
 import { CommandBuilder, MyEmbedBuilder, CommandReturnTypes, isChatInputCommandInteraction, userIsAdmin } from "@library";
 
 import { prefixes } from "@config";
+import { UserService } from "@services";
 
 // , privateCommands: CommandReturnTypes[]
 function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: (CommandReturnTypes | CommandBuilder<any>)[]){
-    const run = (message: Message<boolean> | ChatInputCommandInteraction<CacheType> , args?: I_Help) => {
+    const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType> , args?: I_Help) => {
         let command: string | null = args?.command ?? null;
         const embed = new MyEmbedBuilder();
     
@@ -23,7 +24,7 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
             else
                 user = message.author;
 
-            if(!userIsAdmin(user.id))
+            if(!UserService.userIsAdmin(user.id))
                 throw new Error("You're not a private member");
 
             embed.setTitle("Hold it!")
@@ -83,7 +84,7 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
         .setSlash({
             slashCommand,
             interact: async (interaction, args) => {
-                const embeds = run(interaction, args);
+                const embeds = await run(interaction, args);
                 
                 await interaction.reply({embeds});
             },
@@ -95,7 +96,7 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
         })
         .setChat({
             execute: async (message, args) => {
-                const embeds = run(message, args);
+                const embeds = await run(message, args);
 
                 await message.channel.send({embeds});
             },

@@ -6,19 +6,20 @@ import {EventArguments} from "../"
 import * as sharedCommands from "shared/commands";
 import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
 import { message_delete_time } from "@config";
+import { UserService } from "@services";
 
-function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): ErrorValidation | CommandBuilder<any>{
+function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): CommandBuilder<any>{
     if(!sharedCommands.allCommands.has(interaction.commandName))
-        return new ErrorValidation("slash_command_unavailable", interaction.commandName);
+        throw new ErrorValidation("slash_command_unavailable", interaction.commandName);
 
     const slashCommand = sharedCommands.allCommands.get(interaction.commandName)!;
 
     if(slashCommand.status === "private"){
         const userId = interaction.member?.user.id;
         if(userId === undefined)
-            return new ErrorValidation("command_user_not_found");
-        else if(!userIsAdmin(userId))
-            return new ErrorValidation("command_is_private");
+            throw new ErrorValidation("command_user_not_found");
+        else if(!(UserService.userIsAdmin(userId)))
+            throw new ErrorValidation("command_is_private");
     }
 
     return slashCommand;
@@ -35,7 +36,7 @@ const event: EventArguments<Events.InteractionCreate> = [
             if(ErrorValidation.isErrorValidation(slashCommand))
                 return await ErrorValidation.sendErrorValidation(interaction, slashCommand);
 
-            const res = await slashCommand.execute(interaction);
+            const res = slashCommand.execute(interaction);
             if(ErrorValidation.isErrorValidation(res))
                 return await ErrorValidation.sendErrorValidation(interaction, res);
         }

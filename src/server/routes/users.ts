@@ -1,11 +1,13 @@
-import { Router } from "express";
+import { RouterInterface } from "@library/customTypes";
+import { getUserById } from "server/controller/user";
 
-import { firestore } from "@config";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+const routes: RouterInterface[] = [
+    {
+        path: "/user/:userid",
+        handler: getUserById,
+        method: "post",
+        accessType: "private",
+    }
+];
 
-const router = Router();
-
-router.get("/users", async (_, res) => {
-    // get all users
-    // const users = await firestore.collection("users").get();
-});
+export default routes;

@@ -7,6 +7,7 @@ import {EventArguments} from "../"
 import { CommandBuilder, userIsAdmin, ErrorValidation, TemporaryArray } from "@library";
 import { sendError } from "@bot";
 import { Message } from "discord.js";
+import { UserService } from "@services";
 
 const holdUser = new TemporaryArray<string>([], (stra, strb) => stra === strb);
 
@@ -22,7 +23,7 @@ function commandValidation(message: Message<boolean>, command: string): CommandB
         const userId = message.author.id;
         if(userId === undefined)
             return new ErrorValidation("command_user_not_found");
-        else if(!userIsAdmin(userId))
+        else if(!UserService.userIsAdmin(userId))
             return new ErrorValidation("command_is_private");
     }
 
@@ -40,7 +41,7 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     
     // inline command handling
     // ignore inline command if chrezbot is muted
-    if(!muted && !holdUser.has(message.author.id))
+    if(!muted && !holdUser.find((data) => data === message.author.id))
         for(const [v, k] of sharedCommands.aliasCriteriaMap){
             if(typeof v === "string")
             if(message.content === v){

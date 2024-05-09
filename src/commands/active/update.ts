@@ -2,10 +2,17 @@ const debug = require("debug")("ChrezBot:update");
 
 import {MyEmbedBuilder, CommandBuilder} from "@library";
 
-import { SlashCommandBuilder } from "discord.js";
+import { APIEmbedField, EmbedBuilder, RestOrArray, SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
 import { prefixes, botVersion } from "@config";
 import { UpdateService } from "services/update";
+
+function customFieldMaker(title: string, list: string[]): APIEmbedField{
+    return {
+        name: title,
+        value: list.map(str => `- ${str}`).join("\n")
+    };
+}
 
 const run = async ( args?: I_Update) => {
     // defaulted to latest version
@@ -16,9 +23,9 @@ const run = async ( args?: I_Update) => {
 
     embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
     if(update.news)
-        embed.addFields({name: "news", value: update.news.join("\n")})
+        embed.addFields(customFieldMaker("news", update.news));
     if(update.bugfix)
-        embed.addFields({name: "bugfix", value: update.bugfix.join("\n")});
+        embed.addFields(customFieldMaker("bugfix", update.bugfix));
 
     return [embed];
 } 
@@ -46,7 +53,7 @@ const update = new CommandBuilder<I_Update>()
                 opt.setDescription("Version to specify");
 
                 return opt;
-                }),
+            }),
         getParameter: (interaction) => {
             const version = interaction.options.getString("version", false);
 

@@ -29,6 +29,11 @@ export class RecommendService{
 
     public static fileManger: FileManager = new FileManager(RecommendService.recommendedPath);
 
+    public static async getAlldata(): Promise<(Recommend & {id: string})[]>{
+        const res = await RecommendService.service.getAllData();
+        return Array.from(res).map(([id, rec]) => {return {id, ...rec}});
+    }
+
     public static async createNewrecommend(recommend: Recommend, imgUrl?: string): Promise<string>{
         // load the recommended first without the imgUrl
         const rec: Recommend = {
@@ -51,5 +56,10 @@ export class RecommendService{
         }
 
         return id;
+    }
+
+    public static async deleteRecommend(id: string){
+        await RecommendService.service.deleteData(id);
+        await RecommendService.fileManger.deleteImage(id);
     }
 }

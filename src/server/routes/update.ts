@@ -1,12 +1,31 @@
-import { asyncErrorHandler } from "@library/server";
-import { Router } from "express";
-import { update_get, update_get_all} from "server/controller/update";
+import { RouterInterface } from "@library/customTypes";
+import { update_get, update_get_all, update_add, update_get_latest} from "server/controller/update";
 
-const router = Router();
+const routes: RouterInterface[] = [
+    {
+        path: "/update",
+        handler: update_get_all,
+        method: "get",
+        accessType: "public",
+    },
+    {
+        path: "/update/:version",
+        handler: update_get,
+        method: "get",
+        accessType: "public",
+    },
+    {
+        path: "/update/latest",
+        handler: update_get_latest,
+        method: "get",
+        accessType: "public",
+    },
+    {
+        path: "/update/add",
+        handler: update_add,
+        method: "post",
+        accessType: "owner",
+    },
+];
 
-// router.post("/update/add", asyncErrorHandler(update_post_add));
-
-router.get("/update", asyncErrorHandler(update_get_all));
-router.get("/update/:version", asyncErrorHandler(update_get));
-
-export default router;
+export default routes;

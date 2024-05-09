@@ -28,6 +28,7 @@ export const CLIENT_ID = process.env.CLIENT_ID ?? "";
 export const CLIENT_SECRET = process.env.CLIENT_SECRET ?? "";
 export const port = process.env.PORT ?? "3000";
 export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
+export const OAUTH2_REDIRECT_URL_SERVER = process.env.OAUTH2_REDIRECT_URL_SERVER ?? "";
 export const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
 
 // FROM HERE IS THE CHECKING FOR .env
@@ -53,6 +54,7 @@ if(CLIENT_ID === "") console.warn("Warning: Couldn't find CLIENT_ID in .env");
 if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .env");
 
 if(OAUTH2_REDIRECT_URL === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL in .env");
+if(OAUTH2_REDIRECT_URL_SERVER === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL_SERVER in .env");
 
 
 // muted variable to share across all modules

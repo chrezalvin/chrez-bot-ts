@@ -40,4 +40,34 @@ export class UpdateService{
 
         return arr;
     }
+
+    public static async deleteUpdate(version: string): Promise<void>{
+        const find = UpdateService.service.findFirst((update) => update.version === version);
+
+        if(!find)
+            throw new Error("version not found");
+
+        await UpdateService.service.deleteData(find.id);
+    }
+
+    public static async addUpdate(version: string, update: I_Update): Promise<void>{
+        // check if the version is already exist        
+        const allData = await UpdateService.service.findFirst((update) => update.version === version);
+
+        if(allData)
+            throw new Error("version already exist");
+
+        await UpdateService.service.addData(update, version);
+    }
+
+    public static async editUpdate(version: string, update: I_Update): Promise<I_Update>{
+        const find = UpdateService.service.findFirst((update) => update.version === version);
+
+        if(!find)
+            throw new Error("version not found");
+
+        await UpdateService.service.updateData(find.id, update);
+
+        return update;
+    }
 }
