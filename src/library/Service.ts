@@ -30,7 +30,6 @@ export class Service<T extends { [x: string]: any; }>{
         Service.s_services.push(this);
     }
 
-
     // getter
     /**
      * database name
@@ -54,11 +53,11 @@ export class Service<T extends { [x: string]: any; }>{
      * @param pred the search function
      * @returns data that matches the pred
      */
-    find(pred: (val: T) => boolean): Map<string, T> { 
-        const res = new Map<string, T>();
-        for(const [id, data]  of this.m_cache)
+    find(pred: (val: T) => boolean): {id: string, data: T}[] { 
+        const res = [];
+        for(const [id, data] of this.m_cache)
             if(pred(data))
-                res.set(id, data);
+                res.push({id, data});
         return res;
     }
 

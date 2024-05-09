@@ -1,4 +1,5 @@
 import { Router } from "express";
+import {checkAccessType} from "../middlewares";
 
 import event from "./events";
 import authenticate from "./authenticate";
@@ -24,6 +25,10 @@ const routes: RouterInterface[][] = [
 
 for(const route of routes)
     for(const routeElement of route)
-        router[routeElement.method](routeElement.path, asyncErrorHandler(routeElement.handler));
+        router[routeElement.method](
+            routeElement.path, 
+            checkAccessType(routeElement.accessType),
+            asyncErrorHandler(routeElement.handler)
+        );
 
 export default router;

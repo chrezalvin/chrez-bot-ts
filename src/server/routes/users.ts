@@ -6,6 +6,7 @@ const routes: RouterInterface[] = [
         path: "/user/:userid",
         handler: getUserById,
         method: "post",
+        accessType: "private",
     }
 ];
 

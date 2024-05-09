@@ -26,7 +26,7 @@ export async function authenticate_get(req: Request, res: Response, next: NextFu
   const user = await collectUserData(oauth2Response);
   const resUser = await UserService.getUser(user.id);
 
-  if(!UserService.userIsAdmin(resUser)){
+  if(!UserService.userIsAdmin(user.id)){
     debug(`user ${user.username} tried to login but is not an admin`);
     throw new Error("User is not an admin");
   }
@@ -42,7 +42,7 @@ export async function authenticate_get(req: Request, res: Response, next: NextFu
 export async function authenticate_post(req: Request, res: Response, next: NextFunction){
   if(req.body.SESSION_KEY !== undefined){
     const SESSION_KEY = req.body.SESSION_KEY;
-    const find = sessions.getData(SESSION_KEY);
+    const find = sessions.get(SESSION_KEY);
 
     if(find){
       debug(`got sessionkey for user: ${find.username}`);
@@ -75,7 +75,7 @@ export async function authenticate_server(req: Request, res: Response, next: Nex
   const user = await collectUserData(oauth2Response);
   const resUser = await UserService.getUser(user.id);
 
-  if(!UserService.userIsAdmin(resUser)){
+  if(!UserService.userIsAdmin(user.id)){
     debug(`user ${user.username} tried to login but is not admin`);
     throw new Error("User is not admin");
   }
@@ -93,7 +93,7 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
   const sessionid = req.cookies.sessionid;
 
   if(typeof sessionid === "string"){
-    const userSession = sessions.getData(sessionid);
+    const userSession = sessions.get(sessionid);
 
     if(userSession !== undefined){
       res.json(userSession);

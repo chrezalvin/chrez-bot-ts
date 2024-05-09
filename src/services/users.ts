@@ -4,6 +4,7 @@ export type Role = "admin" | "vice" | "owner";
 export interface I_User{
     username: string,
     alias: string[],
+    discordId: string,
     role?: Role,
     birthday?: {
         day: number,
@@ -18,6 +19,7 @@ export class UserService {
     static isUser(obj: unknown): obj is I_User{
         if(typeof obj !== "object" || obj === null) return false;
 
+        if(!("discordId" in obj)) return false;
         if(!("username" in obj)) return false;
         if(!("alias" in obj)) return false;
         if("role" in obj){
@@ -48,7 +50,7 @@ export class UserService {
         typeGuard: UserService.isUser
     });
 
-    public static async getUser(userid: string){
+    public static async getUser(userid: string): Promise<I_User>{
         const find = await UserService.service.getById(userid);
 
         return find;
@@ -79,14 +81,33 @@ export class UserService {
         return await UserService.service.addData(user, userid);
     }
 
-    public static userIsAdmin(user: I_User): boolean{
-        switch(user.role){
-            case "admin":
-            case "vice":
-            case "owner":
-                return true;
-            default:
-                return false;
+    public static userIsAdmin(discordId: string): boolean{
+        try{
+            const user = UserService.service.cache.get(discordId);
+            if(!user) throw new Error("User not found");
+
+            switch(user.role){
+                case "admin":
+                case "vice":
+                case "owner":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        catch(e){
+            return false;
         }
     }
+
+    // public static userIsAdmin(user: I_User): boolean{
+    //     switch(user.role){
+    //         case "admin":
+    //         case "vice":
+    //         case "owner":
+    //             return true;
+    //         default:
+    //             return false;
+    //     }
+    // }
 }

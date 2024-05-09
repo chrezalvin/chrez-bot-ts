@@ -1,6 +1,3 @@
-import sessionCheck from "./sessionCheck";
-
-// you need to be careful with the order of the middlewares
-const middlewares = [
-    sessionCheck
-];
+export {sessionCheck} from "./sessionCheck";
+export {page404} from "./404";
+export {checkAccessType} from "./checkAccessType";

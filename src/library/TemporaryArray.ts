@@ -6,9 +6,9 @@ const debugs = require("debug")("ChrezBot:TemporaryArray");
  * TemporaryArray is an array that the data will be deleted after a certain time
  */
 export class TemporaryArray<_T> {
-    private _data: { data: _T, timeOut: NodeJS.Timeout }[] = [];
-    private _time: number;
-    private _isEqual: (a: _T, b: _T) => boolean;
+    private m_data: { data: _T, timeOut: NodeJS.Timeout }[] = [];
+    private m_time: number;
+    private m_isEqual: (a: _T, b: _T) => boolean;
 
     /**
      * 
@@ -22,38 +22,38 @@ export class TemporaryArray<_T> {
     ) {
         for(const d of data)
             this.addData(d);
-        this._isEqual = isEqual;
-        this._time = time;
+        this.m_isEqual = isEqual;
+        this.m_time = time;
 
         debugs(`created TemporaryArray with ${data.length} data that lasted for ${time}ms`);
     }
 
     // getters
-    get data(): _T[] { return this._data.map(d => d.data); }
-    get timeOut(): number { return this._time; }
+    get data(): _T[] { return this.m_data.map(d => d.data); }
+    get timeOut(): number { return this.m_time; }
 
     // methods
-    addData(data: _T): this {
+    addData(data: _T, timeoutms?: number): this {
         const timeOut = setTimeout(
             () => {
-                this._data = this._data.filter((d) => !this._isEqual(d.data, data));
-                debugs(`removed data from TemporaryArray, now has ${this._data.length} data`);
-            }, this._time
-        )
-        this._data.push({ data, timeOut });
+                this.m_data = this.m_data.filter((d) => !this.m_isEqual(d.data, data));
+                debugs(`removed data from TemporaryArray, now has ${this.m_data.length} data`);
+            }, timeoutms ?? this.m_time);
+            
+        this.m_data.push({ data, timeOut });
 
-        debugs(`added data to TemporaryArray, now has ${this._data.length} data`);
+        debugs(`added data to TemporaryArray, now has ${this.m_data.length} data`);
 
         return this;
     }
 
     find(pred: (data: _T) => boolean): _T | undefined {
-        return this._data.find((d) => pred(d.data))?.data;
+        return this.m_data.find((d) => pred(d.data))?.data;
     }
 
     removeData(data: _T): this {
-        this._data = this._data.filter((d) => {
-            if(this._isEqual(d.data, data)){
+        this.m_data = this.m_data.filter((d) => {
+            if(this.m_isEqual(d.data, data)){
                 clearTimeout(d.timeOut);
                 return false;
             }
