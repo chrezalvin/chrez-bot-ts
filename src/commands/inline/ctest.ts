@@ -3,7 +3,7 @@ import {inlineCommandReturnTypes, MyEmbedBuilder} from "@library";
 const command: inlineCommandReturnTypes = {
     name: "test",
     description: "Tests the time delay",
-    searchCriteria: [/^test.*$/i, "testing", "ping"],
+    searchCriteria: ["test", "testing", "ping"],
     execute: (message) => {
             // get current time
             const timeMs = new Date().getMilliseconds();
