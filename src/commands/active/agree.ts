@@ -8,7 +8,7 @@ function run(args?: I_Agree): MessageCreateOptions | string{
         const embed = new MyEmbedBuilder({title: args.description, description: agrees[rngInt(0, agrees.length - 1)]});
         return {embeds: [embed]};
     }
-    else 
+    else
         return agrees[rngInt(0, agrees.length - 1)];
 }
 

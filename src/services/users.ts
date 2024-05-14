@@ -1,11 +1,11 @@
 import { Service } from "@library/Service";
 
-export type Role = "admin" | "vice" | "owner";
+export type Role = "admin" | "vice" | "owner" | "user";
 export interface I_User{
     username: string,
     alias: string[],
     discordId: string,
-    role?: Role,
+    role: Role,
     birthday?: {
         day: number,
         month: number,
@@ -27,6 +27,7 @@ export class UserService {
                 case "admin":
                 case "vice":
                 case "owner":
+                case "user":
                     break;
                 default:
                     return false;
@@ -66,7 +67,7 @@ export class UserService {
         // find the user by id
         const user = await UserService.service.getById(userid);
 
-        await UserService.service.updateData(userid, {role: role, ...user});
+        await UserService.service.updateData(userid, {...user, role: role});
     }
 
     public static async deleteUser(userid: string){

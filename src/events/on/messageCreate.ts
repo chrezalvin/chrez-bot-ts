@@ -1,10 +1,10 @@
 const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
-import {inline_command_coldown_time, max_message_allowed, muted, prefixes} from "@config";
+import {max_message_allowed, muted, prefixes} from "@config";
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
-import { CommandBuilder, userIsAdmin, ErrorValidation, TemporaryArray } from "@library";
+import { CommandBuilder, ErrorValidation, TemporaryArray } from "@library";
 import { sendError } from "@bot";
 import { Message } from "discord.js";
 import { UserService } from "@services";
