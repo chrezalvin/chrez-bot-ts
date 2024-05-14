@@ -2,9 +2,16 @@ import {MyEmbedBuilder, rngInt, CommandBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
 
 import whys from "@assets/messages/private/why.json";
+import { UserService } from "@services";
 
 const run = (args?: I_Why) => {
-    const why = whys[rngInt(0, whys.length - 1)];
+    if(!args)
+        return "I don't know why you're asking me this.";
+
+    const user = UserService.findUser((u) => u.discordId === args.discordId);
+    const pickWhy = user?.data != null && user.data.role != "user" ? "normal": "exclusive";
+
+    const why = whys[pickWhy][rngInt(0, whys[pickWhy].length - 1)];
 
     const embed = new MyEmbedBuilder({
         title: why.title,
@@ -16,7 +23,7 @@ const run = (args?: I_Why) => {
 }
 
 interface I_Why{
-
+    discordId: string;
 }
 
 const slashCommand = new SlashCommandBuilder().setName("why").setDescription("Answering the real question");
@@ -28,7 +35,9 @@ const why = new CommandBuilder<I_Why>()
     .setSlash({
         slashCommand,
         getParameter: (interaction) => {
-            return {};
+            return {
+                discordId: interaction.user.id
+            };
         },
         interact: async (interaction, args) => {
             const res = run(args);
@@ -38,7 +47,9 @@ const why = new CommandBuilder<I_Why>()
     })
     .setChat({
         getParameter: (message, args) => {
-            return {};
+            return {
+                discordId: message.id
+            };
         },
         execute: async (message, args) => {
             const res = run(args);

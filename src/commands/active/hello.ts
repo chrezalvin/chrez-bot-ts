@@ -1,4 +1,5 @@
 import { CommandBuilder } from "@library";
+import { UserService } from "@services";
 
 const hello = new CommandBuilder<undefined>()
     .setName("hello")

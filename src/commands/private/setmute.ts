@@ -30,11 +30,18 @@ interface I_Mute{
 const slashCommand = new SlashCommandBuilder()
         .setName("mute")
         .setDescription("mutes chrezbot")
-        .addBooleanOption(input => input.setName("mute").setDescription("set mute to true or false").setRequired(true));
+        .addBooleanOption(input => input.setName("global")
+            .setDescription("if this is true, chrezbot will be muted for all users")
+            .setRequired(false)
+        )
+        .addNumberOption(input => input.setName("duration")
+            .setDescription("how long chrezbot will be muted in minutes (20 minutes if left empty)")
+            .setRequired(false)
+        );
 
 const mute = new CommandBuilder<I_Mute>()
         .setName("mute")
-        .setDescription("mutes chrezbot")
+        .setDescription("mutes chrezbot's inline command")
         .setAlias(["stfu", "shutup", "off", "shoo", "sshh"])
         .setSlash({
             slashCommand,
