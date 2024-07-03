@@ -23,7 +23,6 @@ const command: inlineCommandReturnTypes = {
             await message.reply(dieMessage);
         else if(message.content !== "die")
             await message.channel.send(dieMessage);
-
     }
 };
 

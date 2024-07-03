@@ -1,0 +1,41 @@
+{
+    "ts-node": {
+      "files": true
+    },
+    "compilerOptions": {
+      "target": "es2021",
+      "experimentalDecorators": true,
+      "module": "commonjs",
+      "rootDir": "./src",
+      "baseUrl": "src",
+      "paths": {
+        "@modules/*": ["modules/*"],
+  
+        "@typings/*": ["typings/*"],
+        
+        "@commands/*": ["commands/*"],
+        "@config": ["./config"],
+  
+        "@assets/*": ["assets/*"],
+        "@database": ["db"],
+        "@bot": ["./bot"],
+  
+        "@library": ["library/index"],
+  
+        "@shared/*": ["shared/*"],
+  
+        "@services/*": ["services/*"]
+      },      
+      "typeRoots": [
+        "./node_modules/@types",
+        "src/@types"
+      ],
+      "resolveJsonModule": true,
+      "sourceMap": true,
+      "outDir": "./output",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+  
+      "strict": true
+    }
+  }

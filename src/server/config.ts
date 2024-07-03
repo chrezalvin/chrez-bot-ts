@@ -35,13 +35,13 @@ function discordError(err: unknown): err is {error: string, error_description: s
 express.use(function(err: any, _req: Request, res: Response, _next: NextFunction) {
     res.status(err.status || 400);
     if(err instanceof Error){
-        return res.send({error: 0, message: err.message});
+        return res.status(400).json({error: 0, message: err.message});
     }
     if(discordError(err)){
-        return res.send({...err})
+        return res.status(400).json({...err})
     }
 
-    return res.send({message: "Unknown Error!", error: err});
+    return res.status(500).json({message: "Unknown Error!", error: err});
 });
 
 export default express;

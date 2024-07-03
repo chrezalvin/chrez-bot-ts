@@ -9,14 +9,16 @@ export interface I_Update{
 export class UpdateService{
     protected static dbName = "update";
     static isUpdate(obj: unknown): obj is I_Update{
-        if(typeof obj !== "object" || obj === null) return false;
+        return true;
+
+        // if(typeof obj !== "object" || obj === null) return false;
     
-        // update can have either news or bugfix or both
-        if("news" in obj && "bugfix" in obj) return true;
-        else if("news" in obj && !("bugfix" in obj)) return true;
-        else if(!("news" in obj) && "bugfix" in obj) return true;
-        else
-            return false;
+        // // update can have either news or bugfix or both
+        // if("news" in obj && "bugfix" in obj) return true;
+        // else if("news" in obj && !("bugfix" in obj)) return true;
+        // else if(!("news" in obj) && "bugfix" in obj) return true;
+        // else
+        //     return false;
     }
 
     public static service: Service<I_Update> = new Service<I_Update>({
@@ -35,7 +37,7 @@ export class UpdateService{
     }
 
     public static async getAllUpdate(): Promise<I_Update[]>{
-        const allData = await UpdateService.service.getAllData();
+        const allData = await UpdateService.service.getAllData(true);
         const arr = Array.from(allData.values());
 
         return arr;

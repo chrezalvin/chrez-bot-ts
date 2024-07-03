@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import {config} from "dotenv"; config();
 
 // firebase for database;
@@ -31,6 +32,9 @@ export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
 export const OAUTH2_REDIRECT_URL_SERVER = process.env.OAUTH2_REDIRECT_URL_SERVER ?? "";
 export const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
 
+export const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
+export const SUPABASE_KEY = process.env.SUPABASE_KEY ?? "";
+
 // FROM HERE IS THE CHECKING FOR .env
 
 if(process.env.MODE === "production" || process.env.MODE === "development")
@@ -56,6 +60,10 @@ if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .
 if(OAUTH2_REDIRECT_URL === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL in .env");
 if(OAUTH2_REDIRECT_URL_SERVER === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL_SERVER in .env");
 
+if(SUPABASE_URL === "" || SUPABASE_KEY === "") {
+    console.warn("Warning: Couldn't find SUPABASE DATABASE credentials in .env");
+    console.warn("Warning: database feature will be disabled");
+}
 
 // muted variable to share across all modules
 export let muted = false;
@@ -97,3 +105,5 @@ if(Object.keys(firebase_config).length === 0)
 
 export const firebaseApp = initializeApp(firebase_config);
 export const firestore = getFirestore(firebaseApp);
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);

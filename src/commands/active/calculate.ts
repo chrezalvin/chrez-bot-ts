@@ -66,8 +66,7 @@ type V = ((match: string, p1: string, p2: string) => string) | ((match: string, 
 
 // here's the character that will be replaced
 const replaceable = new Map<RegExp | string, V>([
-    [/(\d*\.?\d*)(\w)/g, replaceUnit], // change k, m, b, t to 000, 000000, 000000000, 000000000000
-    [/(sum|mult|multiply|sub|subtract)\(([0-9,]*)\)/g, replaceFunction], // sum(1,2,3,1,2,3) -> (1+2+3+1+2+3)
+    [/(sum|mult|multiply|sub|subtract)\(([(\d|\w)+, ?]*)\)/g, replaceFunction], // sum(1,2,3,1,2,3) -> (1+2+3+1+2+3)
     ['x', '*'],
     [/[÷|:]/g, '/'],
     ['%', '/100'],
@@ -78,11 +77,7 @@ const replaceable = new Map<RegExp | string, V>([
 
 const calculationPrecision = 5;
 
-const run = (args?: I_Calculate) => {
-    if(args === undefined) throw new Error("no expression to be evaluated!");
-
-    let expression = args.expression;
-
+export function calculateExpression(expression: string): string{
     // the expression that will be send instead for easier reading
     let expressionSend = expression.replaceAll('*', '\\*'); 
     const embed = new MyEmbedBuilder();
@@ -96,18 +91,39 @@ const run = (args?: I_Calculate) => {
             expression = expression.replaceAll(key, val);
             debug(`replace ${key} with ${val.name} | expression: ${expression}`);
         }
+    }
 
+    const isExpressionHaveUnit = expression.match(/\d+(k|m|t|b)/) !== null;
+
+    if(isExpressionHaveUnit){
+        // change k, m, b, t to 000, 000000, 000000000, 000000000000
+        expression = expression.replaceAll(/(\d*\.?\d*)(\w)/g, replaceUnit);        
+        debug(`replace ${/(\d*\.?\d*)(\w)/} with ${replaceUnit} | expression: ${expression}`);
     }
 
     debug(`end expression: ${expression}`);
-    let result = evaluatex(expression)();
+    let result: number | string = evaluatex(expression)() as number;
 
     // remove trailing 000... when the expression have measurement unit (like k, m, t, ...)
     // 4k + 4k = 8k not 8000 and 4k * 4k = 16m
-    if(args.isExpressionHaveUnit && result >= 1000){
+    if(isExpressionHaveUnit && result >= 1000){
         // count the number of zeros
         result = replaceZeroWithUnit(Number.parseInt(`${result}`) ?? 0);
     }
+
+    return result.toString();
+}
+
+const run = (args?: I_Calculate) => {
+    if(args === undefined) throw new Error("no expression to be evaluated!");
+
+    let expression = args.expression;
+
+    // the expression that will be send instead for easier reading
+    let expressionSend = expression.replaceAll('*', '\\*'); 
+    const embed = new MyEmbedBuilder();
+
+    const result = calculateExpression(expression);
 
     embed.setTitle("calculates the expression")
         .setDescription(`${expressionSend} = ${result}`);
@@ -142,7 +158,7 @@ const calculate = new CommandBuilder<I_Calculate>({
         },
         getParameter(interaction) {
             const expression = interaction.options.getString("expression", true);
-            const isExpressionHaveUnit = expression.match(/(k|m|t|b)/) !== null;
+            const isExpressionHaveUnit = expression.match(/\d+(k|m|t|b)/) !== null;
 
             return {expression, isExpressionHaveUnit};
         }

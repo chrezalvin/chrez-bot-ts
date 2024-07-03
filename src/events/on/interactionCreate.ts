@@ -4,7 +4,7 @@ import { MyEmbedBuilder, isDiscordAPIError, ErrorValidation, CommandBuilder, use
 import {EventArguments} from "../"
 
 import * as sharedCommands from "shared/commands";
-import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Events, Message } from "discord.js";
 import { message_delete_time } from "@config";
 import { UserService } from "@services";
 
@@ -30,7 +30,7 @@ const event: EventArguments<Events.InteractionCreate> = [
     async (interaction) => {
         if(!interaction.isChatInputCommand()) return;
         debug(`received interaction: /${interaction.commandName} from ${interaction.member?.user.username}`);
-        
+                
         try{
             const slashCommand = slashCommandValidation(interaction);
             if(ErrorValidation.isErrorValidation(slashCommand))

@@ -1,6 +1,6 @@
 output
 node_modules
 *.env
-test*
+test*.ts
 *.sqlite
 firebase.json
