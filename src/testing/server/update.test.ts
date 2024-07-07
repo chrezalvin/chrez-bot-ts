@@ -1,5 +1,5 @@
-import { supabase } from "../config";
-import {isUpdate, Update} from "../models/Update";
+import { supabase } from "../../config";
+import {isUpdate, Update} from "../../models/Update";
 
 const dummyUpdate: Update = {
     version: "1.0.0",

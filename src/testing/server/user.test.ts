@@ -1,5 +1,5 @@
-import {supabase} from "../config";
-import {isUser, User} from "../models/User";
+import {supabase} from "../../config";
+import {isUser, User} from "../../models/User";
 
 const dummyUser: User = {
     id: "696693247350931488",

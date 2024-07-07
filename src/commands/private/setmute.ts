@@ -1,22 +1,24 @@
 import { SlashCommandBuilder } from "discord.js";
 
 import { MyEmbedBuilder, CommandBuilder } from "@library";
-import { muted, setMute } from "@config";
+import { GlobalState } from "@shared/GlobalState";
 
 const run = (args?: I_Mute) => {
     let flagMute: boolean = args?.mute ?? true;
     
     const embed = new MyEmbedBuilder();
-    if(flagMute == muted)
-        embed.setDescription(`Chrezbot is already ${muted ? "muted": "unmuted"}`);
+    if(flagMute == GlobalState.isMuted)
+        embed.setDescription(`Chrezbot is already ${flagMute ? "muted": "unmuted"}`);
     else{
-        setMute(
+        GlobalState.setMute(
             flagMute, 
-            flagMute ? args?.onUnmuted
-            : undefined);
+            {
+                callback: args?.onUnmuted,
+            }
+        );
         embed.setTitle(`Chrezbot has been ${flagMute? "muted": "unmuted"}!`)
         if(flagMute)
-            embed.setDescription("Inline command have been muted for 10 minutes");
+            embed.setDescription("Inline command have been muted for 30 minutes");
     }
 
     return  [embed];

@@ -1,6 +1,7 @@
 const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
-import {max_message_allowed, muted, prefixes} from "@config";
+import {max_message_allowed, prefixes} from "@config";
+import { GlobalState } from "@shared/GlobalState";
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
@@ -41,7 +42,7 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     
     // inline command handling
     // ignore inline command if chrezbot is muted
-    if(!muted && !holdUser.find((data) => data === message.author.id))
+    if(!GlobalState.isMuted && !holdUser.find((data) => data === message.author.id))
         for(const [v, k] of sharedCommands.aliasCriteriaMap){
             if(typeof v === "string")
             if(message.content === v){

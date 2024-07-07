@@ -12,6 +12,29 @@ function translateUnit(unit: string): Unit | undefined{
     return translated as Unit | undefined;
 }
 
+/**
+ * convert a value from a unit to another unit
+ * @param value conversion value
+ * @param from unit before conversion
+ * @param to unit after conversion
+ * @returns after conversion value
+ */
+export function conversion(value: number, from: string, to: string): number{
+    const fromUnit = translateUnit(from);
+    const toUnit = translateUnit(to);
+
+    if(fromUnit === undefined || toUnit === undefined)
+        throw new Error("Invalid conversion parameter");
+
+    const result = convert(value).from(fromUnit).to(toUnit);
+
+    // round to 2 decimal places
+    // found some bugs but eh whatever cm -> km
+    const resultRound = Math.round(result * 100) / 100;
+
+    return resultRound;
+}
+
 function run(args?: I_Convert){
     if(args === undefined)
         return "Invalid conversion parameter";
@@ -20,23 +43,19 @@ function run(args?: I_Convert){
     const from = args.fromUnit;
     const to = args.toUnit;
 
-    const fromUnit = translateUnit(from);
-    const toUnit = translateUnit(to);
+    try{
+        const resultRound = conversion(value, from, to);
+    
+        const embed = new MyEmbedBuilder();
+            embed.setTitle(`Conversion from ${from} to ${to}`);
+            embed.setDescription(`${value}${from} equals to ${resultRound}${to}`);
+    
+        return {embeds: [embed]};
+    }
+    catch(e){
+        return (e as Error).message;
+    }
 
-    if(fromUnit === undefined || toUnit === undefined)
-        return "Invalid conversion parameter";
-
-    const result = convert(value).from(fromUnit).to(toUnit);
-
-    // round to 2 decimal places
-    // found some bugs but eh whatever cm -> km
-    const resultRound = Math.round(result * 100) / 100;
-
-    const embed = new MyEmbedBuilder();
-        embed.setTitle(`Conversion from ${fromUnit} to ${toUnit}`);
-        embed.setDescription(`${value}${fromUnit} equals to ${resultRound}${toUnit}`);
-
-    return {embeds: [embed]};
 }
 
 interface I_Convert{

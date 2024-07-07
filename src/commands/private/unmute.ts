@@ -1,14 +1,14 @@
 import { SlashCommandBuilder } from "discord.js";
 
 import { MyEmbedBuilder, CommandBuilder } from "@library";
-import { muted, setMute } from "@config";
+import { GlobalState } from "@shared/GlobalState";
 
 const run = () => {    
     const embed = new MyEmbedBuilder();
-    if(!muted)
+    if(!GlobalState.isMuted)
         embed.setDescription(`Chrezbot is already unmuted`);
     else{
-        setMute(false);
+        GlobalState.setMute(false);
         embed.setTitle(`Chrezbot has been unmuted!`)
     }
 
@@ -16,6 +16,7 @@ const run = () => {
 }
 
 interface I_Mute{
+
 }
 
 const slashCommand = new SlashCommandBuilder()

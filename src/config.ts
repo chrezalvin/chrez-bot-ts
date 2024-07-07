@@ -65,39 +65,6 @@ if(SUPABASE_URL === "" || SUPABASE_KEY === "") {
     console.warn("Warning: database feature will be disabled");
 }
 
-// muted variable to share across all modules
-export let muted = false;
-
-let timerMuted: NodeJS.Timeout| null = null;
-
-export function setMute(set: boolean, callback?: () => void){
-    if(timerMuted === null){
-        if(set)
-            timerMuted = setTimeout(() => {
-                muted = false;
-                timerMuted = null;
-                if(callback)
-                    callback();
-            }, 60 * 10 * 1000);
-    }
-    else{
-        if(set){
-            clearTimeout(timerMuted);
-            timerMuted = setTimeout(() => {
-                muted = false;
-                timerMuted = null;
-                if(callback)
-                    callback();
-            }, 60 * 10);
-        }
-        else{
-            clearTimeout(timerMuted);
-            timerMuted = null;
-        }
-    }
-    muted = set;
-}
-
 const firebase_config = JSON.parse(process.env.FIREBASE_CONFIG ?? "{}");
 // check if firebase_config actually have JSON data
 if(Object.keys(firebase_config).length === 0)
