@@ -2,6 +2,11 @@
  * a static class to store state for chrezbot
  */
 export class GlobalState{
+    /**
+     * Default waiting time for setMute to be reset back in minute
+     */
+    public static readonly default_mute_time_minute: number = 30;
+
     private static m_isMuted = false;
 
     private static m_timerMuted: NodeJS.Timeout | null = null;
@@ -27,7 +32,7 @@ export class GlobalState{
             timeMs?: number
         }
     ): void{
-        const time = options?.timeMs || 60 * 10 * 1000;
+        const time = options?.timeMs || this.default_mute_time_minute * 60 * 1000;
 
         // if the timer is already assigned, clear it first
         if(GlobalState.m_timerMuted !== null){

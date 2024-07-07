@@ -18,7 +18,7 @@ const run = (args?: I_Mute) => {
         );
         embed.setTitle(`Chrezbot has been ${flagMute? "muted": "unmuted"}!`)
         if(flagMute)
-            embed.setDescription("Inline command have been muted for 30 minutes");
+            embed.setDescription(`Inline command have been muted fo ${GlobalState.default_mute_time_minute} minutes`);
     }
 
     return  [embed];
