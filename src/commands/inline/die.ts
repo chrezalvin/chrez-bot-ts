@@ -10,11 +10,11 @@ const command: inlineCommandReturnTypes = {
     description: "sending mean message to mean people >:(",
     execute: async (message) => {
         
-        const user = UserService.findUser((u) => u.discordId === message.author.id);
+        const user = await UserService.getUser(message.author.id);
         let dieMessage: string  = "";
 
-        if(user && (user.data.role === "owner" || user.data.role === "vice"))
-            dieMessage = dieMessages[user.data.role][rngInt(0, dieMessages.owner.length - 1)]
+        if(user && (user.rolename === "owner" || user.rolename === "vice"))
+            dieMessage = dieMessages[user.rolename][rngInt(0, dieMessages.owner.length - 1)]
                             .replace("[name]", message.author.username);
         else
             dieMessage = dieMessages.normal[rngInt(0, dieMessages.normal.length - 1)].replace("[name]", message.author.username);

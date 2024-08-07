@@ -1,18 +1,21 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
-import stories from "@assets/messages/active/story.json";
 import { prefixes } from "@config";
+import { StoryService } from "@services";
 
-const run = (args?: I_Story) => {
-    let index: number = args?.index ?? rngInt(0, stories.length - 1);
+const run = async (args?: I_Story) => {
+    const length = StoryService.serviceSupabase.length;
+    let index: number = args?.index ?? rngInt(0, length - 1);
 
-    if(index >= stories.length)
-        return new ErrorValidation("index_out_of_bounds", 0, stories.length - 1);
+    if(index >= length)
+        return new ErrorValidation("index_out_of_bounds", 0, length - 1);
     if(index < 0)
         return new ErrorValidation("index_negative");
 
-    const story = stories[index];
+    const story = await StoryService.getStory(index);
+
+    // const story = stories[index];
     const embeds: MyEmbedBuilder[] = [];
     const sentences: string[] = [];
     let flagTitle: boolean = false;
@@ -59,7 +62,7 @@ const story = new CommandBuilder<I_Story>()
                 .setDescription("Creates a random story, you can specify which story you want using the option")
                 .addIntegerOption(option => option.setName("index").setDescription("Index to target a story")),
             interact: async (interaction, args) => {
-                const embeds = run(args);
+                const embeds = await run(args);
 
                 if(ErrorValidation.isErrorValidation(embeds))
                     return embeds;
@@ -67,14 +70,14 @@ const story = new CommandBuilder<I_Story>()
                 await interaction.reply({embeds});
             },
             getParameter: (interaction) => {
-                const index = interaction.options.getInteger("index", false) ?? rngInt(0, stories.length - 1);
+                const index = interaction.options.getInteger("index", false) ?? rngInt(0, StoryService.serviceSupabase.length - 1);
     
                 return {index};
             }
         })
         .setChat({
             getParameter: (_, args) => {
-                let index = rngInt(0, stories.length - 1);
+                let index = rngInt(0, StoryService.serviceSupabase.length - 1);
                 if(args && args[0] !== undefined){
                     let num = parseInt(args[0]);
                     if(!isNaN(num))
@@ -84,7 +87,7 @@ const story = new CommandBuilder<I_Story>()
                 return {index};
             },
             execute: async (message, args) => {
-                const embeds = run(args);
+                const embeds = await run(args);
    
                 if(ErrorValidation.isErrorValidation(embeds))
                     return embeds;

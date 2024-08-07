@@ -8,6 +8,7 @@ import memes from "./memes";
 import cursed from "./cursed";
 import update from "./update";
 import users from "./users";
+import story from "./story";
 import { RouterInterface } from "@library/customTypes";
 import { asyncErrorHandler } from "@library";
 
@@ -21,6 +22,7 @@ const routes: RouterInterface[][] = [
     cursed,
     update,
     users,
+    story,
 ];
 
 for(const route of routes)

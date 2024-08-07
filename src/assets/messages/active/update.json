@@ -154,5 +154,16 @@
         "- API Improvement",
         "- Added new alias for Chrez help, Chrez manual"
     ]
+},
+{
+    "version": "1.6.0",
+    "news": [
+        "- API Improvement",
+        "- Added more inline commands",
+        "- Switching the database from firebase to supabase"
+    ],
+    "bugfix": [
+        "- fix bug on Chrez recommend"
+    ]
 }
 ]

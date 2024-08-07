@@ -1,4 +1,5 @@
 import {inlineCommandReturnTypes, rngInt} from "@library";
+import { MessageFlags } from "discord.js";
 
 const dontYellMessages = [
     "Don't yell D:",
@@ -17,7 +18,10 @@ const command: inlineCommandReturnTypes = {
     execute: async (message) => {
         let dontyell: string  = dontYellMessages[rngInt(0, dontYellMessages.length - 1)];
 
-        await message.channel.send(dontyell);
+        message.reply({
+            allowedMentions: { repliedUser: false },
+            content: dontyell,
+        });
     }
 };
 

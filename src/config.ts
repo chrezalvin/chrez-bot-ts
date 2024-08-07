@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import {config} from "dotenv"; config();
 
 // firebase for database;
@@ -17,7 +18,7 @@ export const message_delete_time = 10;
 
 export const inline_command_coldown_time = MODE === "development" ? 5 : 30;
 export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
-export const botVersion = "1.5.1";
+export const botVersion = "1.6.0";
 
 // still string | undefined so i put null coalescing
 export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";
@@ -30,6 +31,9 @@ export const port = process.env.PORT ?? "3000";
 export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
 export const OAUTH2_REDIRECT_URL_SERVER = process.env.OAUTH2_REDIRECT_URL_SERVER ?? "";
 export const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
+
+export const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
+export const SUPABASE_KEY = process.env.SUPABASE_KEY ?? "";
 
 // FROM HERE IS THE CHECKING FOR .env
 
@@ -55,6 +59,11 @@ if(CLIENT_SECRET === "") console.warn("Warning: Couldn't find CLIENT_SECRET in .
 
 if(OAUTH2_REDIRECT_URL === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL in .env");
 if(OAUTH2_REDIRECT_URL_SERVER === "") console.warn("Warning: Couldn't find OAUTH2_REDIRECT_URL_SERVER in .env");
+
+if(SUPABASE_URL === "" || SUPABASE_KEY === "") {
+    console.warn("Warning: Couldn't find SUPABASE DATABASE credentials in .env");
+    console.warn("Warning: database feature will be disabled");
+}
 
 
 // muted variable to share across all modules
@@ -97,3 +106,5 @@ if(Object.keys(firebase_config).length === 0)
 
 export const firebaseApp = initializeApp(firebase_config);
 export const firestore = getFirestore(firebaseApp);
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);

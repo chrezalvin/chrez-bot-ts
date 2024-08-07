@@ -70,6 +70,14 @@ export {
 } from "./FileManager";
 
 export {
+    FileManagerSupabase
+} from "./FileManagerSupabase"
+
+export {
+    ServiceSupabase
+} from "./ServiceSupabase"
+
+export {
     TemporaryMap
 } from './TemporaryMap';
 

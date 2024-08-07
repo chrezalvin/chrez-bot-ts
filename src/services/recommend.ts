@@ -1,42 +1,40 @@
 const debug = require('debug')('Server:recommend');
 
-import { Service, FileManager } from "@library";
-
-export interface Recommend{
-    title: string;
-    description: string;
-    imgUrl?: string;
-    link?: string;
-    category?: string[];
-}
+import { rngInt } from "@library";
+import {ServiceSupabase, FileManagerSupabase} from "@library";
+import { isRecommend, Recommend } from "@models";
 
 export class RecommendService{
-    protected static recommendedPath = "images/recommend";
-    protected static recommend = "recommend";
+    protected static readonly recommendedPath = "recommend";
+    protected static readonly bucket = "images";
+    protected static readonly recommend = "recommend";
 
-    public static isRecommend(obj: unknown): obj is Recommend{
-        if(typeof obj !== "object" || obj === null) return false;
-    
-        if(!("title" in obj) || !("description" in obj)) return false;
-    
-        return obj.title !== undefined && obj.description !== undefined;
+    public static service = new ServiceSupabase<Recommend, "id">( 
+        "id", 
+        RecommendService.recommend, 
+        {typeGuard: isRecommend,}
+    );
+
+    protected static changeImgUrlToUrl(recommend: Recommend): Recommend{
+        return recommend.imgUrl ? {...recommend, imgUrl: RecommendService.fileManager.translateToUrl(recommend.imgUrl)} : {...recommend, id: recommend.id};
     }
 
-    public static service: Service<Recommend> = new Service<Recommend>({
-        dbName: RecommendService.recommend,
-        typeGuard: RecommendService.isRecommend
-    });
+    public static fileManager = new FileManagerSupabase(RecommendService.bucket, RecommendService.recommendedPath);
 
-    public static fileManger: FileManager = new FileManager(RecommendService.recommendedPath);
-
-    public static async getAlldata(): Promise<(Recommend & {id: string})[]>{
-        const res = await RecommendService.service.getAllData();
-        return Array.from(res).map(([id, rec]) => {return {id, ...rec}});
+    public static async getAlldata(): Promise<Recommend[]>{
+        const res = await RecommendService.service.getAll();
+        return res.map((val) => RecommendService.changeImgUrlToUrl(val));
     }
 
-    public static async createNewrecommend(recommend: Recommend, imgUrl?: string): Promise<string>{
+    public static getRandomRecommend(): Recommend{
+        const recommends = RecommendService.service.cache;
+        const recommend = recommends[rngInt(0, recommends.length - 1)];
+        return RecommendService.changeImgUrlToUrl(recommend);
+    }
+
+    public static async createNewrecommend(recommend: Omit<Recommend, "id">, imgUrl?: string): Promise<Recommend>{
         // load the recommended first without the imgUrl
-        const rec: Recommend = {
+        const rec: Omit<Recommend, "id"> = {
             title: recommend.title,
             description: recommend.description,
         };
@@ -46,20 +44,31 @@ export class RecommendService{
         if(recommend.category)
             rec.category = recommend.category;
 
-        const id = await RecommendService.service.addData(rec);
+        const newRecommend = await RecommendService.service.add(rec);
+
+        if(!newRecommend)
+            throw new Error("Failed to create new recommend");
 
         // then upload the image
         if(imgUrl){
-            const res = await RecommendService.fileManger.uploadImage(imgUrl, id);
-            if(res)
-                await RecommendService.service.updateData(id, {...recommend, imgUrl: res.ref.fullPath});
+            const res = await RecommendService.fileManager.uploadImage(imgUrl);
+            const data = await RecommendService.service.update(newRecommend.id, {...recommend, imgUrl: res});
+
+            if(data)
+                newRecommend.imgUrl = data.imgUrl;
         }
 
-        return id;
+        return RecommendService.changeImgUrlToUrl(newRecommend);
     }
 
-    public static async deleteRecommend(id: string){
-        await RecommendService.service.deleteData(id);
-        await RecommendService.fileManger.deleteImage(id);
+    public static async deleteRecommend(id: number){
+        const rec = await RecommendService.service.get(id);
+
+        if(!rec)
+            throw new Error("Recommend not found");
+
+        await RecommendService.service.delete(rec.id);
+        if(rec.imgUrl)
+            await RecommendService.fileManager.deleteImage(rec.imgUrl);
     }
 }

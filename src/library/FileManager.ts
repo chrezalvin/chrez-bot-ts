@@ -3,6 +3,9 @@ const debug = require("debug")("Server:FileManager");
 import { firebaseApp } from "@config";
 import { getStorage, UploadResult, uploadBytes, deleteObject, getDownloadURL, listAll, ref, StorageReference } from "firebase/storage";
 
+/**
+ * @deprecated
+ */
 export class FileManager{
     // map all FileManagers
     public static s_filemanagers: FileManager[] = [];

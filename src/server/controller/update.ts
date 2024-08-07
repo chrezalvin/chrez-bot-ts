@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { I_Update, UpdateService } from "services/update";
+import { UpdateService } from "services/update";
 
 import {botVersion} from "@config";
+import { isUpdate, Update } from "@models";
 
 export async function update_get_latest(_1: Request, res: Response, _2: NextFunction){
     const latest = UpdateService.getUpdate(botVersion);
@@ -30,11 +31,11 @@ export async function update_add(req: Request, res: Response, _: NextFunction){
     const version = req.body.version as unknown;
     const update = req.body.update as unknown;
 
-    if(!UpdateService.isUpdate(update) || !(typeof version === "string"))
+    if(!isUpdate(update) || !(typeof version === "string"))
         res.status(400).json({error: "invalid update object"});
 
     // should be already ensured here
-    await UpdateService.addUpdate(version as string, update as I_Update);
+    await UpdateService.addUpdate(version as string, update as Update);
     res.json({success: true});
 }
 

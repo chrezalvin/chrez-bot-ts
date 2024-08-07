@@ -8,15 +8,15 @@ const command: inlineCommandReturnTypes = {
     name: "greet",
     description: "Greet the user",
     searchCriteria: ["cheese", /^he+re+$/i, ...prefixes],
-    execute: (message) => {
+    execute: async (message) => {
         // exclusive for vice and owner only!
-        const user = UserService.findUser((u) => u.discordId === message.author.id);
+        const user = await UserService.getUser(message.author.id);
         if(user){
-            if(user.data.role === "owner" || user.data.role === "vice"){
+            if(user.rolename === "owner" || user.rolename === "vice"){
                 message.channel.send(greet.exclusive[rngInt(0, greet.exclusive.length - 1)]
                     .replace("[name]", message.author.username)
-                    .replace("[role]", user.data.role)
-                    .replace("[alias]", user.data.alias[rngInt(0, user.data.alias.length - 1)])
+                    .replace("[role]", user.rolename)
+                    .replace("[alias]", user.aliases ? user.aliases[rngInt(0, user.aliases.length - 1)] : "")
                 );
                 return;
             }

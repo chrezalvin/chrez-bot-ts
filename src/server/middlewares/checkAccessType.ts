@@ -10,13 +10,13 @@ export function checkAccessType(accessType: RouterInterface["accessType"] = "pri
         const user = req.user;
 
         // non-admin user can't access private routes
-        if(user?.role === undefined)
+        if(user?.rolename === undefined)
             if(accessType === "public") 
                 return next();
             else
                 return res.status(401).send({error: 401, message: "Unauthorized!"});
 
-        switch(user?.role){
+        switch(user?.rolename){
             // owner can access all routes
             case "owner": return next();
 

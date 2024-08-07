@@ -13,19 +13,17 @@ export default function recommend(client: Client<boolean>){
         // send to crystal phoenix
         const ch = await client.channels.fetch("739696962097512452");
 
-        const recommends = Array.from(await RecommendService.service.getAllData());
+        const recommends = await RecommendService.service.getAll();
 
-        const recommend = recommends[rngInt(0, recommends.length - 1)][1];
+        const recommend = recommends[rngInt(0, recommends.length - 1)];
 
         const embed = new MyEmbedBuilder({
             title: recommend.title,
             description: recommend.description
         });
 
-        if(recommend.imgUrl){
-            const downloadUrl = await RecommendService.fileManger.getUrlFromPath(recommend.imgUrl);
-            embed.setThumbnail(downloadUrl);
-        }
+        if(recommend.imgUrl)
+            embed.setThumbnail(recommend.imgUrl);
 
         if(recommend.link)
             embed.setURL(recommend.link);
