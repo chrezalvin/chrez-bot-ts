@@ -16,6 +16,7 @@
   "author": "Chrez. A",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.1",
     "convert-units": "^2.3.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
