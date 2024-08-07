@@ -10,7 +10,7 @@ import { UpdateService } from "services/update";
 function customFieldMaker(title: string, list: string[]): APIEmbedField{
     return {
         name: title,
-        value: list.map(str => `${str}`).join("\n")
+        value: list.join("\n")
     };
 }
 
