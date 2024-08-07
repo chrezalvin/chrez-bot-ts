@@ -1,11 +1,14 @@
-import { FileManager, rngInt } from "@library";
+import { rngInt } from "@library";
+import {FileManagerSupabase} from "@library";
 
 export class MemeService{
-    protected static readonly memePathSfw = "images/memes/sfw";
-    protected static readonly memePathNsfw = "images/memes/nsfw";
+    protected static readonly memePathSfw = "memes/sfw";
+    protected static readonly memePathNsfw = "memes/nsfw";
 
-    public static fileManagerNsfw = new FileManager(MemeService.memePathNsfw);
-    public static fileManagerSfw = new FileManager(MemeService.memePathSfw);
+    protected static readonly bucketImage = "images";
+
+    public static fileManagerNsfw = new FileManagerSupabase(MemeService.bucketImage, MemeService.memePathNsfw);
+    public static fileManagerSfw = new FileManagerSupabase(MemeService.bucketImage, MemeService.memePathSfw);
 
     static getMemeList(nsfw: boolean = false){
         if(nsfw)
@@ -14,9 +17,9 @@ export class MemeService{
     }
 
     static async getMemeUrl(nsfw: boolean = false, index?: number): Promise<string>{
-        const service: FileManager = nsfw ? MemeService.fileManagerNsfw : MemeService.fileManagerSfw;
-        const rand = service.cache[index ?? rngInt(0, service.cache.length - 1)];
+        const service: FileManagerSupabase = nsfw ? MemeService.fileManagerNsfw : MemeService.fileManagerSfw;
+        const rand = service.cache[index ?? rngInt(0, service.length - 1)];
 
-        return await service.getUrlFromPath(rand.fullPath);
+        return rand;
     }
 }

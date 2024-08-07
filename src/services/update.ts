@@ -1,14 +1,16 @@
-import { Service } from "@library/Service";
-
-export interface I_Update{
-    version: string;
-    news?: string[];
-    bugfix?: string[];
-}
+import {ServiceSupabase} from "@library";
+import { Update, isUpdate } from "@models";
 
 export class UpdateService{
-    protected static dbName = "update";
-    static isUpdate(obj: unknown): obj is I_Update{
+    protected static dbName = "updates";
+
+    public static serviceSupabase = new ServiceSupabase<Update, "version">( 
+        "version", 
+        UpdateService.dbName, 
+        {typeGuard: isUpdate,}
+    );
+
+    static isUpdate(obj: unknown): obj is Update{
         if(typeof obj !== "object" || obj === null) return false;
     
         // update can have either news or bugfix or both
@@ -19,55 +21,37 @@ export class UpdateService{
             return false;
     }
 
-    public static service: Service<I_Update> = new Service<I_Update>({
-        dbName: UpdateService.dbName,
-        typeGuard: UpdateService.isUpdate
-    });
-
-    public static getUpdate(version: string): I_Update{
-        const find = UpdateService.service.findFirst((update) => update.version === version);
+    public static async getUpdate(version: string): Promise<Update>{
+        const find = await UpdateService.serviceSupabase.get(version);
 
         if(!find)
             throw new Error("version not found");
 
         // return first occurence
-        return find.data;
+        return find;
     }
 
-    public static async getAllUpdate(): Promise<I_Update[]>{
-        const allData = await UpdateService.service.getAllData();
+    public static async getAllUpdate(): Promise<Update[]>{
+        const allData = await UpdateService.serviceSupabase.getAll();
         const arr = Array.from(allData.values());
 
         return arr;
     }
 
     public static async deleteUpdate(version: string): Promise<void>{
-        const find = UpdateService.service.findFirst((update) => update.version === version);
+        const find = await UpdateService.serviceSupabase.get(version);
 
         if(!find)
             throw new Error("version not found");
 
-        await UpdateService.service.deleteData(find.id);
+        await UpdateService.serviceSupabase.delete(version);
     }
 
-    public static async addUpdate(version: string, update: I_Update): Promise<void>{
-        // check if the version is already exist        
-        const allData = await UpdateService.service.findFirst((update) => update.version === version);
-
-        if(allData)
-            throw new Error("version already exist");
-
-        await UpdateService.service.addData(update, version);
+    public static async addUpdate(version: string, update: Update): Promise<void>{
+        await UpdateService.serviceSupabase.add(update);
     }
 
-    public static async editUpdate(version: string, update: I_Update): Promise<I_Update>{
-        const find = UpdateService.service.findFirst((update) => update.version === version);
-
-        if(!find)
-            throw new Error("version not found");
-
-        await UpdateService.service.updateData(find.id, update);
-
-        return update;
+    public static async editUpdate(version: string, update: Update): Promise<Update | undefined>{
+        return await UpdateService.serviceSupabase.update(version, update);
     }
 }

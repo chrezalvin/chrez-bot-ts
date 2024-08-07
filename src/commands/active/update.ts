@@ -1,8 +1,8 @@
 const debug = require("debug")("ChrezBot:update");
 
-import {MyEmbedBuilder, CommandBuilder} from "@library";
+import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 
-import { APIEmbedField, EmbedBuilder, RestOrArray, SlashCommandBuilder } from "discord.js";
+import { APIEmbedField, SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
 import { prefixes, botVersion } from "@config";
 import { UpdateService } from "services/update";
@@ -10,15 +10,15 @@ import { UpdateService } from "services/update";
 function customFieldMaker(title: string, list: string[]): APIEmbedField{
     return {
         name: title,
-        value: list.map(str => `- ${str}`).join("\n")
+        value: list.join("\n")
     };
 }
 
-const run = async ( args?: I_Update) => {
+const run = async ( version: string) => {
     // defaulted to latest version
-    let version: string = args?.version ?? botVersion;
+    // let version: string = args?.version ?? botVersion;
 
-    const update = UpdateService.getUpdate(version);
+    const update = await UpdateService.getUpdate(version);
     const embed = new MyEmbedBuilder();
 
     embed.setTitle(`Chrezbot \`v${update.version}\` news and bugfixes`)
@@ -31,7 +31,7 @@ const run = async ( args?: I_Update) => {
 } 
 
 interface I_Update{
-    version: string | null;
+    version: string;
 }
 
 const update = new CommandBuilder<I_Update>()
@@ -44,7 +44,7 @@ const update = new CommandBuilder<I_Update>()
     ])
     .setSlash({
         slashCommand: new SlashCommandBuilder().setName("update")
-            .setDescription("Gives you uppdate about ChrezBot (news and bugfixes)")
+            .setDescription("Gives you update about ChrezBot (news and bugfixes)")
             .addStringOption(opt => {
                 for(const update of updates)
                     opt.addChoices({name: `v${update.version}`, value: update.version})
@@ -55,19 +55,22 @@ const update = new CommandBuilder<I_Update>()
                 return opt;
             }),
         getParameter: (interaction) => {
-            const version = interaction.options.getString("version", false);
+            const version = interaction.options.getString("version", false) ?? botVersion;
 
             return {version};
         },
         interact: async (interaction, args) => {
-            const embeds = await run(args);
+            if(!args)
+                return new ErrorValidation("no_argument_provided");
+
+            const embeds = await run(args.version);
 
             await interaction.reply({embeds});
         }
     })
     .setChat({
         getParameter: (_, args) => {
-            let version: string | null = null;
+            let version: string = botVersion;
 
             if(args && args[0] !== undefined)
                 version = args[0];
@@ -75,7 +78,10 @@ const update = new CommandBuilder<I_Update>()
             return {version};
         },
         execute: async (message, args) => {
-            const embeds = await run(args);
+            if(!args)
+                return new ErrorValidation("no_argument_provided");
+            
+            const embeds = await run(args.version);
 
             message.channel.send({embeds});
         },

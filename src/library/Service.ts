@@ -5,6 +5,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, quer
 
 /**
  * Service class to handle the database operation, this class will cache the data to reduce the payload
+ * @deprecated
  */
 export class Service<T extends { [x: string]: any; }>{
     public static s_services: Service<any>[] = [];

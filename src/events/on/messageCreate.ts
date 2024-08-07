@@ -43,15 +43,16 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     // ignore inline command if chrezbot is muted
     if(!muted && !holdUser.find((data) => data === message.author.id))
         for(const [v, k] of sharedCommands.aliasCriteriaMap){
-            if(typeof v === "string")
-            if(message.content === v){
-                sharedCommands.inlineCommands.get(k)?.execute(message);
-                holdUser.addData(message.author.id);
-                return;
-            }
-            if(v instanceof RegExp)
-            if(message.content.match(v) !== null){
-                sharedCommands.inlineCommands.get(k)?.execute(message);
+            if(
+                (typeof v === "string" && message.content !== v) 
+                || 
+                (v instanceof RegExp && message.content.match(v) === null)
+            )
+                continue;
+            
+            const command = sharedCommands.inlineCommands.get(k);
+            if(command){
+                command.execute(message);
                 holdUser.addData(message.author.id);
                 return;
             }

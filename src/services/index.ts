@@ -22,17 +22,17 @@ export {
 } from "./memes";
 
 export {
-    Recommend,
     RecommendService,
 } from "./recommend";
 
 export {
-    I_Update,
     UpdateService,
 } from "./update";
 
 export {
-    I_User,
-    Role,
     UserService
 } from "./users";
+
+export {
+    StoryService
+} from "./story";

@@ -1,6 +1,7 @@
 const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
+import { isRecommend } from '@models';
 import { RecommendService } from 'services/recommend';
 
 export const recommend_get_default = async (req: Request, res: Response) => {
@@ -10,12 +11,12 @@ export const recommend_get_default = async (req: Request, res: Response) => {
 }
 
 export const recommend_get_by_id = async (req: Request, res: Response) => {
-    const id = req.params.id;
+    const id = parseInt(req.params.id);
 
-    if(typeof id !== "string")
+    if(isNaN(id))
         throw new Error("Invalid id!");
 
-    const recommend = await RecommendService.service.getById(id);
+    const recommend = await RecommendService.service.get(id);
 
     res.json(recommend);
 }
@@ -40,22 +41,22 @@ export const recommend_post_add = async (req: Request, res: Response) => {
 
     const recommend = JSON.parse(param);
 
-    if(!RecommendService.isRecommend(recommend))
+    if(!isRecommend(recommend))
         throw new Error("Invalid recommend object!");
 
     // TODO: add image parameter on post request
-    const recommendId: string = await RecommendService.createNewrecommend(recommend, /* recommend.imgUrl */);
+    const newRecommend = await RecommendService.createNewrecommend(recommend, /* recommend.imgUrl */);
 
-    res.status(200).json({id: recommendId});
+    res.status(200).json(newRecommend);
 }
 
 export const recommend_post_delete = async (req: Request, res: Response) => {
-    const id = req.body.id as unknown;
+    const id = parseInt(req.body.id);
     
-    if(typeof id !== "string")
+    if(isNaN(id))
         throw new Error("Invalid id!");
 
-    await RecommendService.service.deleteData(id);
+    await RecommendService.service.delete(id);
 
     res.status(200).json({
         message: "Recommend deleted!"
@@ -63,15 +64,15 @@ export const recommend_post_delete = async (req: Request, res: Response) => {
 }
 
 export const recommend_post_update = async (req: Request, res: Response) => {
-    const id = req.body.id as unknown;
+    const id = parseInt(req.body.id);
     const recommend = req.body.recommend as unknown;
 
-    if(!RecommendService.isRecommend(recommend))
+    if(!isRecommend(recommend))
         throw new Error("Invalid recommend object!");
-    if(typeof id !== "string")
+    if(isNaN(id))
         throw new Error("Invalid id!");
 
-    await RecommendService.service.updateData(id, recommend);
+    await RecommendService.service.update(id, recommend);
 
     res.status(200).json({
         message: "Recommend updated!"

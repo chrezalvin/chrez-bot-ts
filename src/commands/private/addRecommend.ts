@@ -1,29 +1,23 @@
 import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
-import { Recommend, RecommendService } from "services/recommend";
+import { Recommend } from "@models";
+import { RecommendService } from "services/recommend";
 
-const run = async (args?: Recommend): Promise<MessageCreateOptions | ErrorValidation> => {
+const run = async (args?: Omit<Recommend, "id">): Promise<MessageCreateOptions | ErrorValidation> => {
     if(!args)
         return new ErrorValidation("no_argument_provided");
 
-    const id = await RecommendService.createNewrecommend(args, args.imgUrl);
-
-    const resRec = await RecommendService.service.getById(id);
+    const recommend = await RecommendService.createNewrecommend(args, args.imgUrl);
 
     const embed = new MyEmbedBuilder();
-
-    // highly inneficient, but will do for now
-    const recommend = resRec;
 
     embed
         .setTitle(recommend.title)
         .setDescription(recommend.description);
 
-    if(resRec.imgUrl){
-        const downloadUrl = await RecommendService.fileManger.getUrlFromPath(resRec.imgUrl);
-        embed.setThumbnail(downloadUrl);
-    }
+    if(recommend.imgUrl)
+        embed.setThumbnail(recommend.imgUrl);
 
     if(recommend.link)
         embed.setURL(recommend.link);
@@ -63,7 +57,7 @@ const slashCommand = new SlashCommandBuilder()
             .setRequired(false)
         );
 
-const addrecommend = new CommandBuilder<Recommend>()
+const addrecommend = new CommandBuilder<Omit<Recommend, "id">>()
         .setName("addrecommend")
         .setDescription("Recommend a random thing")
         .setSlash({
@@ -75,7 +69,7 @@ const addrecommend = new CommandBuilder<Recommend>()
                 const link = interaction.options.getString("link", false);
                 const category = interaction.options.getString("category", false)?.split(",").map((cat) => cat.trim());
                 
-                let data: Recommend = {
+                let data: Omit<Recommend, "id"> = {
                     title,
                     description,
                 };
