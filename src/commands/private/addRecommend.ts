@@ -8,24 +8,30 @@ const run = async (args?: Omit<Recommend, "id">): Promise<MessageCreateOptions |
     if(!args)
         return new ErrorValidation("no_argument_provided");
 
-    const recommend = await RecommendService.createNewrecommend(args, args.imgUrl);
+    try{
+        const recommend = await RecommendService.createNewrecommend(args, args.imgUrl);
+            
+        const embed = new MyEmbedBuilder();
 
-    const embed = new MyEmbedBuilder();
+        embed
+            .setTitle(recommend.title)
+            .setDescription(recommend.description);
 
-    embed
-        .setTitle(recommend.title)
-        .setDescription(recommend.description);
+        if(recommend.imgUrl)
+            embed.setThumbnail(recommend.imgUrl);
 
-    if(recommend.imgUrl)
-        embed.setThumbnail(recommend.imgUrl);
+        if(recommend.link)
+            embed.setURL(recommend.link);
 
-    if(recommend.link)
-        embed.setURL(recommend.link);
+        if(recommend.category)
+            embed.setFooter({text: `category: ${recommend.category.join(", ")}`});
 
-    if(recommend.category)
-        embed.setFooter({text: `category: ${recommend.category.join(", ")}`});
-
-    return {embeds: [embed]};
+        return {embeds: [embed]};
+    }
+    catch(e: unknown){
+        console.log(e);
+        return new ErrorValidation("message_error");
+    } 
 }
 
 const slashCommand = new SlashCommandBuilder()
