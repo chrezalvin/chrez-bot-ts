@@ -1,15 +1,9 @@
 import { RouterInterface } from "@library/customTypes";
-import { events_add_event, events_get } from "server/controller/events";
+import { events_add_event, events_get, events_get_all } from "server/controller/events";
 
 const routes: RouterInterface[] = [
     {
         path: "/events",
-        handler: events_get,
-        method: "get",
-        accessType: "public",
-    },
-    {
-        path: "/events/:monthName",
         handler: events_get,
         method: "get",
         accessType: "public",
@@ -20,6 +14,12 @@ const routes: RouterInterface[] = [
         method: "post",
         accessType: "private",
     },
+    {
+        path: "/events/all",
+        handler: events_get_all,
+        method: "get",
+        accessType: "public",
+    }
 ];
 
 export default routes;

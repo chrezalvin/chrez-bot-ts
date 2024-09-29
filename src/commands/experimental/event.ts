@@ -1,18 +1,17 @@
 import { CommandReturnTypes, MyEmbedBuilder, CommandBuilder} from "@library";
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
-import {getEventByMonth} from "../../services/events";
 
 const run = async (args?: I_Event) => {
-    const events = await getEventByMonth();
+    // const events = await getEventByMonth();
 
-    const embeds = events.eventList.map(event => {
-        return new MyEmbedBuilder({
-            title: event.name,
-            description: event.description
-        })
-    })
+    // const embeds = events.eventList.map(event => {
+    //     return new MyEmbedBuilder({
+    //         title: event.name,
+    //         description: event.description
+    //     })
+    // })
 
-    return embeds;
+    // return embeds;
 }
 
 interface I_Event{
@@ -38,14 +37,14 @@ const chrezEvent = new CommandBuilder<I_Event>()
         interact: async (interaction, args) => {
             const embeds = await run(args);
             
-            await interaction.reply({embeds});
+            await interaction.reply("{embeds}");
         }
     })
     .setChat({
         execute: async (message, args) => {
             const embeds = await run(args);
             
-            await message.channel.send({embeds});
+            await message.channel.send("{embeds}");
         }
     })
 

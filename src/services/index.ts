@@ -9,8 +9,7 @@ export {
 } from "./cursed";
 
 export {
-    addEventByMonth,
-    getEventByMonth,
+    EventService
 } from "./events";
 
 export {

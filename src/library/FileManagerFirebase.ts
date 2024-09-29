@@ -2,13 +2,14 @@ const debug = require("debug")("Server:FileManager");
 
 import { firebaseApp } from "@config";
 import { getStorage, UploadResult, uploadBytes, deleteObject, getDownloadURL, listAll, ref, StorageReference } from "firebase/storage";
+import { randomUUID } from "crypto";
 
 /**
  * @deprecated
  */
-export class FileManager{
+export class FileManagerFirebase{
     // map all FileManagers
-    public static s_filemanagers: FileManager[] = [];
+    public static s_filemanagers: FileManagerFirebase[] = [];
 
     protected static readonly acceptedBlobTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     protected static storage = getStorage(firebaseApp);
@@ -23,7 +24,7 @@ export class FileManager{
         this.getAllFiles();
 
         // load the instance to the static array
-        FileManager.s_filemanagers.push(this);
+        FileManagerFirebase.s_filemanagers.push(this);
     }
 
     // getter
@@ -34,13 +35,17 @@ export class FileManager{
         return this.m_cache;
     }
 
+    public async translateToUrl(fileName: string): Promise<string>{
+        return await getDownloadURL(ref(FileManagerFirebase.storage, `${this.m_imgPath}/${fileName}`));
+    }
+
     // private async base functions to only get data from database
     /**
      * get all files in the folder
      * @returns list of data (might be limited per page)
      */
     protected async _getAllFiles(){
-        const imgRef = ref(FileManager.storage, this.m_imgPath);
+        const imgRef = ref(FileManagerFirebase.storage, this.m_imgPath);
         const list = await listAll(imgRef);
         
         return list.items;
@@ -49,19 +54,20 @@ export class FileManager{
     /**
      * Uploads an image to the database, this function will only accept the extension that is in the acceptedBlobTypes
      * @param imgUrl url of the image to be uploaded
-     * @param filename the file name of the image that will be stored in the database (without extension)
+     * @param filename the file name of the image that will be stored in the database (without extension) if not set, it will generate an uuid
      * @returns UploadResult
      */
-    protected async _uploadImage(imgUrl: string, filename: string): Promise<UploadResult>{
+    protected async _uploadImage(imgUrl: string, filename?: string): Promise<UploadResult>{
         // fetcha and test if the data is a valid image
         const res = await fetch(imgUrl);
         const blob = await res.blob();
         
-        if(!FileManager.acceptedBlobTypes.includes(blob.type))
+        const fileExtension = blob.type.split("/")[1];
+
+        if(!FileManagerFirebase.acceptedBlobTypes.includes(blob.type))
             throw new Error("Invalid image file!");
 
-        const fileExtension = blob.type.split("/")[1];
-        const imgRef = ref(FileManager.storage, `${this.m_imgPath}/${filename}.${fileExtension}`);
+        const imgRef = ref(FileManagerFirebase.storage, `${this.m_imgPath}/${filename ?? randomUUID()}.${fileExtension}`);
         const uploadRes = await uploadBytes(imgRef, blob);
 
         return uploadRes;
@@ -72,7 +78,7 @@ export class FileManager{
      * @param imgName the name of the image to be deleted
      */
     protected async _deleteImage(imgName: string): Promise<void>{
-        const storageRef = ref(FileManager.storage, `${this.m_imgPath}/${imgName}`);
+        const storageRef = ref(FileManagerFirebase.storage, `${this.m_imgPath}/${imgName}`);
         await deleteObject(storageRef);
     }
 
@@ -93,7 +99,7 @@ export class FileManager{
      * @returns the download url of the image
      */
     protected async _getUrlFromPath(path: string): Promise<string>{
-        const imgRef = ref(FileManager.storage, path);
+        const imgRef = ref(FileManagerFirebase.storage, path);
         const imgUrl = await getDownloadURL(imgRef);
         return imgUrl;
     }
@@ -108,8 +114,8 @@ export class FileManager{
         return allFiles;
     }
 
-    public async uploadImage(imgUrl: string, filename: string): Promise<UploadResult | null>{
-        debug(`Uploading ${filename}`);
+    public async uploadImage(imgUrl: string, filename?: string): Promise<UploadResult | null>{
+        debug(`Uploading ${filename ?? "unknown filename"}`);
         
         const res = await this._uploadImage(imgUrl, filename);
         return res;

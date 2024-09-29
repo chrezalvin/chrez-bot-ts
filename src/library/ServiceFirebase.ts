@@ -1,4 +1,4 @@
-const debug = require("debug")("Server:Service");
+const debug = require("debug")("Server:ServiceFirebase");
 
 import { firebaseApp } from "@config";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, writeBatch } from "firebase/firestore/lite";
@@ -7,8 +7,8 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, quer
  * Service class to handle the database operation, this class will cache the data to reduce the payload
  * @deprecated
  */
-export class Service<T extends { [x: string]: any; }>{
-    public static s_services: Service<any>[] = [];
+export class ServiceFirebase<T extends { [x: string]: any; }>{
+    public static s_services: ServiceFirebase<any>[] = [];
 
     protected static db = getFirestore(firebaseApp);
 
@@ -28,7 +28,7 @@ export class Service<T extends { [x: string]: any; }>{
         this.getAllData(true);
 
         // put the instance into the static array
-        Service.s_services.push(this);
+        ServiceFirebase.s_services.push(this);
     }
 
     // getter
@@ -82,7 +82,7 @@ export class Service<T extends { [x: string]: any; }>{
      * @returns the data that matches the id or null if not found
      */
     protected async _getById(id: string): Promise<T | null>{
-        const docRef = doc(Service.db, this.m_dbName, id);
+        const docRef = doc(ServiceFirebase.db, this.m_dbName, id);
         const docSnapshot = await getDoc(docRef);
 
         if(docSnapshot.exists()){
@@ -105,7 +105,7 @@ export class Service<T extends { [x: string]: any; }>{
      * @returns all data from the database or null if not found
      */
     protected async _getAllData(): Promise<Map<string, T> | null>{
-        const q = query(collection(Service.db, this.m_dbName));
+        const q = query(collection(ServiceFirebase.db, this.m_dbName));
 
         const querySnapshot = await getDocs(q);
         if(!querySnapshot.empty){
@@ -133,7 +133,7 @@ export class Service<T extends { [x: string]: any; }>{
      * @param data the updated data
      */
     protected async _updateData(id: string, data: T): Promise<void>{
-        const docRef = doc(Service.db, this.m_dbName, id);
+        const docRef = doc(ServiceFirebase.db, this.m_dbName, id);
         await updateDoc(docRef, data);
     }
 
@@ -144,13 +144,13 @@ export class Service<T extends { [x: string]: any; }>{
      */
     protected async _addData(data: T, id?: string): Promise<string>{
         if(id){
-            const docRef = doc(Service.db, this.m_dbName, id);
+            const docRef = doc(ServiceFirebase.db, this.m_dbName, id);
             await setDoc(docRef, data);
 
             return id;
         }
         else{
-            const ref = collection(Service.db, this.m_dbName);
+            const ref = collection(ServiceFirebase.db, this.m_dbName);
             const res = await addDoc(ref, data);
     
             return res.id;
@@ -162,7 +162,7 @@ export class Service<T extends { [x: string]: any; }>{
      * @param id id string to delete
      */
     protected async _deleteData(id: string): Promise<void>{
-        const docRef = doc(Service.db, this.m_dbName, id);
+        const docRef = doc(ServiceFirebase.db, this.m_dbName, id);
         await deleteDoc(docRef);
     }
 
@@ -171,10 +171,10 @@ export class Service<T extends { [x: string]: any; }>{
      * @param ids array of id to be deleted
      */
     protected async _batchDelete(ids: string[]): Promise<void>{
-        const batch = writeBatch(Service.db);
+        const batch = writeBatch(ServiceFirebase.db);
 
         for(const id of ids){
-            const docRef = doc(Service.db, this.m_dbName, id);
+            const docRef = doc(ServiceFirebase.db, this.m_dbName, id);
             batch.delete(docRef);
         }
 

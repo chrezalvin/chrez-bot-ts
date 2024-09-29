@@ -1,6 +1,7 @@
 const debug = require("debug")("Server:Service");
 
 import { supabase } from "@config";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Service class to handle the database operation, this class will cache the data to reduce the payload
@@ -14,8 +15,20 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     protected m_typeGuard?: (value: unknown) => value is _T;
 
     // getter
+    /**
+     * the name of the table
+     */
     get tableName(): string { return this.m_tableName; }
+
+    /**
+     * the key name from the table's column
+     */
     get keyName(): _K { return this.m_keyName; }
+
+    /**
+     * the supabase's client
+     */
+    get client() { return supabase.from(this.m_tableName); }
 
     /**
      * the cached data in array form, it's supposed to return the full data in the database
@@ -27,6 +40,9 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         return res;
     }
 
+    /**
+     * the length of the cached data
+     */
     get length(): number { return this.m_cache.size; }
     
     /**

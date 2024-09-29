@@ -62,12 +62,12 @@ export {
 } from "./server";
 
 export {
-    Service,
-} from "./Service";
+    ServiceFirebase as Service,
+} from "./ServiceFirebase";
 
 export {
-    FileManager,
-} from "./FileManager";
+    FileManagerFirebase as FileManager,
+} from "./FileManagerFirebase";
 
 export {
     FileManagerSupabase
