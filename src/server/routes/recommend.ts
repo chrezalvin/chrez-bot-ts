@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { recommend_get_by_id, recommend_get_default, recommend_post_add, recommend_post_delete, recommend_post_update } from "server/controller/recommend";
 
 const routes: RouterInterface[] = [

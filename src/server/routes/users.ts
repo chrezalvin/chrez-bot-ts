@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { getUserById } from "server/controller/user";
 
 const routes: RouterInterface[] = [

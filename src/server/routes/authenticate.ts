@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { authenticate_get, authenticate_post, authenticate_server, getUserProfile } from "server/controller/authenticate";
 
 export const routes: RouterInterface[] = [

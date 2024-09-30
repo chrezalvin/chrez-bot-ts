@@ -9,8 +9,7 @@ export {
 } from "./cursed";
 
 export {
-    addEventByMonth,
-    getEventByMonth,
+    EventService
 } from "./events";
 
 export {
@@ -30,9 +29,9 @@ export {
 } from "./update";
 
 export {
-    UserService
+    UserService,
 } from "./users";
 
 export {
-    StoryService
+    StoryService,
 } from "./story";

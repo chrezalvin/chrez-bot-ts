@@ -1,55 +1,79 @@
 const debug = require('debug')('Server:events');
 
-import {firebaseApp} from "@config";
-import { getFirestore, collection, getDocs, query, where, updateDoc, doc, arrayUnion } from 'firebase/firestore/lite';
+import { FileManagerFirebase, ServiceSupabase } from "@library";
+import { Event, isEvent } from "@models";
 
-interface Event{
-    month: string;
-    eventList: {
-        name: string;
-        description: string;
-    }[];
-}
+export class EventService {
+    protected static readonly eventPath: string = "events";
 
-function isEvent(obj: unknown): obj is Event{
-    if(typeof obj !== "object" || obj === null) return false;
+    static eventManager = new ServiceSupabase<Event, "id">("id", EventService.eventPath, {
+        typeGuard: isEvent
+    });
 
-    if(!("month" in obj) || !("eventList" in obj)) return false;
+    static fileManager = new FileManagerFirebase("");
 
-
-    return obj.month !== undefined && obj.eventList !== undefined;
-}
-
-const db = getFirestore(firebaseApp);
-
-export async function getEventByMonth(month?: string){
-    const eventMonth = month ?? new Date().toLocaleString('default', { month: 'long' }).toLowerCase();
-    const q = query(collection(db, 'events'), where('month', '==', eventMonth));
-
-    debug(`Requesting events in ${eventMonth}`);
-
-    const querySnapshot = await getDocs(q);
-    if(!querySnapshot.empty){
-        const event = querySnapshot.docs[0].data();
-
-        if(isEvent(event))
-            return event;
-        else
-            throw new Error("Event not found!");
+    static async translateImageToUrl<_T extends string | Event, _R = _T extends string ? string : Event>(eventOrPath: _T): Promise<_R>{
+        if(typeof eventOrPath === "string")
+            return await EventService.fileManager.getUrlFromPath(eventOrPath) as _R;
+        else if (typeof eventOrPath === "object")
+            return {...eventOrPath, img_path: eventOrPath.img_path && await EventService.fileManager.getUrlFromPath(eventOrPath.img_path)} as _R;
+        else 
+            throw Error("Never");
     }
-    else
-        throw new Error("Event not found!");
+
+    static async getEventList(): Promise<Event[]>{
+        return await Promise.all(EventService
+            .eventManager
+            .cache
+            .map(EventService.translateImageToUrl));
+    }
+
+    static async allEvents(): Promise<Event[]>{
+        const res = await EventService.eventManager.getAll();
+
+        return await Promise.all(res.map(EventService.translateImageToUrl));
+    }
+
+    static async getEventByMonth(month?: number): Promise<Event[]>{
+        // if month is not provided, get the current month
+        const currentMonth = new Date().getMonth() + 1;
+
+        const res = await EventService
+            .eventManager
+            .client
+            .select("*")
+            .or(`start_month.eq.${month || currentMonth},end_month.eq.${month || currentMonth}`);
+
+        if(res.error)
+            throw new Error(res.error.message);
+
+        const events = res.data.filter(isEvent);
+
+        return await Promise.all(events.map(EventService.translateImageToUrl));
+    }
+
+    static getEventByName(name: string): Event | undefined{
+        return EventService.eventManager.cache.find(e => e.title.match(new RegExp(name, "i")));
+    }
+
+    static getEvent(id: number){
+        return EventService.eventManager.get(id);
+    }
+
+    static async getActiveEvent(): Promise<Event[]>{
+        const date = new Date().toISOString();
+        const res = await EventService
+            .eventManager
+            .client
+            .select("*")
+            .lte("start_date", date)
+            .gte("end_date", date);
+
+        if(res.error)
+            throw new Error(res.error.message);
+
+        return res.data.filter(isEvent);
+    }
 }
 
-export async function addEventByMonth(monthName: string, event: {name: string, description: string}){
-    const q = query(collection(db, 'events'), where('month', '==', monthName));
-
-    const querySnapshot = await getDocs(q);
-
-    if(querySnapshot.empty)
-        throw new Error("MonthName not found!");
-
-    await updateDoc(querySnapshot.docs[0].ref, {
-        eventList: arrayUnion(event)
-    })
-}
+export default EventService;

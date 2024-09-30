@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { update_get, update_get_all, update_add, update_get_latest} from "server/controller/update";
 
 const routes: RouterInterface[] = [

@@ -1,6 +1,10 @@
 # Chrez Bot
 
-A Crystal Phoenix's guild discord app
+A Crystal Phoenix's guild discord app & node-based API
+
+## Environtment Configuration
+
+the environtment example can be found at `~/env.example`
 
 ## Chrez Bot Command Lists
 

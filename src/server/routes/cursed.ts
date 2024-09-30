@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { cursed_get } from "server/controller/cursed";
 
 const routes: RouterInterface[] = [

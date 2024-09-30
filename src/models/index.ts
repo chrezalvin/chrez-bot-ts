@@ -27,3 +27,8 @@ export {
     Yomama,
     isYomama,
 } from "./Yomama";
+
+export {
+    Event,
+    isEvent,
+} from "./Event";

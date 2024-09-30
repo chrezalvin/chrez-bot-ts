@@ -6,7 +6,7 @@ import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 const run = async (args?: I_Recommend): Promise<MessageCreateOptions> => {
     const embed = new MyEmbedBuilder();
 
-    const recommend = RecommendService.getRandomRecommend();
+    const recommend = await RecommendService.getRandomRecommend();
 
     embed
         .setTitle(recommend.title)
