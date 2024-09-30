@@ -119,9 +119,6 @@ const firebase_config = JSON.parse(process.env.FIREBASE_CONFIG ?? "{}");
 if(Object.keys(firebase_config).length === 0)
     throw new Error("Couldn't find FIREBASE_CONFIG in .env");
 
-console.log("supabase url", SUPABASE_URL);
-console.log("supabase key", SUPABASE_KEY);
-
 export const firebaseApp = initializeApp(firebase_config);
 export const firestore = getFirestore(firebaseApp);
 
