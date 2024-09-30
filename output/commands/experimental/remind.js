@@ -50,7 +50,7 @@ const remind = new _library_1.CommandBuilder()
 exports.default = remind;
 // import {CommandReturnTypes} from "../../library/customTypes";
 // import { SlashCommandBuilder } from "discord.js";
-// import {Event} from "../../db";
+// import {Event} from "../..";
 // import { MyEmbedBuilder } from "../../library/basicFunctions";
 // const command: CommandReturnTypes = {
 //     name: "remind",
