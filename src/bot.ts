@@ -38,7 +38,6 @@ export async function sendError(
         description: `**${errorMessage}**`, 
         footer: `this message will be deleted in ${deleteTime} seconds`
     });
-
     if(isChatInputCommandInteraction(message)){
         message.deferred ? await message.editReply({embeds: [embed]}) : await message.reply({embeds: [embed]});
         if(deleteTime)
