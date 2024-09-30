@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Indonesia/Jakarta",
+        "memberRef": "Gold",
+        "criteria": ["indo", "indonesia", "indonesia", "jakarta", "id"],
+        "timezone": "Asia/Jakarta"
+    },
+    {
+        "name": "Japan",
+        "criteria": ["jap", "japan", "japanese"],
+        "timezone": "Japan"
+    },
+    {
+        "name": "America/Chicago",
+        "criteria": ["america", "chicago", "american"],
+        "timezone": "America/Chicago"
+    },
+    {
+        "name": "India/Kolkata",
+        "memberRef": "Hidan",
+        "criteria": ["india", "indian", "ind"],
+        "timezone": "Asia/Kolkata"
+    },
+    {
+        "name": "Philippine/Manila",
+        "memberRef": "GCB",
+        "criteria": ["ph", "filipino", "philiphine", "manila"],
+        "timezone": "Asia/Manila"
+    },
+    {
+        "name": "Canada",
+        "memberRef": "Gyatop",
+        "criteria": ["cad", "canada", "kanada"],
+        "timezone": "Canada/Pacific"
+    },
+    {
+        "name": "Taiwan/Taipei",
+        "criteria": ["taiwan", "tw", "taipei"],
+        "timezone": "Asia/Taipei"
+    },
+    {
+        "name": "Jerusalem",
+        "memberRef": "Sulain",
+        "criteria": [],
+        "timezone": "Asia/Jerusalem"
+    },
+    {
+        "name": "Guam",
+        "memberRef": "Lost-One",
+        "criteria": ["pacific"],
+        "timezone": "Pacific/Guam"
+    },
+    {
+        "name": "America/Puerto_Rico",
+        "memberRef": "Raiden",
+        "timezone": "America/Puerto_Rico",
+        "criteria": []
+    },
+    {
+        "name": "Pacific/Northern Mariana Islands",
+        "memberRef": "MasterDuck",
+        "timezone": "Pacific/Saipan",
+        "criteria": ["mariana"]
+    }
+]

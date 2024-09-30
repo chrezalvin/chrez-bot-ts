@@ -1,0 +1,1 @@
+{"version":3,"file":"cursed.js","sourceRoot":"","sources":["../../../src/server/routes/cursed.ts"],"names":[],"mappings":";;AACA,qDAAsD;AAEtD,MAAM,MAAM,GAAsB;IAC9B;QACI,IAAI,EAAE,SAAS;QACf,OAAO,EAAE,mBAAU;QACnB,MAAM,EAAE,KAAK;QACb,UAAU,EAAE,QAAQ;KACvB;IACD;QACI,IAAI,EAAE,gBAAgB;QACtB,OAAO,EAAE,mBAAU;QACnB,MAAM,EAAE,KAAK;QACb,UAAU,EAAE,QAAQ;KACvB;CACJ,CAAC;AAEF,kBAAe,MAAM,CAAC"}

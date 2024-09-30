@@ -1,0 +1,62 @@
+[
+    {
+        "unit": "C",
+        "alias": ["celsius"],
+        "canonincalName": "Celsius"
+    },
+    {
+        "unit": "F",
+        "alias": ["fahrenheit"],
+        "canonincalName": "Fahrenheit"
+    },
+    {
+        "unit": "K",
+        "alias": ["kelvin"],
+        "canonincalName": "Kelvin"
+    },
+    {
+        "unit": "lbs",
+        "alias": ["pounds", "lb", "pound"],
+        "canonincalName": "Pounds"
+    },
+    {
+        "unit": "kg",
+        "alias": ["kilograms", "kgs", "kilogram"],
+        "canonincalName": "Kilogram"
+    },
+    {
+        "unit": "g",
+        "alias": ["grams", "gram"],
+        "canonincalName": "Gram"
+    },
+    {
+        "unit": "ton",
+        "alias": ["tons", "tonne", "tonnes"],
+        "canonincalName": "Tonne"
+    },
+    {
+        "unit": "km",
+        "alias": ["kilometers", "kilometer"],
+        "canonincalName": "Kilometer"
+    },
+    {
+        "unit": "miles",
+        "alias": ["mi", "mile"],
+        "canonincalName": "Mile"
+    },
+    {
+        "unit": "cm",
+        "alias": ["centimeters", "centimeter"],
+        "canonincalName": "Centimeter"
+    },
+    {
+        "unit": "m",
+        "alias": ["meters", "meter"],
+        "canonincalName": "Meter"
+    },
+    {
+        "unit": "in",
+        "alias": ["inches", "inch"],
+        "canonincalName": "Inch"
+    }
+]

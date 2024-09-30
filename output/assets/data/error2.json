@@ -1,0 +1,67 @@
+{
+    "message_error": {
+        "code": 0,
+        "name": "message_error",
+        "description": "Index out of bounds, please choose between 0 to "
+    },
+    "slash_error": {
+        "code": 1,
+        "name": "slash_error",
+        "description": "slash error"
+    },
+    "interaction_error": {
+        "code": 2,
+        "name": "interaction_error",
+        "description": "interaction error"
+    },
+    "index_out_of_bounds": {
+        "code": 3,
+        "name": "Out Of Bounds",
+        "description": "Index out of bounds, please choose between {0} to {1}"
+    },
+    "index_negative": {
+        "code": 4,
+        "name": "Index is Negative",
+        "description": "Index cannot be negative"
+    },
+    "no_argument_provided": {
+        "code": 5,
+        "name": "No Argument Provided",
+        "description": "You did not provide any argument for this command"
+    },
+    "command_restricted": {
+        "code": 6,
+        "name": "Command is Restricted",
+        "description": "I can only send {0} in {1}"
+    },
+    "slash_command_option_unavailable": {
+        "code": 7,
+        "name": "Slash Command Unavailable",
+        "description": "Slash option is not available for this command"
+    },
+    "chat_command_option_unavailable": {
+        "code": 8,
+        "name": "Chat Command Unavailable",
+        "description": "Chat option is not available for this command"
+    },
+    "chat_command_unavailable": {
+        "code": 9,
+        "name": "Chat Command Unavailable",
+        "description": "Chat command is not available for command \"{0}\""
+    },
+    "slash_command_unavailable": {
+        "code": 10,
+        "name": "Slash Command Unavailable",
+        "description": "Slash command is not available for command \"{0}\""
+    },
+    "command_is_private": {
+        "code": 9,
+        "name": "This Command is Private Command",
+        "description": "This command is only available for private members!"
+    },
+    "command_user_not_found": {
+        "code": 10,
+        "name": "User Not Found",
+        "description": "Cannot verify the sender of this command!"
+    }
+}

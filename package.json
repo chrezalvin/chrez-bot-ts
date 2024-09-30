@@ -12,12 +12,14 @@
     "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
     "build": "tsc && tsc-alias",
     "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand",
-    "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
+    "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand",
+    "startOutput": "npm run loadSlashCommands &&node ./output/index"
   },
   "author": "Chrez. A",
   "license": "ISC",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.1",
+    "bun": "^1.1.0",
     "convert-units": "^2.3.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
