@@ -17,6 +17,11 @@ export const client = new Client({intents: [
     GatewayIntentBits.MessageContent
 ]});
 
+client.once("messageCreate", (message) => {
+    if(message.channel.isSendable())
+        message.channel.send("bot is online");
+})
+
 for(const botEvent of events){
     for(const execute of botEvent.execute){
         debug(`created event ${botEvent.name} ${execute[0]}`);
@@ -41,7 +46,7 @@ export async function sendError(
                 message.deleteReply();
             }, deleteTime * 1000);
     }
-    else{
+    else if(message.channel.isSendable()){
         const msg = await message.channel.send({embeds: [embed]});
         if(deleteTime) 
             setTimeout(async () => {

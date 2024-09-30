@@ -1,5 +1,6 @@
-import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Message, OmitPartialGroupDMChannel, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import { Cause, isChatInputCommandInteraction, ErrorValidation } from "@library";
+import { SenddableMessage } from "./CustomTypes";
 const debug = require("debug")("ChrezBot:command");
 
 export interface ExampleField{
@@ -23,14 +24,14 @@ export type CommandStatus = keyof typeof CommandStatuses;
 export type Mode = keyof typeof Modes;
 
 export interface I_SlashCommand<_T> {
-    slashCommand: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+    slashCommand: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | SlashCommandOptionsOnlyBuilder;
     interact: (interaction: ChatInputCommandInteraction<CacheType>, args?: _T) => Promise<ErrorValidation | void>;
     getParameter?: (interaction: ChatInputCommandInteraction<CacheType>) => (_T | ErrorValidation);
 }
 
 export interface I_ChatCommand<_T> {
-    execute: (message: Message<boolean>, args?: _T) => Promise<ErrorValidation | void>;
-    getParameter?: (message: Message<boolean>, args: string[]) => (_T | ErrorValidation);
+    execute: (message: SenddableMessage, args?: _T) => Promise<ErrorValidation | void>;
+    getParameter?: (message: SenddableMessage, args: string[]) => (_T | ErrorValidation);
 }
 
 export interface CommandData<_T>{
@@ -260,9 +261,10 @@ export class CommandBuilder<_T> implements CommandData<_T>{
 
     // methods
     async execute(message: ChatInputCommandInteraction<CacheType>): Promise<void | ErrorValidation | undefined>;
-    async execute(message: Message<boolean>, args: string[]): Promise<void | ErrorValidation | undefined>
-    async execute(message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: string[]){
+    async execute(message: SenddableMessage, args: string[]): Promise<void | ErrorValidation | undefined>
+    async execute(message: SenddableMessage | ChatInputCommandInteraction<CacheType>, args?: string[]){
         let params: _T | undefined | ErrorValidation = undefined;
+
         if(isChatInputCommandInteraction(message)){
             debug(`running command /${this.name}`);
 

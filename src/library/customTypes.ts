@@ -1,10 +1,10 @@
 import { MyEmbedBuilder } from "@library";
-import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError} from "discord.js";
+import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError, SlashCommandOptionsOnlyBuilder, OmitPartialGroupDMChannel} from "discord.js";
 import { NextFunction, RequestHandler, Request, Response } from "express";
 
 export interface Command{
     name: string;
-    execute: (message: Message, args: string[]) => Awaitable<void>;
+    execute: (message: SenddableMessage, args: string[]) => Awaitable<void>;
     unavailable?: boolean;
     description: string;
 }
@@ -28,7 +28,7 @@ export interface CommandReturnTypes extends Command {
     alias?: string[];
     examples?: {command: string, description?: string}[];
     slash?:  {
-        slashCommand: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">,
+        slashCommand: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | SlashCommandOptionsOnlyBuilder,
         interact: (interaction: ChatInputCommandInteraction<CacheType>) => Awaitable<void>;
     }
 }
@@ -36,7 +36,7 @@ export interface CommandReturnTypes extends Command {
 export interface inlineCommandReturnTypes extends Command {
     searchCriteria: (string | RegExp)[];
     acceptedLength?: number;
-    execute: (message: Message) => void;
+    execute: (message: SenddableMessage) => void;
 }
 
 function isCommand(command: unknown): command is Command {
@@ -171,3 +171,5 @@ export class Cause implements I_Cause{
         this.message = message;
     }
 }
+
+export type SenddableMessage = OmitPartialGroupDMChannel<Message<boolean>>;

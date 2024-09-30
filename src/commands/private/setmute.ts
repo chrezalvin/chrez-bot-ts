@@ -48,7 +48,8 @@ const mute = new CommandBuilder<I_Mute>()
             getParameter: (interaction) => {
                 const mute = interaction.options.getBoolean("mute", true);
                 const onUnmuted = () => {
-                    interaction.channel?.send({embeds: [new MyEmbedBuilder({description: "Chrezbot is now unmuted"})]});
+                    if(interaction.channel?.isSendable())
+                        interaction.channel?.send({embeds: [new MyEmbedBuilder({description: "Chrezbot is now unmuted"})]});
                 }
                 return {
                     mute,
