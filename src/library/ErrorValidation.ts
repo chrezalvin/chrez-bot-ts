@@ -54,7 +54,7 @@ export class ErrorValidation implements ErrorValidationData{
                     message.deleteReply();
                 }, deleteTime * 1000);
         }
-        else{
+        else if(message.channel.isSendable()){
             const msg = await message.channel.send({embeds: [embed]});
             if(deleteTime) 
                 setTimeout(async () => {
@@ -89,7 +89,7 @@ export class ErrorValidation implements ErrorValidationData{
                     message.deleteReply();
                 }, deleteTime * 1000);
         }
-        else{
+        else if(message.channel.isSendable()){
             message.channel.send({embeds: [embed]});
             if(deleteTime) 
                 setTimeout(async () => {

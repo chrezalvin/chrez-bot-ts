@@ -194,7 +194,7 @@ const chrezEvent = new CommandBuilder<I_Event>()
     .setChat({
         execute: async (message, args) => {
             const embeds = await run(args);
-            
+        
             await message.channel.send(embeds);
         },
         getParameter: (_, args) => {
