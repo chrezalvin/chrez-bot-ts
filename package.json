@@ -13,7 +13,7 @@
     "build": "tsc && tsc-alias",
     "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand",
     "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand",
-    "startOutput": "npm run loadSlashCommands &&node ./output/index"
+    "startOutput": "node ./output/registerSlashCommand &&node ./output/index"
   },
   "author": "Chrez. A",
   "license": "ISC",
