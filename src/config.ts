@@ -10,14 +10,26 @@ type Mode = "development" | "production";
 export let MODE: Mode = process.env.MODE as Mode | undefined ?? "development";
 
 // basic configs
-// max character bot can allow, if message word count is higher then the message will be ignored
+/**
+ * max character bot can allow, if message word count is higher then the message will be ignored
+ * only used in text-based command
+ */
 export const max_message_allowed = 100;
 
-// time for error message to be deleted (in seconds)
+/**
+ * time for error message to be deleted (in seconds)
+ */
 export const message_delete_time = 10;
 
+/**
+ * cooldown time for inline command per user (in seconds)
+ */
 export const inline_command_coldown_time = MODE === "development" ? 5 : 30;
 export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
+
+/**
+ * current bot version
+ */
 export const botVersion = "1.6.0";
 
 // still string | undefined so i put null coalescing
@@ -67,6 +79,9 @@ if(SUPABASE_URL === "" || SUPABASE_KEY === "") {
 
 
 // muted variable to share across all modules
+/**
+ * whether the bot is muted or not
+ */
 export let muted = false;
 
 let timerMuted: NodeJS.Timeout| null = null;

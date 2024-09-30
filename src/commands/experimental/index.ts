@@ -1,9 +1,6 @@
 import { inlineCommandReturnTypes, CommandBuilder } from "@library";
 
-import event from "./event";
-
 const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
-    event,
     // dyePrice    
 ]
 

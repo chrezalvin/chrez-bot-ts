@@ -44,3 +44,17 @@ export async function sleep(ms: number){
         setTimeout(() => {res()}, ms);
     })
 }
+
+/**
+ * converts a number to ordinal form
+ * @example
+ * toOrdinal(1) // 1st
+ * toOrdinal(2) // 2nd
+ * @param n number to convert
+ * @returns string ordinal form of the number
+ */
+export function toOrdinal(n: number): string{
+    const s = ["th", "st", "nd", "rd"],
+    v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}

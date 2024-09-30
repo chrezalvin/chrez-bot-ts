@@ -29,9 +29,9 @@ export {
 } from "./update";
 
 export {
-    UserService
+    UserService,
 } from "./users";
 
 export {
-    StoryService
+    StoryService,
 } from "./story";

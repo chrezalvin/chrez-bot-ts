@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { events_add_event, events_get, events_get_all } from "server/controller/events";
 
 const routes: RouterInterface[] = [

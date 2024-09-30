@@ -3,6 +3,8 @@ export {
     rng, 	
     rngInt, 	
     sleep,
+    toOrdinal,
+    isFileImage,
 } from "./basicFunctions";
 
 export {
@@ -30,7 +32,8 @@ export {
     isDiscordMessage,
     isInline,
     runCommand,
-} from "./customTypes";
+    RouterInterface,
+} from "./CustomTypes";
 
 export {
     ErrorMessages,
@@ -82,5 +85,10 @@ export {
 } from './TemporaryMap';
 
 
-export {} from "";
-export {} from "";
+export {
+    FileManagerFirebase,
+} from "./FileManagerFirebase";
+
+export {
+    ServiceFirebase,
+} from "./ServiceFirebase";

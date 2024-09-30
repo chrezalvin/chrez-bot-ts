@@ -1,10 +1,10 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:bot");
 
-import {DISCORD_TOKEN, message_delete_time} from "@config";
-import {CacheType, ChatInputCommandInteraction, Client, GatewayIntentBits, Message } from "discord.js";
+import { DISCORD_TOKEN, message_delete_time} from "@config";
+import { CacheType, ChatInputCommandInteraction, Client, GatewayIntentBits, Message } from "discord.js";
 
-import { isChatInputCommandInteraction } from "library/customTypes";
+import { isChatInputCommandInteraction } from "@library";
 import { MyEmbedBuilder } from "@library";
 
 import events from "./events";
@@ -15,7 +15,7 @@ export const client = new Client({intents: [
     GatewayIntentBits.Guilds, 
     GatewayIntentBits.GuildMessages, 
     GatewayIntentBits.MessageContent
-]})
+]});
 
 for(const botEvent of events){
     for(const execute of botEvent.execute){

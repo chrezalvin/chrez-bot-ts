@@ -1,4 +1,4 @@
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { memes_get } from "server/controller/memes";
 
 const routes: RouterInterface[] = [
@@ -13,7 +13,7 @@ const routes: RouterInterface[] = [
         handler: memes_get,
         method: "get",
         accessType: "public",
-    }
+    },
 ];
 
 export default routes;

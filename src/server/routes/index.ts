@@ -9,7 +9,7 @@ import cursed from "./cursed";
 import update from "./update";
 import users from "./users";
 import story from "./story";
-import { RouterInterface } from "@library/customTypes";
+import { RouterInterface } from "@library";
 import { asyncErrorHandler } from "@library";
 
 const router: Router = Router();
