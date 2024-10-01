@@ -4,15 +4,15 @@ import { SlashCommandBuilder } from "discord.js";
 
 const run = async (args?: I_Registlet) => {
     if(args === undefined || args.name === "")
-        return [MyEmbedBuilder.createError({description: "Please provide a name"})];
+        return {embeds: [MyEmbedBuilder.createError({description: "Please provide a name"})]};
 
     if(args.name.length < 3)
-        return [MyEmbedBuilder.createError({description: "Name must be at least 3 characters long"})];
+        return {embeds: [MyEmbedBuilder.createError({description: "Name must be at least 3 characters long"})]};
 
     const registlets = await RegistletService.getRegistletByName(args.name);
 
     if(registlets.length === 0)
-        return [MyEmbedBuilder.createError({description: "No registlet found"})];
+        return {embeds: [MyEmbedBuilder.createError({description: "No registlet found"})]};
 
     const embeds: MyEmbedBuilder[] = [];
 
@@ -38,7 +38,7 @@ const run = async (args?: I_Registlet) => {
         embeds.push(embed);
     }
 
-    return embeds;
+    return {embeds, content: `found ${registlets.length} registlet named "${args.name}"`};
 }
 
 interface I_Registlet{
@@ -60,7 +60,7 @@ const chrezRegistlet = new CommandBuilder<I_Registlet>()
         interact: async (interaction, args) => {
             const embeds = await run(args);
             
-            await interaction.reply({embeds});
+            await interaction.reply(embeds);
         },
         getParameter: (interaction) => {
             return {
@@ -80,7 +80,7 @@ const chrezRegistlet = new CommandBuilder<I_Registlet>()
         execute: async (message, args) => {
             const embeds = await run(args);
         
-            await message.channel.send({embeds});
+            await message.channel.send(embeds);
         },
         getParameter: (_, args) => {
             return {
