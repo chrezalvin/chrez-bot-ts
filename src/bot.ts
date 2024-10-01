@@ -17,11 +17,6 @@ export const client = new Client({intents: [
     GatewayIntentBits.MessageContent
 ]});
 
-client.once("messageCreate", (message) => {
-    if(message.channel.isSendable())
-        message.channel.send("bot is online");
-})
-
 for(const botEvent of events){
     for(const execute of botEvent.execute){
         debug(`created event ${botEvent.name} ${execute[0]}`);
