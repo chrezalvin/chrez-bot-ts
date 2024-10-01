@@ -1,1 +1,0 @@
-{"version":3,"file":"ready.js","sourceRoot":"","sources":["../../../src/events/once/ready.ts"],"names":[],"mappings":";;;;;AAAA,2CAA6C;AAE7C,qCAA2C;AAC3C,kDAA0B;AAE1B,MAAM,KAAK,GAAuC;IAC9C,mBAAM,CAAC,WAAW;IAClB,GAAG,EAAE;QACD,OAAO,CAAC,GAAG,CAAC,8BAA8B,cAAI,EAAE,CAAC,CAAC;QAClD,IAAA,eAAK,EAAC,uBAAuB,oBAAO,kBAAkB,oBAAU,EAAE,CAAC,CAAC;IACxE,CAAC;CACJ,CAAA;AAED,kBAAe,KAAK,CAAC"}

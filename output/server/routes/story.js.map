@@ -1,1 +1,0 @@
-{"version":3,"file":"story.js","sourceRoot":"","sources":["../../../src/server/routes/story.ts"],"names":[],"mappings":";;AACA,mDAA8E;AAE9E,MAAM,MAAM,GAAsB;IAC9B;QACI,IAAI,EAAE,QAAQ;QACd,OAAO,EAAE,wBAAgB;QACzB,MAAM,EAAE,KAAK;QACb,UAAU,EAAE,QAAQ;KACvB;IACD;QACI,IAAI,EAAE,YAAY;QAClB,OAAO,EAAE,yBAAiB;QAC1B,MAAM,EAAE,KAAK;QACb,UAAU,EAAE,QAAQ;KACvB;CACJ,CAAC;AAEF,kBAAe,MAAM,CAAC"}

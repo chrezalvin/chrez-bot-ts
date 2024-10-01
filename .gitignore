@@ -3,3 +3,4 @@ node_modules
 test*
 *.sqlite
 firebase.json
+output
