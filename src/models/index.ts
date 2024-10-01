@@ -32,3 +32,8 @@ export {
     Event,
     isEvent,
 } from "./Event";
+
+export {
+    Registlet,
+    isRegistlet,
+} from "./Registlet";

@@ -5,7 +5,7 @@ export {
     sleep,
     toOrdinal,
     isFileImage,
-} from "./basicFunctions";
+} from "./BasicFunctions";
 
 export {
     CommandBuilder, 	
@@ -33,6 +33,7 @@ export {
     isInline,
     runCommand,
     RouterInterface,
+    SenddableMessage,
 } from "./CustomTypes";
 
 export {
@@ -65,25 +66,16 @@ export {
 } from "./server";
 
 export {
-    ServiceFirebase as Service,
-} from "./ServiceFirebase";
-
-export {
-    FileManagerFirebase as FileManager,
-} from "./FileManagerFirebase";
-
-export {
-    FileManagerSupabase
+    FileManagerSupabase,
 } from "./FileManagerSupabase"
 
 export {
-    ServiceSupabase
+    ServiceSupabase,
 } from "./ServiceSupabase"
 
 export {
     TemporaryMap
 } from './TemporaryMap';
-
 
 export {
     FileManagerFirebase,
