@@ -35,3 +35,7 @@ export {
 export {
     StoryService,
 } from "./story";
+
+export {
+    RegistletService,
+} from "./registlet";

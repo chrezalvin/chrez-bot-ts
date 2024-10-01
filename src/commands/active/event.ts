@@ -1,6 +1,6 @@
-import { CommandReturnTypes, MyEmbedBuilder, CommandBuilder, toOrdinal} from "@library";
+import { MyEmbedBuilder, CommandBuilder, toOrdinal} from "@library";
 import { EventService } from "@services";
-import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
 const monthAliases = [
     {
