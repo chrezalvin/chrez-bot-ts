@@ -39,3 +39,7 @@ export {
 export {
     RegistletService,
 } from "./registlet";
+
+export {
+    ActiveEventService,
+} from "./activeEvent";

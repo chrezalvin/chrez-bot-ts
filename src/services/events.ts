@@ -52,8 +52,10 @@ export class EventService {
         return await Promise.all(events.map(EventService.translateImageToUrl));
     }
 
-    static getEventByName(name: string): Event | undefined{
-        return EventService.eventManager.cache.find(e => e.title.match(new RegExp(name, "i")));
+    static async getEventByName(name: string): Promise<Event | undefined>{
+        const found = EventService.eventManager.cache.find(e => e.title.match(new RegExp(name, "i")));
+
+        return found ? await EventService.translateImageToUrl(found) : undefined;
     }
 
     static getEvent(id: number){
