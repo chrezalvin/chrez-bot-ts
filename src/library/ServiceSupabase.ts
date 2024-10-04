@@ -13,6 +13,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     protected m_keyName: _K;
     protected m_tableName: string;
     protected m_typeGuard?: (value: unknown) => value is _T;
+    protected m_useCache: boolean = true;
 
     // getter
     /**
@@ -56,6 +57,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         tableName: string,
         option: {
             typeGuard?: (value: unknown) => value is _T,
+            useCache?: boolean,
         }
     ){
         this.m_keyName = keyName;
@@ -83,12 +85,14 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         // filter the data based on the typeguard
         const data = (this.m_typeGuard ? res.data.filter(ele => this.m_typeGuard?.(ele)): res.data) as _T[];
 
-        // reset cache
-        this.m_cache.clear();
-
-        // then fill the cache with the retrieved data
-        for(const item of data)
-            this.m_cache.set(item[this.m_keyName], item);
+        if(this.m_useCache){
+            // reset cache
+            this.m_cache.clear();
+    
+            // then fill the cache with the retrieved data
+            for(const item of data)
+                this.m_cache.set(item[this.m_keyName], item);
+        }
 
         return data;
     }
@@ -113,7 +117,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
             if(res.data.length !== 0){
                 const data = res.data[0] as _T;
 
-                this.m_cache.set(data[this.m_keyName], data);
+                if(this.m_useCache)
+                    this.m_cache.set(data[this.m_keyName], data);
 
                 return data;
             }
@@ -139,7 +144,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         const returnedData = res.data[0] as unknown;
 
         if(this.m_typeGuard && this.m_typeGuard(returnedData)){
-            this.m_cache.set(returnedData[this.m_keyName], returnedData);
+            if(this.m_useCache)
+                this.m_cache.set(returnedData[this.m_keyName], returnedData);
 
             return returnedData;
         }
@@ -181,7 +187,9 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         const data = res.data[0] as unknown;
 
         if(this.m_typeGuard && this.m_typeGuard(data)){
-            this.m_cache.set(key, data);            
+            if(this.m_useCache)
+                this.m_cache.set(key, data);            
+
             return data;
         }
         else return undefined;
@@ -198,7 +206,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
             .delete()
             .eq(this.m_keyName, key);
 
-        if(!res.error)
+        if(!res.error && this.m_useCache)
             this.m_cache.delete(key);
 
         return res.error?.message;

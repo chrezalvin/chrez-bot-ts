@@ -172,4 +172,11 @@ export class Cause implements I_Cause{
     }
 }
 
+/**
+ * modifier type to modify the type to be non nullable
+ */
+export type NonNullableFields<T> = {
+    [P in keyof T]: NonNullable<T[P]>;
+};
+
 export type SenddableMessage = OmitPartialGroupDMChannel<Message<boolean>>;

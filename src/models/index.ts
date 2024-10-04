@@ -37,3 +37,8 @@ export {
     Registlet,
     isRegistlet,
 } from "./Registlet";
+
+export {
+    ActiveEvent,
+    isActiveEvent,
+} from "./ActiveEvent";

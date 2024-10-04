@@ -34,6 +34,7 @@ export {
     runCommand,
     RouterInterface,
     SenddableMessage,
+    NonNullableFields,
 } from "./CustomTypes";
 
 export {
