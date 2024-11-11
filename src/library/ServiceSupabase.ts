@@ -93,6 +93,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @returns the data in array format
      */
     async getAll(): Promise<_T[]>{
+        debug(`getting all data from table ${this.m_tableName}`);
+
         const res = await supabase.from(this.m_tableName).select("*");
         if(res.error)
             throw new Error(res.error.message);
@@ -101,6 +103,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         const data = (this.m_typeGuard ? res.data.filter(ele => this.m_typeGuard?.(ele)): res.data) as _T[];
 
         if(this.m_useCache){
+            debug(`resetting cache for table ${this.m_tableName}`);
             // reset cache
             this.m_cache.clear();
     
@@ -118,17 +121,22 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @returns the data that matches the key, undefined if not found
      */
     async get(key: _T[_K]): Promise<_T | undefined>{
+        debug(`getting ${this.m_keyName}:${key} from table ${this.m_tableName}`);
+
         let item :_T | undefined = undefined;
 
         // search on the cache first
-        if(this.m_useCache)
+        if(this.m_useCache){
+            debug(`searching ${this.m_keyName}:${key} from cache`);
             item = this.m_cache.get(key);
+        }
 
         if(item)
             return item;
         else{
             // if not found, search on the database
             const res = await supabase.from(this.m_tableName).select("*").eq(this.m_keyName, key);
+
             if(res.error)
                 throw new Error(res.error.message);
 
@@ -141,6 +149,9 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
 
                 return data;
             }
+
+            // otherwise, throw an error
+            throw new Error("Data not found!");
         }
     }
 
@@ -150,6 +161,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @param keyValue optional key value, if not set, it will use the key from the value
      */
     async add(value: Omit<_T, _K>, keyValue?: _K): Promise<_T | undefined>{
+        debug(`inserting data to table ${this.m_tableName}`);
+
         // remove the key from the value since key is permanent
         const data = keyValue ? {...value, [this.m_keyName]: keyValue} : value;
         const res = await supabase
@@ -178,6 +191,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @throws an error if the cache is disabled, use queryBuilder instead
      */
     getWhere(pred: (val: _T) => boolean): _T[]{
+        debug(`getting data from table ${this.m_tableName} based on pred`);
+
         if(!this.m_useCache)
             throw new Error("Cache is disabled!");
 
@@ -198,6 +213,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @param value 
      */
     async update(key: _T[_K], value: Partial<Omit<_T, _K>>): Promise<_T | undefined>{
+        debug(`updating ${this.m_keyName}:${key} in table ${this.m_tableName}`);
+
         // seems like value still accepts Partial<_T>, so need to create additional measures
         // apparently this is a flaw in typescript, Partial is called weak type, and it's not possible to check if the key is in the value
         // but should be fine with typeguard beforehand, just need to check if the key is in the value
@@ -229,6 +246,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @param key 
      */
     async delete(key: _T[_K]): Promise<void>{
+        debug(`deleting ${this.m_keyName}:${key} from table ${this.m_tableName}`);
+
         const res = await supabase
             .from(this.m_tableName)
             .delete()
@@ -247,6 +266,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @returns the data that matches the query
      */
     async queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestQueryBuilder) => _R): Promise<_T | _T[]>{
+        debug(`querying data from table ${this.m_tableName}`);
+
         const res = await fcn(supabase.from(this.m_tableName));
 
         if(res.error)
@@ -269,6 +290,8 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @param args arguments
      */
     async call(functionName: string, args: any): Promise<_T[]>{
+        debug(`calling function ${functionName} from table ${this.m_tableName}`);
+        
         const res = await supabase.rpc(functionName, args);
 
         if(res.error)

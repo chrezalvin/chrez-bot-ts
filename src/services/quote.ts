@@ -33,6 +33,10 @@ export class QuoteService{
         return quote[0];
     }
 
+    static async getQuoteById(quoteId: Quote["id"]): Promise<Quote | undefined>{
+        return await QuoteService.quoteSupabase.get(quoteId);
+    }
+
     static async setNewQuote(quote: Omit<Quote, "id">){
         return QuoteService.quoteSupabase.add(quote);
     }

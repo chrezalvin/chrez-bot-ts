@@ -47,3 +47,12 @@ export const quote_post_delete = async (req: Request, res: Response) => {
 
     res.status(200).json({success: true});
 }
+
+export const quote_get_by_id = async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+
+    if(isNaN(id))
+        throw new Error("Invalid id!");
+
+    const quote = await QuoteService.getQuoteById(id);
+}

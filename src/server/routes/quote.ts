@@ -1,5 +1,5 @@
 import { RouterInterface } from "@library";
-import { quote_get_all, quote_post_add, quote_post_delete, quote_post_edit } from "server/controller/quote";
+import { quote_get_all, quote_get_by_id, quote_post_add, quote_post_delete, quote_post_edit } from "server/controller/quote";
 
 const routes: RouterInterface[] = [
     {
@@ -26,6 +26,12 @@ const routes: RouterInterface[] = [
         method: "post",
         accessType: "private",
     },
+    {
+        path: "/quote/:id",
+        handler: quote_get_by_id,
+        method: "get",
+        accessType: "public",
+    }
 ];
 
 export default routes;
