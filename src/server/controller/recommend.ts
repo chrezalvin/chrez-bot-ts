@@ -1,8 +1,9 @@
 const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
-import { isRecommend } from '@models';
+import { isRecommendWithoutId, Recommend } from '@models';
 import { RecommendService } from 'services/recommend';
+import fs from "fs";
 
 export const recommend_get_default = async (req: Request, res: Response) => {
     const recommend = await RecommendService.getAlldata();
@@ -21,31 +22,26 @@ export const recommend_get_by_id = async (req: Request, res: Response) => {
     res.json(recommend);
 }
 
-// export const recommend_get_by_page = async (req: Request, res: Response) => {
-//     debug("GET /recommend");
-//     const page = parseInt(req.params.page);
-
-//     if(isNaN(page))
-//         throw new Error("Invalid page number!");
-
-//     const recommend = await getRecommend(page);
-
-//     res.json(recommend);
-// }
-
 export const recommend_post_add = async (req: Request, res: Response) => {
-    const param = req.body.recommend as unknown;
+    const recommend = JSON.parse(req.body.recommend);
+    const image = req.file;
 
-    if(typeof param !== "string")
+    console.log(recommend);
+
+    if(!isRecommendWithoutId(recommend))
         throw new Error("Invalid recommend object!");
 
-    const recommend = JSON.parse(param);
+    let newRecommend: Recommend;
+    if(image){
+        const buffer = fs.readFileSync(image.path);
+        const blob = new Blob([buffer], {type: image.mimetype});
 
-    if(!isRecommend(recommend))
-        throw new Error("Invalid recommend object!");
+        newRecommend = await RecommendService.createNewRecommend(recommend, blob);
 
-    // TODO: add image parameter on post request
-    const newRecommend = await RecommendService.createNewrecommend(recommend, /* recommend.imgUrl */);
+        fs.unlinkSync(image.path);
+    }
+    else
+        newRecommend = await RecommendService.createNewRecommend(recommend);
 
     res.status(200).json(newRecommend);
 }
@@ -56,7 +52,7 @@ export const recommend_post_delete = async (req: Request, res: Response) => {
     if(isNaN(id))
         throw new Error("Invalid id!");
 
-    await RecommendService.service.delete(id);
+    await RecommendService.deleteRecommend(id);
 
     res.status(200).json({
         message: "Recommend deleted!"
@@ -65,16 +61,26 @@ export const recommend_post_delete = async (req: Request, res: Response) => {
 
 export const recommend_post_update = async (req: Request, res: Response) => {
     const id = parseInt(req.body.id);
-    const recommend = req.body.recommend as unknown;
+    const recommend = JSON.parse(req.body.recommend);
+    const image = req.file;
 
-    if(!isRecommend(recommend))
-        throw new Error("Invalid recommend object!");
     if(isNaN(id))
         throw new Error("Invalid id!");
 
-    await RecommendService.service.update(id, recommend);
+    if(!isRecommendWithoutId(recommend))
+        throw new Error("Invalid recommend object!");
 
-    res.status(200).json({
-        message: "Recommend updated!"
-    });
+    let updatedRecommend: Recommend;
+    if(image){
+        const buffer = fs.readFileSync(image.path);
+        const blob = new Blob([buffer], {type: image.mimetype});
+
+        updatedRecommend = await RecommendService.updateRecommend(id, recommend, blob);
+
+        fs.unlinkSync(image.path);
+    }
+    else
+        updatedRecommend = await RecommendService.updateRecommend(id, recommend);
+
+    res.status(200).json(updatedRecommend);
 }

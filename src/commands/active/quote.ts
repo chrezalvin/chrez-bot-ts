@@ -1,11 +1,20 @@
 import {MyEmbedBuilder, rngInt, getProfileByID, CommandBuilder, ErrorValidation} from "@library";
 
-import { SlashCommandBuilder } from "discord.js";
+import { CacheType, ChannelType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import quotes from "@assets/messages/active/quote.json";
 import { prefixes } from "@config";
+import QuoteService from "@services/quote";
 
-const run = (args?: I_Quote) => {
+const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Quote) => {
+    if(!message.channel || message.channel.type !== ChannelType.GuildText)
+        return new ErrorValidation("command_restricted", "quote", "guild text channel");
+
+    // nsfw checking
+    if(args?.isNsfw && !message.channel.nsfw)
+        return new ErrorValidation("command_restricted", "quote", "age restricted channel");
+
     let index: number = args?.index ?? rngInt(0, quotes.length - 1);
+    let isNsfw: boolean = (message.channel?.type === ChannelType.GuildText ? message.channel.nsfw : false) || args?.isNsfw || false;
 
     if(index >= quotes.length)
         return new ErrorValidation("index_out_of_bounds", 0, quotes.length - 1);
@@ -13,7 +22,7 @@ const run = (args?: I_Quote) => {
         return new ErrorValidation("index_negative");
 
     const embed = new MyEmbedBuilder();
-    const quote = quotes[index];
+    const quote = await QuoteService.getRandomQuote(isNsfw);
 
     if(quote.memberRef){
         const member = getProfileByID(quote.memberRef);
@@ -32,6 +41,7 @@ const run = (args?: I_Quote) => {
 
 interface I_Quote{
     index: number;
+    isNsfw?: boolean;
 };
 
 const quote = new CommandBuilder<I_Quote>()
@@ -53,7 +63,7 @@ const quote = new CommandBuilder<I_Quote>()
                 .setMaxValue(quotes.length - 1)
                 ),
         interact: async (interaction, args) => {
-            const embeds = run(args);
+            const embeds = await run(interaction, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
@@ -75,7 +85,7 @@ const quote = new CommandBuilder<I_Quote>()
             return {index};
         },
         execute: async (message, args) => {
-            const embeds = run(args);
+            const embeds = await run(message, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;

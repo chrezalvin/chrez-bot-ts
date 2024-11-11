@@ -1,13 +1,11 @@
 const debug = require('debug')('Server:recommend');
 
 import { rngInt } from "@library";
-import {ServiceSupabase, FileManagerSupabase} from "@library";
+import {ServiceSupabase} from "@library";
 import { FileManagerFirebase } from "@library/FileManagerFirebase";
 import { isRecommend, Recommend } from "@models";
 
 export class RecommendService{
-    protected static readonly recommendedPath = "recommend";
-    protected static readonly bucket = "images";
     protected static readonly recommend = "recommend";
 
     protected static readonly firebaseImgPath = "images/recommend";
@@ -19,7 +17,7 @@ export class RecommendService{
     );
 
     protected static async changeImgUrlToUrl(recommend: Recommend): Promise<Recommend>{
-        return recommend.imgUrl ? {...recommend, imgUrl: await RecommendService.fileManager2.translateToUrl(recommend.imgUrl)} : {...recommend, id: recommend.id};
+        return recommend.imgUrl ? {...recommend, imgUrl: await RecommendService.fileManager2.getUrlFromPath(recommend.imgUrl)} : {...recommend, id: recommend.id};
     }
 
     // public static fileManager = new FileManagerSupabase(RecommendService.bucket, RecommendService.recommendedPath);
@@ -36,44 +34,87 @@ export class RecommendService{
         return await RecommendService.changeImgUrlToUrl(recommend);
     }
 
-    public static async createNewrecommend(recommend: Omit<Recommend, "id">, imgUrl?: string): Promise<Recommend>{
-        // load the recommended first without the imgUrl
-        const rec: Omit<Recommend, "id"> = {
-            title: recommend.title,
-            description: recommend.description,
-        };
-
-        if(recommend.link)
-            rec.link = recommend.link;
-        if(recommend.category)
-            rec.category = recommend.category;
-
-        const newRecommend = await RecommendService.service.add(rec);
+    public static async createNewRecommend(recommend: Omit<Recommend, "id">, imgBlob?: Blob): Promise<Recommend>{
+        // load the recommend first without the imgUrl
+        const newRecommend = await RecommendService.service.add({...recommend, imgUrl: null});
 
         if(!newRecommend)
-            throw new Error("Failed to create new recommend");
+            throw new Error("Failed to create new Recommend");
 
-        // then upload the image
-        if(imgUrl){
-            const res = await RecommendService.fileManager2.uploadImage(imgUrl);
-            const data = await RecommendService.service.update(newRecommend.id, {...recommend, imgUrl: res?.metadata.name});
+        if(!imgBlob)
+            return await RecommendService.changeImgUrlToUrl(newRecommend);
+        
+        const fileName: string = recommend.title.toLowerCase().replace(/ /g, "_");
+        const res = await RecommendService.fileManager2.uploadImage(imgBlob, fileName);
 
-            if(data)
-                newRecommend.imgUrl = data.imgUrl;
-        }
+        if(!res)
+            throw new Error("Failed to upload image");
 
-        return RecommendService.changeImgUrlToUrl(newRecommend);
+        const data = await RecommendService.service.update(newRecommend.id, {imgUrl: res.metadata.fullPath});
+
+        if(!data)
+            throw new Error("Failed to update Recommend");
+
+        return await RecommendService.changeImgUrlToUrl(data);
     }
 
-    public static async deleteRecommend(id: number){
-        const rec = await RecommendService.service.get(id);
+    static async updateRecommend(id: Recommend["id"], editedRecommend: Partial<Omit<Recommend, "id" | "imgUrl">>, imgBlob?: Blob): Promise<Recommend>{
+        const recommend = await RecommendService.service.get(id);
 
-        if(!rec)
-            throw new Error("Recommend not found");
+        if(!recommend)
+            throw new Error("Recommend not found!");
 
-        await RecommendService.service.delete(rec.id);
+        const updatedRecommend = await RecommendService.service.update(id, editedRecommend);
 
-        if(rec.imgUrl)
-            await RecommendService.fileManager2.deleteImage(rec.imgUrl);
+        if(!updatedRecommend)
+            throw new Error("Failed to update Recommend!");
+
+        if(!imgBlob)
+            return RecommendService.changeImgUrlToUrl(updatedRecommend);
+
+        if(recommend.imgUrl){
+            const fileName = recommend.imgUrl.split("/").pop();
+            
+            if(!fileName)
+                throw new Error("Failed to get image name!");
+            
+            await RecommendService.fileManager2.deleteImage(fileName);
+        }
+
+        let fileName: string;
+        if(editedRecommend.title)
+            fileName = editedRecommend.title.toLowerCase().replace(/ /g, "_");
+        else
+            fileName = recommend.title.toLowerCase().replace(/ /g, "_");
+
+        const fileNameRes =  await RecommendService.fileManager2.uploadImage(imgBlob, fileName);
+
+        if(!fileNameRes)
+            throw new Error("Failed to upload image!");
+
+        const updatedImageRecommend = await RecommendService.service.update(id, {imgUrl: fileNameRes.metadata.fullPath});
+
+        if(!updatedImageRecommend)
+            throw new Error("Failed to update Recommend!");
+
+        return await RecommendService.changeImgUrlToUrl(updatedImageRecommend);
+    }
+
+    static async deleteRecommend(id: Recommend["id"]): Promise<void>{
+        const recommend = await RecommendService.service.get(id);
+
+        if(!recommend)
+            throw new Error("Recommend not found!");
+
+        if(recommend.imgUrl){
+            const fileName = recommend.imgUrl.split("/").pop();
+
+            if(!fileName)
+                throw new Error("Failed to get image name!");
+
+            await RecommendService.fileManager2.deleteImage(fileName);
+        }
+
+        await RecommendService.service.delete(id);
     }
 }

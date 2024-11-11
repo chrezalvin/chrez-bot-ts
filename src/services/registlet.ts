@@ -48,27 +48,88 @@ export class RegistletService {
         return await Promise.all(res.map(RegistletService.translateImageToUrl));
     }
 
-    static async setNewRegistlet(registlet: Omit<Registlet, "id">, imgUrl?: string): Promise<Registlet>{
+    static async setNewRegistlet(registlet: Omit<Registlet, "id">, imgBlob?: Blob): Promise<Registlet>{
         const newRegistlet = await RegistletService.serviceSupabase.add(registlet);
 
         if(!newRegistlet)
             throw new Error("Failed to create new registlet");
 
-        if(imgUrl){
-            // file name format will be registlet_title.extension
-            const imgName = registlet.name.replace(/\s/g, "_").toLowerCase();
+        if(!imgBlob)
+            return newRegistlet;
 
-            const res = await RegistletService.fileManager.uploadImage(imgUrl, imgName);
+        // file name format will be registlet_title.extension
+        const imgName = registlet.name.replace(/\s/g, "_").toLowerCase();
 
-            if(res)
-                await RegistletService.serviceSupabase.update(newRegistlet.id, {...registlet, img_path: `${RegistletService.imgDir}/${res.metadata.name}`});
+        const res = await RegistletService.fileManager.uploadImage(imgBlob, imgName);
 
-            // if(data)
-            //     return await RegistletService.translateImageToUrl(data);
-            // else
-            //     throw new Error("Failed to update the registlet");
+        if(!res)
+            throw new Error("Failed to upload the image");
+
+        const resRegi = await RegistletService.serviceSupabase.update(newRegistlet.id, {...registlet, img_path: res.metadata.fullPath});
+
+        if(!resRegi)
+            throw new Error("Failed to upload image");
+
+        return await RegistletService.translateImageToUrl(resRegi);
+    }
+
+    static async updateRegistlet(id: Registlet["id"], registlet: Partial<Omit<Registlet, "id">>, imgBlob?: Blob): Promise<Registlet>{
+        const regi = await RegistletService.serviceSupabase.get(id);
+
+        if(!regi)
+            throw new Error("Registlet not found");
+
+        const updatedRegistlet = await RegistletService.serviceSupabase.update(id, registlet);
+
+        if(!updatedRegistlet)
+            throw new Error("Failed to update registlet");
+
+        if(!imgBlob)
+            return RegistletService.translateImageToUrl(updatedRegistlet);
+
+        if(regi.img_path){
+            const fileName = regi.img_path.split("/").pop();
+
+            if(!fileName)
+                throw new Error("Failed to get image name");
+
+            await RegistletService.fileManager.deleteImage(fileName);
         }
 
-        return newRegistlet;
+        let fileName: string;
+        if(registlet.name)
+            fileName = registlet.name.replace(/\s/g, "_").toLowerCase();
+        else
+            fileName = regi.name.replace(/\s/g, "_").toLowerCase();
+
+        const updatedImageRegistlet = await RegistletService.fileManager.uploadImage(imgBlob, fileName);
+
+        if(!updatedImageRegistlet)
+            throw new Error("Failed to upload image");
+
+        const res = await RegistletService.serviceSupabase.update(id, {...registlet, img_path: updatedImageRegistlet.metadata.fullPath});
+
+        if(!res)
+            throw new Error("Failed to update image path");
+
+        return await RegistletService.translateImageToUrl(res);
+    }
+
+    static async deleteRegistlet(id: Registlet["id"]){
+        const regi = await RegistletService.serviceSupabase.get(id);
+
+        if(!regi)
+            throw new Error("Registlet not found");
+
+        if(regi.img_path){
+            const fileName = regi.img_path.split("/").pop();
+
+            if(!fileName)
+                throw new Error("Failed to get image name");
+
+            await RegistletService.fileManager.deleteImage(fileName);
+        }
+
+        await RegistletService.serviceSupabase.delete(regi.id);
     }
 }

@@ -1,19 +1,26 @@
-const debug = require("debug")("app:sessionCheck");
+const debug = require("debug")("Server:sessionCheck");
 
-import { sessions } from "@shared";
+import SessionService from "@services/session";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
 export function sessionCheck(): RequestHandler{
-    return (req: Request, res: Response, next: NextFunction) => {        
+    return async (req: Request, res: Response, next: NextFunction) => {    
         // check if session is set
-        const sessionid = req.cookies.sessionid as unknown;
+        const sessionid = req.cookies.SESSION_KEY as unknown;
 
         if(!sessionid)
             debug("no sessionid found");
         else
             debug(`sessionid found: ${sessionid}`);
 
-        req.user = sessions.get(sessionid as string);
-        next();
+        try{
+            if(typeof sessionid === "string")
+                req.user = await SessionService.getSession(sessionid);
+
+            next();
+        }
+        catch(err){
+            res.status(401).send({error: 401, message: "Unknown error"});
+        }
     }
 }

@@ -27,15 +27,42 @@ export async function update_get_all(req: Request, res: Response, _: NextFunctio
     res.json(updates);
 }
 
-export async function update_add(req: Request, res: Response, _: NextFunction){
+export async function update_post_add(req: Request, res: Response, _: NextFunction){
+    const update = req.body.update as unknown;
+
+    if(!isUpdate(update))
+        throw new Error("invalid update object");
+
+    // should be already ensured here
+    const updateRes = await UpdateService.addUpdate(update);
+    res.json({updateRes});
+}
+
+export async function update_post_update(req: Request, res: Response, _: NextFunction){
     const version = req.body.version as unknown;
     const update = req.body.update as unknown;
 
-    if(!isUpdate(update) || !(typeof version === "string"))
-        res.status(400).json({error: "invalid update object"});
+    if(typeof version !== "string")
+        throw new Error("invalid version");
 
-    // should be already ensured here
-    await UpdateService.addUpdate(version as string, update as Update);
+    if(typeof update !== "object" || update === null)
+        throw new Error("invalid update object");
+
+    const updated = await UpdateService.editUpdate(version, update);
+
+    if(!updated)
+        throw new Error("version not found");
+
+    res.json(updated);
+}
+
+export async function update_post_delete(req: Request, res: Response, _: NextFunction){
+    const version = req.body.version as unknown;
+
+    if(typeof version !== "string")
+        throw new Error("invalid version");
+
+    await UpdateService.deleteUpdate(version);
     res.json({success: true});
 }
 

@@ -1,7 +1,10 @@
 const debug = require("debug")("Server:Service");
 
 import { supabase } from "@config";
-import { SupabaseClient } from "@supabase/supabase-js";
+
+type PostgrestQueryBuilder = ReturnType<typeof supabase.from>;
+type PostgrestFilterBuilder = ReturnType<ReturnType<typeof supabase.from>["select"]>;
+type PostgrestBuilder = ReturnType<ReturnType<ReturnType<typeof supabase.from>["select"]>["single"]>;
 
 /**
  * Service class to handle the database operation, this class will cache the data to reduce the payload
@@ -33,8 +36,12 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
 
     /**
      * the cached data in array form, it's supposed to return the full data in the database
+     * throws an error if useCache is set to false
      */
     get cache(): _T[]{ 
+        if(!this.m_useCache)
+            throw new Error("Cache is disabled!");
+
         const res = [];
         for(const [_, data] of this.m_cache)
             res.push(data);
@@ -43,8 +50,14 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
 
     /**
      * the length of the cached data
+     * throws an error if useCache is set to false
      */
-    get length(): number { return this.m_cache.size; }
+    get length(): number { 
+        if(!this.m_useCache)
+            throw new Error("Cache is disabled!");
+
+        return this.m_cache.size; 
+    }
     
     /**
      * creates a new service class
@@ -63,10 +76,12 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         this.m_keyName = keyName;
         this.m_tableName = tableName;
         this.m_typeGuard = option.typeGuard;
+        this.m_useCache = option.useCache ?? true;
 
-        this.getAll()
-            .then(() => debug(`Service class created with key: ${this.m_keyName.toString()} and table: ${this.m_tableName}`))
-            .catch(err => debug(`Service class created with key: ${this.m_keyName.toString()} and table: ${this.m_tableName}, error: ${err}`));
+        if(this.m_useCache){
+            this.getAll().then(_ => debug(`Cached data for table: ${this.m_tableName} | Size: ${this.m_cache.size}`));
+        }
+        
         debug(`Service class created with key: ${this.m_keyName.toString()} and table: ${this.m_tableName}`);
 
         ServiceSupabase.s_services.push(this);
@@ -103,8 +118,12 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @returns the data that matches the key, undefined if not found
      */
     async get(key: _T[_K]): Promise<_T | undefined>{
+        let item :_T | undefined = undefined;
+
         // search on the cache first
-        const item = this.m_cache.get(key);
+        if(this.m_useCache)
+            item = this.m_cache.get(key);
+
         if(item)
             return item;
         else{
@@ -156,8 +175,12 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * get data based on pred, this function will only search the data within the cache
      * @param pred the search function
      * @returns data that matches the pred
+     * @throws an error if the cache is disabled, use queryBuilder instead
      */
     getWhere(pred: (val: _T) => boolean): _T[]{
+        if(!this.m_useCache)
+            throw new Error("Cache is disabled!");
+
         const res = [];
         for(const [_, data] of this.m_cache)
             if(pred(data))
@@ -175,6 +198,12 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @param value 
      */
     async update(key: _T[_K], value: Partial<Omit<_T, _K>>): Promise<_T | undefined>{
+        // seems like value still accepts Partial<_T>, so need to create additional measures
+        // apparently this is a flaw in typescript, Partial is called weak type, and it's not possible to check if the key is in the value
+        // but should be fine with typeguard beforehand, just need to check if the key is in the value
+        if(this.m_keyName in value)
+            throw new Error(`Illegal ${this.m_keyName} in value when updating!`);
+
         const res = await supabase
                 .from(this.m_tableName)
                 .update(value)
@@ -198,18 +227,60 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     /**
      * deletes the data from the database based on the key, also deletes the data from the cache
      * @param key 
-     * @returns 
      */
-    async delete(key: _T[_K]): Promise<string | undefined>{
+    async delete(key: _T[_K]): Promise<void>{
         const res = await supabase
             .from(this.m_tableName)
             .delete()
             .eq(this.m_keyName, key);
 
-        if(!res.error && this.m_useCache)
-            this.m_cache.delete(key);
+        if(res.error)
+            throw new Error(res.error.message);
 
-        return res.error?.message;
+        if(this.m_useCache)
+            this.m_cache.delete(key);
+    }
+
+    /**
+     * Query builder to build a query from the database, the result will be filtered based on the typeguard
+     * @param fcn the function to build the query
+     * @returns the data that matches the query
+     */
+    async queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestQueryBuilder) => _R): Promise<_T | _T[]>{
+        const res = await fcn(supabase.from(this.m_tableName));
+
+        if(res.error)
+            throw new Error(res.error.message);
+
+        if(this.m_typeGuard){
+            if(Array.isArray(res.data))
+                return res.data.filter(ele => this.m_typeGuard?.(ele)) as _T[];
+            else if(this.m_typeGuard(res.data))
+                return res.data as _T;
+            else throw new Error("Typeguard failed!");
+        }
+        else
+            return res.data as _T;
+    }
+
+    /**
+     * calls a function and then use typeguard to filter the data, this function will reload the entire cache if the cache is enabled
+     * @param functionName the function's name
+     * @param args arguments
+     */
+    async call(functionName: string, args: any): Promise<_T[]>{
+        const res = await supabase.rpc(functionName, args);
+
+        if(res.error)
+            throw new Error(res.error.message);
+
+        if(!Array.isArray(res.data))
+            throw new Error("Expected an array!");
+
+        if(this.m_useCache)
+            await this.getAll();
+
+        return res.data.filter(ele => this.m_typeGuard?.(ele)) as _T[];
     }
 }
 

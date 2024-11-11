@@ -4,3 +4,4 @@ test*
 *.sqlite
 firebase.json
 output
+/uploads

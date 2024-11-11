@@ -33,6 +33,8 @@ function discordError(err: unknown): err is {error: string, error_description: s
 
 // error handler
 express.use(function(err: any, _req: Request, res: Response, _next: NextFunction) {
+    console.log(err);
+
     res.status(err.status || 400);
     if(err instanceof Error){
         return res.send({error: 0, message: err.message});

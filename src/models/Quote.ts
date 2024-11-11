@@ -1,19 +1,16 @@
-export interface Story {
+export interface Quote{
     id: number;
-    title: string;
     author: string;
     description: string[];
-    footer: string | null;
+    memberRef: string | null;
+    nsfw: boolean;
 }
 
-export function isStory(value: unknown): value is Story {
+export function isQuote(value: unknown): value is Quote {
     if(typeof value !== "object" || value === null)
         return false;
 
     if(!("id" in value) || typeof value.id !== "number")
-        return false;
-
-    if(!("title" in value) || typeof value.title !== "string")
         return false;
 
     if(!("author" in value) || typeof value.author !== "string")
@@ -22,39 +19,42 @@ export function isStory(value: unknown): value is Story {
     if(!("description" in value) || !Array.isArray(value.description))
         return false;
 
-    if(!("footer" in value) || (typeof value.footer !== "string" && value.footer !== null))
+    if(!("memberRef" in value) || (typeof value.memberRef !== "string" && value.memberRef !== null))
+        return false;
+
+    if(!("nsfw" in value) || typeof value.nsfw !== "boolean")
         return false;
 
     return true;
 }
 
-export function isStoryWithoutId(value: unknown): value is Omit<Story, "id"> {
+export function isQuoteWithoutId(value: unknown): value is Omit<Quote, "id"> {
     if(typeof value !== "object" || value === null)
         return false;
 
     if("id" in value)
         return false;
 
-    if("title" in value && typeof value.title !== "string")
-        return false;
-
     if("author" in value && typeof value.author !== "string")
         return false;
 
     if("description" in value && !Array.isArray(value.description))
         return false;
 
-    if("footer" in value && (typeof value.footer !== "string" && value.footer !== null))
+    if("memberRef" in value && (typeof value.memberRef !== "string" && value.memberRef !== null))
+        return false;
+
+    if("nsfw" in value && typeof value.nsfw !== "boolean")
         return false;
 
     return true;
 }
 
-export function isPartialStory(value: unknown): value is Partial<Story> {
+export function isPartialQuote(value: unknown): value is Partial<Quote> {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if("title" in value && typeof value.title !== "string")
+    if("id" in value && typeof value.id !== "number")
         return false;
 
     if("author" in value && typeof value.author !== "string")
@@ -63,10 +63,11 @@ export function isPartialStory(value: unknown): value is Partial<Story> {
     if("description" in value && !Array.isArray(value.description))
         return false;
 
-    if("footer" in value && (typeof value.footer !== "string" && value.footer !== null))
+    if("memberRef" in value && (typeof value.memberRef !== "string" && value.memberRef !== null))
+        return false;
+
+    if("nsfw" in value && typeof value.nsfw !== "boolean")
         return false;
 
     return true;
 }
-
-export default Story;
