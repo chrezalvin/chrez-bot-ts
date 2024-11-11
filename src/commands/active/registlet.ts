@@ -84,7 +84,7 @@ const chrezRegistlet = new CommandBuilder<I_Registlet>()
         },
         getParameter: (_, args) => {
             return {
-                name: args[0] || ""
+                name: args.join(" ")
             };
         }
     })

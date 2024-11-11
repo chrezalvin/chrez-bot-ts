@@ -17,6 +17,7 @@ export interface RouterInterface{
     // handler: ((req: Request, res: Response, next: NextFunction) => Promise<void>) | ((req: Request, res: Response) => Promise<void>);
     method: "get" | "post" | "put" | "delete" | "patch" | "options" | "head" | "connect" | "trace";
     accessType?: "public" | "private" | "owner" | "vice";
+    requestHandler?: RequestHandler;
 }
 
 export interface EventReturnType<K extends keyof ClientEvents>{

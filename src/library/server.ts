@@ -18,7 +18,7 @@ export function asyncErrorHandler(
                     });
                 }
                 else{
-                    debug(`unknown error occured: ${err}`);
+                    debug(`unknown error occured: ${JSON.stringify(err)}`);
                     res.json({
                         error: "Unknown Error!"
                     });

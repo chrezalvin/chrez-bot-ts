@@ -36,7 +36,7 @@ const event: EventArguments<Events.InteractionCreate> = [
             if(ErrorValidation.isErrorValidation(slashCommand))
                 return await ErrorValidation.sendErrorValidation(interaction, slashCommand);
 
-            const res = slashCommand.execute(interaction);
+            const res = await slashCommand.execute(interaction);
             if(ErrorValidation.isErrorValidation(res))
                 return await ErrorValidation.sendErrorValidation(interaction, res);
         }

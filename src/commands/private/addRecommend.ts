@@ -9,7 +9,15 @@ const run = async (args?: Omit<Recommend, "id">): Promise<MessageCreateOptions |
         return new ErrorValidation("no_argument_provided");
 
     try{
-        const recommend = await RecommendService.createNewrecommend(args, args.imgUrl);
+        let recommend: Recommend;
+        if(args.imgUrl){
+            const fetched = await fetch(args.imgUrl);
+            const blob = await fetched.blob();
+            
+            recommend = await RecommendService.createNewRecommend(args, blob);
+        }
+        else
+            recommend = await RecommendService.createNewRecommend(args);
             
         const embed = new MyEmbedBuilder();
 
@@ -78,12 +86,13 @@ const addrecommend = new CommandBuilder<Omit<Recommend, "id">>()
                 let data: Omit<Recommend, "id"> = {
                     title,
                     description,
+                    link: link,
+                    imgUrl: null,
                 };
 
                 if(thumbnail?.url)
                     data.imgUrl = thumbnail.url;
-                if(link)
-                    data.link = link;
+                
                 if(category)
                     data.category = category;
 

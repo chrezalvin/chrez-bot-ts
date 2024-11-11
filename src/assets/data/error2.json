@@ -63,5 +63,15 @@
         "code": 10,
         "name": "User Not Found",
         "description": "Cannot verify the sender of this command!"
+    },
+    "something_not_found": {
+        "code": 11,
+        "name": "Not Found",
+        "description": "{0} not found"
+    },
+    "forbidden": {
+        "code": 12,
+        "name": "Forbidden",
+        "description": "You are not allowed to do this action because {}"
     }
 }

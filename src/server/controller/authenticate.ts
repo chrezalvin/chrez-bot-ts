@@ -2,13 +2,13 @@ const debug = require("debug")("Server:authenticate");
 
 import { NextFunction, Request, Response } from "express";
 import { OAUTH2_REDIRECT_URL, OAUTH2_REDIRECT_URL_SERVER } from "@config";
-import { sessions } from "@shared/UserSessions";
-import crypto from "crypto";
 
 import { requestOauth2, collectUserData } from "services/authenticate";
 import { UserService } from "@services/users";
+import SessionService from "@services/session";
 
 export async function authenticate_get(req: Request, res: Response, next: NextFunction){
+  console.log("authenticate_get");
   const accessCode = req.query.code;
   
   if(typeof accessCode !== "string"){
@@ -24,37 +24,32 @@ export async function authenticate_get(req: Request, res: Response, next: NextFu
   });
 
   const user = await collectUserData(oauth2Response);
-  const resUser = await UserService.getUser(user.id);
 
-  if(!UserService.userIsAdmin(user.id)){
+  if(!await UserService.userIsAdmin(user.id)){
     debug(`user ${user.username} tried to login but is not an admin`);
     throw new Error("User is not an admin");
   }
 
   debug(`collected user ${user.username} - ${user.id}`);
 
-  const sessionID = crypto.randomUUID();
-  sessions.addData(sessionID, resUser);
+  const session = await SessionService.setNewSession(user.id);
   
-  res.json({sessionID});
+  res.json({
+    SESSION_KEY: session.id
+  });
 }
 
 export async function authenticate_post(req: Request, res: Response, next: NextFunction){
-  if(req.body.SESSION_KEY !== undefined){
-    const SESSION_KEY = req.body.SESSION_KEY;
-    const find = sessions.get(SESSION_KEY);
-
-    if(find){
-      debug(`got sessionkey for user: ${find.username}`);
-      res.json(find);
-    }
-    else{
-      debug(`cannot find the user from session_key`);
-      throw new Error("SESSION_KEY not found");
-    }
-  }
-  else
+  if(req.body.SESSION_KEY === undefined)
     throw new Error("no SESSION_KEY provided");
+
+  debug(`authenticating user with SESSION_KEY: ${req.body.SESSION_KEY}`);
+
+  const SESSION_KEY = req.body.SESSION_KEY;
+  const found = await SessionService.getSession(SESSION_KEY);
+
+  debug(`got sessionkey for user ${found.username}`);
+  res.json(found);
 }
 
 export async function authenticate_server(req: Request, res: Response, next: NextFunction){
@@ -73,34 +68,24 @@ export async function authenticate_server(req: Request, res: Response, next: Nex
   });
 
   const user = await collectUserData(oauth2Response);
-  const resUser = await UserService.getUser(user.id);
+  const resSession  = await SessionService.setNewSession(user.id);
 
-  if(!UserService.userIsAdmin(user.id)){
+  if(!await UserService.userIsAdmin(user.id)){
     debug(`user ${user.username} tried to login but is not admin`);
-    throw new Error("User is not admin");
+    throw new Error("User is not an admin");
   }
 
   debug(`collected user ${user.username} - ${user.id}`);
 
-  const sessionID = crypto.randomUUID();
-
-  sessions.addData(sessionID, resUser);
-
-  res.json({sessionID});
+  res.json({SESSION_KEY: resSession.id});
 }
 
 export async function getUserProfile(req: Request, res: Response, next: NextFunction){
-  const sessionid = req.cookies.sessionid;
-
-  if(typeof sessionid === "string"){
-    const userSession = sessions.get(sessionid);
-
-    if(userSession !== undefined){
-      res.json(userSession);
-    }
-    else
-      res.status(401).send({error: 401, message: "Unauthorized!"});
-  }
-  else
+  if(!req.cookies.sessionid || typeof req.cookies.sessionid !== "string")
     res.status(401).send({error: 401, message: "Unauthorized!"});
+
+  const sessionid = req.cookies.sessionid;
+  const session = await SessionService.getSession(sessionid);
+
+  res.json(session);
 }

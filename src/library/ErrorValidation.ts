@@ -100,7 +100,15 @@ export class ErrorValidation implements ErrorValidationData{
     }
 
     public static isErrorValidation(obj: unknown): obj is ErrorValidation {
-        return obj instanceof ErrorValidation;
+        if(typeof obj !== "object" || obj === null) return false;
+
+        if(!("code" in obj) || typeof obj.code !== "number") return false;
+
+        if(!("name" in obj) || typeof obj.name !== "string") return false;
+
+        if(!("description" in obj) || typeof obj.description !== "string") return false;
+
+        return true;
     }
 
     constructor(error: ErrorMessages, ...args: (string | number)[]){

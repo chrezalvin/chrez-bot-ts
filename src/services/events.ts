@@ -76,6 +76,70 @@ export class EventService {
 
         return res.data.filter(isEvent);
     }
+
+    static async addEvent(event: Omit<Event, "id" | "img_path">, imageBlob?: Blob): Promise<Event>{
+        const newEvent = await EventService.eventManager.add({...event, img_path: null});
+
+        if(!newEvent)
+            throw new Error("Failed to create new event");
+
+        if(!imageBlob)
+            return newEvent
+
+        const imgPath = await EventService.fileManager.uploadImage(imageBlob);
+
+        if(!imgPath)
+            throw new Error("Failed to upload image");
+
+        const updatedEvent = await EventService.eventManager.update(newEvent.id, {...event, img_path: imgPath.metadata.fullPath});
+
+        if(!updatedEvent)
+            throw new Error("Failed to update event");
+
+        return await EventService.translateImageToUrl(updatedEvent);
+    }
+
+    static async updateEvent(id: number, event: Partial<Omit<Event, "id" | "img_path">>, imageBlob?: Blob): Promise<Event>{
+        const oldEvent = await EventService.eventManager.get(id);
+
+        if(!oldEvent)
+            throw new Error("Event not found");
+
+        const updatedEvent = await EventService.eventManager.update(id, event);
+
+        if(!updatedEvent)
+            throw new Error("Failed to update event");
+
+        if(!imageBlob)
+            return await EventService.translateImageToUrl(updatedEvent);
+
+        if(oldEvent.img_path)
+            await EventService.fileManager.deleteImage(oldEvent.img_path);
+
+        const imgPath = await EventService.fileManager.uploadImage(imageBlob);
+
+        if(!imgPath)
+            throw new Error("Failed to upload image");
+
+        const updatedImageEvent = await EventService.eventManager.update(id, {img_path: imgPath.metadata.fullPath});
+
+        if(!updatedImageEvent)
+            throw new Error("Failed to update event");
+
+        return await EventService.translateImageToUrl(updatedImageEvent);
+    }
+
+    static async deleteEvent(id: number){
+        const event = await EventService.eventManager.get(id);
+
+        if(!event)
+            throw new Error("Event not found");
+
+        await EventService.eventManager.delete(id);
+
+        if(event.img_path)
+            await EventService.fileManager.deleteImage(event.img_path);
+    }
 }
 
 export default EventService;

@@ -5,12 +5,13 @@ export class StoryService{
     protected static readonly dbName = "story";
 
     public static serviceSupabase = new ServiceSupabase<Story, "id">(
-                        "id", 
-                        StoryService.dbName, 
-                        {
-                            typeGuard: isStory
-                        }
-                    );
+                "id", 
+                StoryService.dbName, 
+                {
+                    typeGuard: isStory,
+                    useCache: true
+                }
+            );
 
     public static async getStory(id: number): Promise<Story>{
         const find = await StoryService.serviceSupabase.get(id);
@@ -22,11 +23,11 @@ export class StoryService{
         return find;
     }
 
-    public static async getAllUpdate(): Promise<Story[]>{
+    public static async getAllStories(): Promise<Story[]>{
         return await StoryService.serviceSupabase.getAll();
     }
 
-    public static async deleteUpdate(id: number): Promise<void>{
+    public static async deleteStory(id: number): Promise<void>{
         const find = await StoryService.serviceSupabase.get(id);
 
         if(!find)
@@ -35,18 +36,21 @@ export class StoryService{
         await StoryService.serviceSupabase.delete(id);
     }
 
-    public static async addUpdate(story: Omit<Story, "id">): Promise<void>{
-        await StoryService.serviceSupabase.add(story);
+    public static async addStory(story: Omit<Story, "id">): Promise<Story | undefined>{
+        return await StoryService.serviceSupabase.add(story);
     }
 
-    public static async editUpdate(id: number, update: Omit<Story, "id">): Promise<Story | undefined>{
+    public static async editStory(id: number, update: Omit<Story, "id">): Promise<Story | undefined>{
         return await StoryService.serviceSupabase.update(id, update);
+    }
+
+    public static async updateStory(id: Story["id"], story: Partial<Omit<Story, "id">>): Promise<Story | undefined>{
+        return await StoryService.serviceSupabase.update(id, story);
     }
 
     public static getRandomStory(): Story{
         const stories = StoryService.serviceSupabase.cache;
-        console.log(stories);
-        const randomIndex = rngInt(0, stories.length);
+        const randomIndex = rngInt(0, stories.length - 1);
 
         return stories[randomIndex];
     }

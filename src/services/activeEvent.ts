@@ -9,10 +9,10 @@ export class ActiveEventService {
 
     static activeEventManager = new ServiceSupabase<ActiveEvent, "id">("id", ActiveEventService.activeEventPath, {
         typeGuard: isActiveEvent,
-        useCache: false,
+        useCache: true,
     });
 
-    static fileManager = new FileManagerFirebase("");
+    static fileManager = new FileManagerFirebase(ActiveEventService.activeEventImgPath);
 
     static async translateImageToUrl<_T extends string | ActiveEvent, _R = _T extends string ? string : ActiveEvent>(eventOrPath: _T): Promise<_R>{
         if(typeof eventOrPath === "string")
@@ -40,78 +40,162 @@ export class ActiveEventService {
         return await Promise.all(res.map(ActiveEventService.translateImageToUrl));
     }
 
-    static async getEventByMonth(month?: number): Promise<ActiveEvent[]>{
-        // if month is not provided, get the current month
-        const currentMonth = new Date().getMonth() + 1;
-
-        const res = await ActiveEventService
+    static async getEventByName(name: string): Promise<ActiveEvent[]>{
+        const res = ActiveEventService
             .activeEventManager
-            .client
-            .select("*")
-            .or(`start_month.eq.${month || currentMonth},end_month.eq.${month || currentMonth}`);
+            .getWhere((pred) => pred.title.toLowerCase() == name.toLowerCase());
 
-        if(res.error)
-            throw new Error(res.error.message);
-
-        const events = res.data.filter(isActiveEvent);
-
-        return await Promise.all(events.map(ActiveEventService.translateImageToUrl));
+        return await Promise.all(res.map(ev => ActiveEventService.translateImageToUrl(ev)));
     }
 
-    static async getEventByName(name: string): Promise<ActiveEvent | undefined>{
-        const res = await ActiveEventService.activeEventManager
-            .client
-            .select("*")
-            .eq("name", name);
+    static async getEventById(id: number): Promise<ActiveEvent>{
+        const event = await ActiveEventService.activeEventManager.get(id);
 
-        if(res.error)
-            throw new Error(res.error.message);
+        if(!event)
+            throw new Error("Event not found");
 
-        if(res.data.length === 0)
-            return undefined;
-
-        return await ActiveEventService.translateImageToUrl(res.data[0]);
+        return await ActiveEventService.translateImageToUrl(event);
     }
 
-    static getEventById(id: number){
-        return ActiveEventService.activeEventManager.get(id);
+    static async getAllActiveEvents(name?: string): Promise<ActiveEvent[]>{
+        const res = await ActiveEventService.activeEventManager.getAll();
+
+        return Promise.all(res.map(ActiveEventService.translateImageToUrl));
     }
 
     static async getActiveEvent(): Promise<ActiveEvent[]>{
         const date = new Date().toISOString();
         const res = await ActiveEventService
             .activeEventManager
-            .client
-            .select("*")
-            .eq("event_type", 2)
-            .lte("start_date", date)
-            .gte("end_date", date);
+            .queryBuilder((query => query
+                    .select("*")
+                    .lte("start_date", date)
+                    .gte("end_date", date)
+                )
+            );
 
-        if(res.error)
-            throw new Error(res.error.message);
+        if(!Array.isArray(res))
+            throw new Error("Failed to get active events");
 
-        return await Promise.all(res.data.filter(isActiveEvent).map(ActiveEventService.translateImageToUrl));
+        return Promise.all(res.map(ActiveEventService.translateImageToUrl));
+    }
+
+    static async getActiveEventByName(name: string): Promise<ActiveEvent[]>{
+        const res = await ActiveEventService
+            .activeEventManager
+            .queryBuilder(query => query
+                .select("*")
+                .ilike("title", `%${name}%`)
+            );
+
+        if(!Array.isArray(res))
+            throw new Error("Failed to get active events");
+
+        return await Promise.all(res.map(ActiveEventService.translateImageToUrl));
     }
 
     /**
-     * get all incoming events from now to maxDayFromNow, defaults to 7 days from now
-     * @param maxDayFromNow 
+     * get all incoming events from now
      */
-    static async getIncomingEvent(maxDayFromNow: number = 7): Promise<ActiveEvent[]>{
-        const date = new Date().toISOString();
-        const endDate = new Date(new Date().getTime() + maxDayFromNow * 24 * 60 * 60 * 1000).toISOString();
+    static async getIncomingEvent(): Promise<ActiveEvent[]>{
+        const date = (new Date()).toISOString();
+
         const res = await ActiveEventService
             .activeEventManager
-            .client
-            .select("*")
-            .eq("event_type", 3)
-            .gte("start_date", date)
-            .lte("start_date", endDate);
+            .queryBuilder(query => query
+                .select("*")
+                .is("end_date", null)
+                .gte("start_date", date)
+            );
 
-        if(res.error)
-            throw new Error(res.error.message);
+        if(!Array.isArray(res))
+            throw new Error("Failed to get incoming events");
 
-        return await Promise.all(res.data.filter(isActiveEvent).map(ActiveEventService.translateImageToUrl));
+        return await Promise.all(res.map(ActiveEventService.translateImageToUrl));
+    }
+
+    static async createNewEvent(event: Omit<ActiveEvent, "id" | "img_path">, imgBlob?: Blob): Promise<ActiveEvent>{
+        // load the event first without the imgUrl
+        const newEvent = await ActiveEventService.activeEventManager.add({...event, img_path: null});
+
+        if(!newEvent)
+            throw new Error("Failed to create new event");
+
+        if(!imgBlob)
+            return await ActiveEventService.translateImageToUrl(newEvent);
+        
+        const fileName: string = newEvent.title.toLowerCase().replace(/ /g, "_");
+        const res = await ActiveEventService.fileManager.uploadImage(imgBlob, fileName);
+
+        if(!res)
+            throw new Error("Failed to upload image");
+
+        const data = await ActiveEventService.activeEventManager.update(newEvent.id, {img_path: res.metadata.fullPath});
+
+        if(data)
+            newEvent.img_path = data.img_path;
+
+        return await ActiveEventService.translateImageToUrl(newEvent);
+    }
+
+    static async updateEvent(id: ActiveEvent["id"], event: Partial<Omit<ActiveEvent, "id" | "img_path">>, imgBlob?: Blob): Promise<ActiveEvent>{
+        const activeEvent = await ActiveEventService.activeEventManager.get(id);
+
+        if(!activeEvent)
+            throw new Error("Active Event not found!");
+
+        const updatedEvent = await ActiveEventService.activeEventManager.update(id, event);
+
+        if(!updatedEvent)
+            throw new Error("Failed to update Active Event!");
+
+        if(!imgBlob)
+            return ActiveEventService.translateImageToUrl(updatedEvent);
+
+        if(activeEvent.img_path){
+            const fileName = activeEvent.img_path.split("/").pop();
+            
+            if(!fileName)
+                throw new Error("Failed to get image name!");
+            
+            await ActiveEventService.fileManager.deleteImage(fileName);
+        }
+
+        let fileName: string;
+        if(event.title)
+            fileName = event.title.toLowerCase().replace(/ /g, "_");
+        else
+            fileName = activeEvent.title.toLowerCase().replace(/ /g, "_");
+
+        const fileNameRes =  await ActiveEventService.fileManager.uploadImage(imgBlob, fileName);
+
+        if(!fileNameRes)
+            throw new Error("Failed to upload image!");
+
+        const updatedActiveEvent = await ActiveEventService.activeEventManager.update(id, {img_path: fileNameRes.metadata.fullPath});
+
+        if(!updatedActiveEvent)
+            throw new Error("Failed to update Active Event!");
+
+        return await ActiveEventService.translateImageToUrl(updatedActiveEvent);
+    }
+
+    static async deleteEvent(id: ActiveEvent["id"]): Promise<void>{
+        const activeEvent = await ActiveEventService.activeEventManager.get(id);
+
+        if(!activeEvent)
+            throw new Error("Active Event not found!");
+
+        if(activeEvent.img_path){
+            const fileName = activeEvent.img_path.split("/").pop();
+
+            if(!fileName)
+                throw new Error("Failed to get image name!");
+
+            await ActiveEventService.fileManager.deleteImage(fileName);
+        }
+
+        await ActiveEventService.activeEventManager.delete(id);
     }
 }
 

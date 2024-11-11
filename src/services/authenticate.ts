@@ -29,8 +29,12 @@ export async function requestOauth2(
       if(tokenResponseData.statusCode === 400){
         const errorJson = await tokenResponseData.body.json();
 
-        if(typeof errorJson === "object" && errorJson !== null && "error" in errorJson)
-          debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
+        if(typeof errorJson === "object" && errorJson !== null && "error" in errorJson){
+            debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
+
+            if(errorJson.error === "invalid_grant")
+                throw new Error("Oath2 failed because of invalid code");
+        }
         else
           debug(`Statuscode 400 error given, reason: ${errorJson ?? "no reason found"}`)
 

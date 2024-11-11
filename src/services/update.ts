@@ -47,11 +47,11 @@ export class UpdateService{
         await UpdateService.serviceSupabase.delete(version);
     }
 
-    public static async addUpdate(version: string, update: Update): Promise<void>{
-        await UpdateService.serviceSupabase.add(update);
+    public static async addUpdate(update: Update): Promise<Update | undefined>{
+        return await UpdateService.serviceSupabase.add(update);
     }
 
-    public static async editUpdate(version: string, update: Update): Promise<Update | undefined>{
+    public static async editUpdate(version: string, update: Partial<Omit<Update, "id">>): Promise<Update | undefined>{
         return await UpdateService.serviceSupabase.update(version, update);
     }
 }
