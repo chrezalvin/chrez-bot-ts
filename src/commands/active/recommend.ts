@@ -3,7 +3,7 @@ import {RecommendService} from "@services/recommend";
 
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 
-const run = async (args?: I_Recommend): Promise<MessageCreateOptions> => {
+const run = async (_?: I_Recommend): Promise<MessageCreateOptions> => {
     const embed = new MyEmbedBuilder();
 
     const recommend = await RecommendService.getRandomRecommend();

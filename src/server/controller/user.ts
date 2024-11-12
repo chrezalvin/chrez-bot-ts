@@ -1,20 +1,16 @@
-import { UserService } from "@services/users";
-import { NextFunction, Request, Response } from "express";
+const debug = require("debug")("Server:Users");
 
-export async function getUserById(req: Request, res: Response, next: NextFunction){
+import { UserService } from "@services/users";
+import { Request, Response } from "express";
+
+export async function getUserById(req: Request, res: Response){
     const id = req.params.userid;
+
+    debug(`getting user with id: ${id}`);
 
     if(typeof id === "string"){
         const user = await UserService.getUser(id);
 
         res.json(user);
     }
-}
-
-export function deleteUser(req: Request, res: Response, next: NextFunction){
-
-}
-
-export function updateUserRole(req: Request, res: Response, next: NextFunction){
-
 }

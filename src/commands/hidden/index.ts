@@ -1,5 +1,3 @@
-import privateCommands from "../private";
-
 import cry from "./cry";
 import weirdThing from "./weirdThing";
 import rice from "./rice";

@@ -14,7 +14,8 @@ function customFieldMaker(title: string, list: string[]): APIEmbedField{
     };
 }
 
-const run = async ( version: string) => {
+const run = async (version: string) => {
+    debug(`getting update for version ${version}`);
     // defaulted to latest version
     // let version: string = args?.version ?? botVersion;
 

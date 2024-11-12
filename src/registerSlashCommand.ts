@@ -1,6 +1,6 @@
 const debug = require("debug")("Bot:registerSlashCommand");
 
-import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes, SlashCommandBuilder } from 'discord.js';
+import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { CLIENT_ID, guildIDs, DISCORD_TOKEN, MODE} from './config';
 import commands from "./commands";
 

@@ -22,7 +22,7 @@ function replaceUnit(match: string, p1: string, p2: string){
     return match;
 }
 
-function replaceFunction(match: string, p1: string, p2: string){
+function replaceFunction(_: string, p1: string, p2: string){
     switch(p1){
         case 'sum': return `(${p2.replaceAll(',', '+')})`;
         case 'multiply':
@@ -76,7 +76,7 @@ const replaceable = new Map<RegExp | string, V>([
     [/(cos|sin|tan|asin|acos|atan)(\d+)/g, '$1($2 * PI / 180)'], // turns sin255 -> sin(255 * PI / 180)
 ]);
 
-const calculationPrecision = 5;
+// const calculationPrecision = 5;
 
 const run = (args?: I_Calculate) => {
     if(args === undefined) throw new Error("no expression to be evaluated!");

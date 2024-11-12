@@ -1,4 +1,4 @@
-import { CommandReturnTypes, CommandBuilder } from "@library";
+import { CommandBuilder } from "@library";
 import bulkDelete from "./bulkdelete";
 import why from "./why";
 import mute from "./setmute";

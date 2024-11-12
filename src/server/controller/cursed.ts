@@ -5,6 +5,7 @@ import { CursedService } from 'services/cursed';
 
 export const cursed_get = async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.index);
+    debug(`getting cursed with id: ${id}`);
 
     let url: string = await CursedService.getCursedUrl(isNaN(id) ? undefined : id );
 

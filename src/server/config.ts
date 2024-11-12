@@ -1,4 +1,5 @@
-const debug = require("debug")("Server:events");
+// const debug = require("debug")("Server:events");
+
 import Express, { NextFunction, Response, Request } from "express";
 import logger from "morgan";
 import cookieParser from "cookie-parser";

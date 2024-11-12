@@ -1,5 +1,4 @@
 import {inlineCommandReturnTypes, rngInt} from "@library";
-import { MessageFlags } from "discord.js";
 
 const dontYellMessages = [
     "Don't yell D:",

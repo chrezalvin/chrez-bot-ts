@@ -1,5 +1,3 @@
-const debug = require('debug')('Server:events');
-
 import { FileManagerFirebase, ServiceSupabase } from "@library";
 import { ActiveEvent, isActiveEvent } from "@models";
 
@@ -57,7 +55,7 @@ export class ActiveEventService {
         return await ActiveEventService.translateImageToUrl(event);
     }
 
-    static async getAllActiveEvents(name?: string): Promise<ActiveEvent[]>{
+    static async getAllActiveEvents(): Promise<ActiveEvent[]>{
         const res = await ActiveEventService.activeEventManager.getAll();
 
         return Promise.all(res.map(ActiveEventService.translateImageToUrl));

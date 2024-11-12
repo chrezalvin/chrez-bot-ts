@@ -1,5 +1,5 @@
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
-import { CommandBuilder, MyEmbedBuilder, CommandReturnTypes, isChatInputCommandInteraction, userIsAdmin } from "@library";
+import { CommandBuilder, MyEmbedBuilder, CommandReturnTypes, isChatInputCommandInteraction } from "@library";
 
 import { prefixes } from "@config";
 import { UserService } from "@services";

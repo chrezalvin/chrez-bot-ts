@@ -1,13 +1,13 @@
 const debug = require("debug")("Server:authenticate");
 
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { OAUTH2_REDIRECT_URL, OAUTH2_REDIRECT_URL_SERVER } from "@config";
 
 import { requestOauth2, collectUserData } from "services/authenticate";
 import { UserService } from "@services/users";
 import SessionService from "@services/session";
 
-export async function authenticate_get(req: Request, res: Response, next: NextFunction){
+export async function authenticate_get(req: Request, res: Response){
   console.log("authenticate_get");
   const accessCode = req.query.code;
   
@@ -39,7 +39,7 @@ export async function authenticate_get(req: Request, res: Response, next: NextFu
   });
 }
 
-export async function authenticate_post(req: Request, res: Response, next: NextFunction){
+export async function authenticate_post(req: Request, res: Response){
   if(req.body.SESSION_KEY === undefined)
     throw new Error("no SESSION_KEY provided");
 
@@ -52,7 +52,7 @@ export async function authenticate_post(req: Request, res: Response, next: NextF
   res.json(found);
 }
 
-export async function authenticate_server(req: Request, res: Response, next: NextFunction){
+export async function authenticate_server(req: Request, res: Response){
   const accessCode = req.query.code;
   
   if(typeof accessCode !== "string"){
@@ -80,7 +80,7 @@ export async function authenticate_server(req: Request, res: Response, next: Nex
   res.json({SESSION_KEY: resSession.id});
 }
 
-export async function getUserProfile(req: Request, res: Response, next: NextFunction){
+export async function getUserProfile(req: Request, res: Response){
   if(!req.cookies.sessionid || typeof req.cookies.sessionid !== "string")
     res.status(401).send({error: 401, message: "Unauthorized!"});
 

@@ -1,5 +1,5 @@
-import { CacheType, ChatInputCommandInteraction, Message, OmitPartialGroupDMChannel, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
-import { Cause, isChatInputCommandInteraction, ErrorValidation } from "@library";
+import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
+import { isChatInputCommandInteraction, ErrorValidation } from "@library";
 import { SenddableMessage } from "./CustomTypes";
 const debug = require("debug")("ChrezBot:command");
 

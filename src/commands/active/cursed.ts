@@ -1,6 +1,6 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
-import { SlashCommandBuilder, AttachmentBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
+import { SlashCommandBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { prefixes } from "@config";
 import { CursedService } from "services/cursed";
 

@@ -6,7 +6,9 @@ import { MemeService } from 'services/memes';
 export const memes_get = async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id);
     const nsfw: boolean = req.query.nsfw === "1";
-    
+   
+    debug(`getting ${nsfw && "nsfw"} meme with id: ${id}`);
+
     let url: string = await (isNaN(id) ? MemeService.getMemeUrl(nsfw) : MemeService.getMemeUrl(nsfw, id));
     
     res.json({url});

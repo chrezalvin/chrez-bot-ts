@@ -1,11 +1,7 @@
 export class Cache<_T extends {}, _K extends keyof _T>{
     private m_cache: Map<_T[_K], _T> = new Map();
-    private m_keyname: _K;
-    // private m_tableName: string;
 
-    constructor(keyName: _K, tableName: string){
-        this.m_keyname = keyName;
-    }
+    constructor(){}
 
     get(key: _T[_K]): _T | undefined{
         const item = this.m_cache.get(key);

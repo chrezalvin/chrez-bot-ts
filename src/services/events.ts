@@ -1,5 +1,3 @@
-const debug = require('debug')('Server:events');
-
 import { FileManagerFirebase, ServiceSupabase } from "@library";
 import { Event, isEvent } from "@models";
 

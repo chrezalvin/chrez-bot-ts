@@ -5,7 +5,9 @@ import { isRecommendWithoutId, Recommend } from '@models';
 import { RecommendService } from 'services/recommend';
 import fs from "fs";
 
-export const recommend_get_default = async (req: Request, res: Response) => {
+export const recommend_get_default = async (_: Request, res: Response) => {
+    debug("getting all recommend");
+
     const recommend = await RecommendService.getAlldata();
 
     res.json(recommend);
@@ -13,6 +15,8 @@ export const recommend_get_default = async (req: Request, res: Response) => {
 
 export const recommend_get_by_id = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
+
+    debug(`getting recommend with id: ${id}`);
 
     if(isNaN(id))
         throw new Error("Invalid id!");
@@ -26,7 +30,7 @@ export const recommend_post_add = async (req: Request, res: Response) => {
     const recommend = JSON.parse(req.body.recommend);
     const image = req.file;
 
-    console.log(recommend);
+    debug(`adding recommend ${image && "with image"}`);
 
     if(!isRecommendWithoutId(recommend))
         throw new Error("Invalid recommend object!");
@@ -48,6 +52,8 @@ export const recommend_post_add = async (req: Request, res: Response) => {
 
 export const recommend_post_delete = async (req: Request, res: Response) => {
     const id = parseInt(req.body.id);
+
+    debug(`deleting recommend with id: ${id}`);
     
     if(isNaN(id))
         throw new Error("Invalid id!");
@@ -63,6 +69,8 @@ export const recommend_post_update = async (req: Request, res: Response) => {
     const id = parseInt(req.body.id);
     const recommend = JSON.parse(req.body.recommend);
     const image = req.file;
+
+    debug(`updating recommend with id: ${id}`);
 
     if(isNaN(id))
         throw new Error("Invalid id!");

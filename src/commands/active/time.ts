@@ -14,6 +14,8 @@ const run = (args?: I_Time) => {
   const embed = new MyEmbedBuilder();
 
   if(timezone == null){
+    debug(`getting japanese time`);
+
     const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
 
     // calculate time left
@@ -35,6 +37,8 @@ const run = (args?: I_Time) => {
     return [embed];
   }
   else{
+    debug(`getting ${timezone} time`);
+    
     for(const timeChoice of timeChoices){
       if(timeChoice.timezone === timezone || timeChoice.criteria.find(crit => crit.toLowerCase() === timezone?.toLowerCase()) !== undefined){
           const localTime = time.toLocaleString('en-US', {timeZone: timeChoice.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');

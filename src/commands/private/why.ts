@@ -49,7 +49,7 @@ const why = new CommandBuilder<I_Why>()
         }
     })
     .setChat({
-        getParameter: (message, args) => {
+        getParameter: (message, _) => {
             return {
                 discordId: message.author.id
             };
