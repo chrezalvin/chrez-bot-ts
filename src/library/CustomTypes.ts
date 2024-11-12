@@ -1,6 +1,6 @@
 import { MyEmbedBuilder } from "@library";
 import {type Message, SlashCommandBuilder, ClientEvents, Awaitable, ChatInputCommandInteraction, CacheType, DiscordAPIError, SlashCommandOptionsOnlyBuilder, OmitPartialGroupDMChannel} from "discord.js";
-import { NextFunction, RequestHandler, Request, Response } from "express";
+import { RequestHandler } from "express";
 
 export interface Command{
     name: string;

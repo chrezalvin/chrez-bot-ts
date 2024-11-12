@@ -1,5 +1,3 @@
-const debug = require('debug')('Server:recommend');
-
 import { rngInt } from "@library";
 import {ServiceSupabase} from "@library";
 import { FileManagerFirebase } from "@library/FileManagerFirebase";

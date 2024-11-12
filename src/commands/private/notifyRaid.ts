@@ -10,7 +10,7 @@ const command: CommandReturnTypes = {
     name: "notify",
     description: "notify users, it uses @everyone but you can change it in the settings",
     alias: [],
-    execute: async (message, args?: string[]) => {
+    execute: async (_, __?: string[]) => {
         // slash command exclusive
     },
     slash:{
@@ -54,4 +54,4 @@ const command: CommandReturnTypes = {
     }
 };
 
-// export default command;
+export default command;

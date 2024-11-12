@@ -70,7 +70,10 @@ debug("Sucessfully added autoWorkers");
 debug(`list of active autoWorkers: ${autoWorkersList.map(w => w.name)}`);
 
 process.on("unhandledRejection", async (error, _) => {
-    console.log(`fatal error: ${JSON.stringify(error)}`);
+    if(error instanceof Error)
+        console.log(`fatal error: ${error.message}`);
+    else
+        console.log(`fatal error: ${error}`);
 })
 
 client.login(DISCORD_TOKEN);

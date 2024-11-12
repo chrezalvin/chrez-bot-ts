@@ -2,7 +2,7 @@ import { isQuoteWithoutId } from '@models';
 import QuoteService from '@services/quote';
 import { Request, Response } from 'express';
 
-export const quote_get_all = async (req: Request, res: Response) => {
+export const quote_get_all = async (_: Request, res: Response) => {
     const quotes = await QuoteService.getQuoteList();
 
     res.json(quotes);
@@ -56,5 +56,8 @@ export const quote_get_by_id = async (req: Request, res: Response) => {
 
     const quote = await QuoteService.getQuoteById(id);
 
+    if(!quote)
+        throw new Error("Quote not found!");
+  
     res.json(quote);
 }

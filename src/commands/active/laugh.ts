@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "discord.js";
 import laughs from "@assets/messages/private/laugh.json";
 import { MyEmbedBuilder, rngInt, CommandBuilder } from "@library";
 
-const run = (args?: I_Laugh) => {
+const run = (_?: I_Laugh) => {
     const laugh = laughs[rngInt(0, laughs.length - 1)];
 
     const embed = new MyEmbedBuilder({
@@ -26,7 +26,7 @@ const laugh = new CommandBuilder<I_Laugh>()
     .setAlias(["haha", "l", "laughs", "heh"])
     .setSlash({
         slashCommand,
-        getParameter: (interaction) => {
+        getParameter: (_) => {
             return {};
         },
         interact: async (interaction, args) => {
@@ -36,7 +36,7 @@ const laugh = new CommandBuilder<I_Laugh>()
         }
     })
     .setChat({
-        getParameter: (message, args) => {
+        getParameter: (_, __) => {
             return {};
         },
         execute: async (message, args) => {

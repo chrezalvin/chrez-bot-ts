@@ -1,4 +1,4 @@
-import {inlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
+import {inlineCommandReturnTypes, rngInt} from "@library";
 
 import greet from "@assets/messages/inline/greet.json";
 import { prefixes } from "@config";
@@ -21,10 +21,6 @@ const command: inlineCommandReturnTypes = {
                 return;
             }
         }
-
-        const embed = new MyEmbedBuilder()
-            // .setTitle(`Chrezbot greets ${message.author.username}`)
-            // .setDescription(greet[rngInt(0, greet.length - 1)].replace("[name]", message.author.username));
 
         message.channel.send(greet.normal[rngInt(0, greet.normal.length - 1)].replace("[name]", message.author.username));
     },

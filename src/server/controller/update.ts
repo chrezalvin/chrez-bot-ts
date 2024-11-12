@@ -1,17 +1,23 @@
-import { NextFunction, Request, Response } from "express";
+const debug = require("debug")("Server:Update");
+
+import { Request, Response } from "express";
 import { UpdateService } from "services/update";
 
 import {botVersion} from "@config";
-import { isUpdate, Update } from "@models";
+import { isUpdate } from "@models";
 
-export async function update_get_latest(_1: Request, res: Response, _2: NextFunction){
+export async function update_get_latest(_1: Request, res: Response){
+    debug(`getting update v${botVersion}`);
+
     const latest = UpdateService.getUpdate(botVersion);
 
     res.json(latest);
 }
 
-export async function update_get(req: Request, res: Response, _: NextFunction){
+export async function update_get(req: Request, res: Response){
     const version = req.params.version;
+
+    debug(`getting update v${version}`);
 
     if(typeof version === "string"){
         const update = UpdateService.getUpdate(version);
@@ -21,13 +27,17 @@ export async function update_get(req: Request, res: Response, _: NextFunction){
         res.status(400).json({error: "invalid version"});
 }
 
-export async function update_get_all(req: Request, res: Response, _: NextFunction){
+export async function update_get_all(_: Request, res: Response){
+    debug("getting all updates");
+
     const updates = await UpdateService.getAllUpdate();
 
     res.json(updates);
 }
 
-export async function update_post_add(req: Request, res: Response, _: NextFunction){
+export async function update_post_add(req: Request, res: Response){
+    debug("adding new update");
+
     const update = req.body.update as unknown;
 
     if(!isUpdate(update))
@@ -38,9 +48,11 @@ export async function update_post_add(req: Request, res: Response, _: NextFuncti
     res.json({updateRes});
 }
 
-export async function update_post_update(req: Request, res: Response, _: NextFunction){
+export async function update_post_update(req: Request, res: Response){
     const version = req.body.version as unknown;
     const update = req.body.update as unknown;
+
+    debug(`editing update v${version}`);
 
     if(typeof version !== "string")
         throw new Error("invalid version");
@@ -56,8 +68,10 @@ export async function update_post_update(req: Request, res: Response, _: NextFun
     res.json(updated);
 }
 
-export async function update_post_delete(req: Request, res: Response, _: NextFunction){
+export async function update_post_delete(req: Request, res: Response){
     const version = req.body.version as unknown;
+
+    debug(`deleting update v${version}`);
 
     if(typeof version !== "string")
         throw new Error("invalid version");
@@ -65,15 +79,3 @@ export async function update_post_delete(req: Request, res: Response, _: NextFun
     await UpdateService.deleteUpdate(version);
     res.json({success: true});
 }
-
-// export async function update_post_add(req: Request, res: Response, next: NextFunction){
-//     const update = JSON.parse(req.body.update);
-
-//     if(isUpdate(update)){
-//         const isSuccess = await addNewUpdate(update);
-
-//         res.json({success: isSuccess});
-//     }
-//     else
-//         throw new Error("invalid update object");
-// }

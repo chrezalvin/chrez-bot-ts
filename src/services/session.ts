@@ -1,6 +1,6 @@
 import client from "@bot";
 import { ServiceSupabase } from "@library";
-import { isSession, isSessionView, Session, SessionView, User } from "@models";
+import { isSession, isSessionView, Session, SessionView } from "@models";
 
 export class SessionService{
     protected static readonly sessionViewPath = "sessions_view";

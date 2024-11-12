@@ -1,6 +1,6 @@
 const debug = require("debug")("ChrezBot:interactionCreate");
 
-import { MyEmbedBuilder, isDiscordAPIError, ErrorValidation, CommandBuilder, userIsAdmin } from "@library";
+import { MyEmbedBuilder, isDiscordAPIError, ErrorValidation, CommandBuilder } from "@library";
 import {EventArguments} from "../"
 
 import * as sharedCommands from "shared/commands";

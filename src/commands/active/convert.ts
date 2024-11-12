@@ -97,7 +97,7 @@ const agree = new CommandBuilder<I_Convert>()
             }
         })
         .setChat({
-            getParameter: (message, args) => {
+            getParameter: (_, args) => {
                 // example command is Chrez convert (15C) to (F)
                 if(args.length !== 3)
                     return new ErrorValidation("message_error");

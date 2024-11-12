@@ -79,7 +79,20 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         this.m_useCache = option.useCache ?? true;
 
         if(this.m_useCache){
-            this.getAll().then(_ => debug(`Cached data for table: ${this.m_tableName} | Size: ${this.m_cache.size}`));
+            supabase
+                .from(this.m_tableName)
+                .select("*")
+                .then(response => {
+                    if(response.error)
+                        throw new Error(response.error.message);
+
+                    const data = (this.m_typeGuard ? response.data.filter(ele => this.m_typeGuard?.(ele)): response.data) as _T[]; 
+                    
+                    for(const item of data)
+                        this.m_cache.set(item[this.m_keyName], item);
+
+                    debug(`Cached data for table: ${this.m_tableName} | Size: ${this.m_cache.size}`)
+                });
         }
         
         debug(`Service class created with key: ${this.m_keyName.toString()} and table: ${this.m_tableName}`);

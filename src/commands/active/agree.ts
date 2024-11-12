@@ -43,7 +43,7 @@ const agree = new CommandBuilder<I_Agree>()
             }
         })
         .setChat({
-            getParameter: (message, args) => {
+            getParameter: (_, args) => {
                 return {description: args.join(" ")};
             },
             execute: async (message, args) => {

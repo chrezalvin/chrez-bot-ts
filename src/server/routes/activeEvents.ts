@@ -1,5 +1,5 @@
 import { RouterInterface } from "@library";
-import { activeEvents_get_all, activeEvents_get_by_id, activeEvents_get_current, activeEvents_get_incoming, activeEvents_post_add, activeEvents_post_delete, activeEvents_post_edit } from "server/controller/activeEvents";
+import { activeEvents_get_all, activeEvents_get_by_id, activeEvents_get_incoming, activeEvents_post_add, activeEvents_post_delete, activeEvents_post_edit } from "server/controller/activeEvents";
 import upload from "server/multerConfig";
 
 const routes: RouterInterface[] = [
