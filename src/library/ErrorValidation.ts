@@ -111,6 +111,66 @@ export class ErrorValidation implements ErrorValidationData{
         return true;
     }
 
+    /**
+     * show out of bounds error message
+     * @param min minimum value
+     * @param max maximum value
+     * @example new ErrorValidation("index_out_of_bounds", 0, 10) -> "Index out of bounds, please choose between 0 to 10"
+     */
+    constructor(error: "index_out_of_bounds", min: number, max: number);
+
+    /**
+     * show negative index error message
+     * @example new ErrorValidation("index_negative") -> "Index cannot be negative"
+     */
+    constructor(error: "index_negative");
+
+    /**
+     * show no argument provided error message
+     * @example new ErrorValidation("no_argument_provided") -> "You did not provide any argument for this command"
+     */
+    constructor(error: "no_argument_provided");
+
+    /**
+     * show error when restricted command is used in a restricted channel
+     * @param command the command that is restricted
+     * @param restriction the restriction that is applied to the command
+     * @example new ErrorValidation("command_restricted", "command", "nsfw channel") -> "I can only send command in nsfw channel"
+     */
+    constructor(error: "command_restricted", command: string, restriction: string);
+
+    /**
+     * show error when restricted command is used in a restricted channel
+     * @example new ErrorValidation("slash_command_option_unavailable") -> "Slash option is not available for this command"
+     */
+    constructor(error: "slash_command_option_unavailable");
+
+    /**
+     * show error when public user tries to use a private command
+     * @example new ErrorValidation("command_is_private") -> "This command is only available for private members!"
+     */
+    constructor(error: "command_is_private");
+
+    /**
+     * show error whenever a user's sender can't be verified
+     * @example new ErrorValidation("command_user_not_found") -> "Cannot verify the sender of this command!"
+     */
+    constructor(error: "command_user_not_found");
+
+    /**
+     * show error when a user tries to use something that is not found
+     * @param name the name of the thing that is not found
+     * @example new ErrorValidation("something_not_found", "user") -> "User not found"
+     */
+    constructor(error: "something_not_found", name: string);
+
+    /**
+     * show error whenever user tries to use a command that is forbidden
+     * @param reason reason why the command is forbidden
+     * @example new ErrorValidation("forbidden", "this command is nsfw") -> "You are not allowed to use this action because this command is nsfw"
+     */
+    constructor(error: "forbidden", reason: string);
+
     constructor(error: ErrorMessages, ...args: (string | number)[]){
         this.code = error2[error].code;
         this.name = error2[error].name;

@@ -72,6 +72,6 @@
     "forbidden": {
         "code": 12,
         "name": "Forbidden",
-        "description": "You are not allowed to do this action because {}"
+        "description": "You are not allowed to do this action because {0}"
     }
 }

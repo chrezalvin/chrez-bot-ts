@@ -19,7 +19,7 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
     if(args.index < 0)
         return new ErrorValidation("index_negative");
 
-    const cursedUrl = await CursedService.getCursedUrl(args.index);
+    const cursedUrl = CursedService.getCursedUrl(args.index);
     const embed = new MyEmbedBuilder({title: `cursed #${args.index}`}).setImage(cursedUrl);
 
     return [embed];

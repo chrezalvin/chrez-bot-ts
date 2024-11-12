@@ -8,6 +8,7 @@ import { Collection } from "discord.js";
 
 const allCommandList = new Collection<string, CommandBuilder<any>>();
 
+debug("================ Loading ChrezBot Commands ================");
 for(const command of [...commands.active, ...commands.c_private]){
     if(allCommandList.has(command.name)){
         console.log(`command with name ${command.name} already exists, skipping this command creation`);
@@ -20,7 +21,7 @@ for(const command of [...commands.active, ...commands.c_private]){
 const _aliasCriteriaMap = new Collection<string|RegExp, string>();
 const _inlineCommands= new Collection<string, inlineCommandReturnTypes>();
 
-debug("Loading Inline Commands");
+debug("================ Loading Inline Commands ================");
 for(const inline of commands.inline){
     for(const criteria of inline.searchCriteria)
         _aliasCriteriaMap.set(criteria, inline.name);
@@ -32,6 +33,7 @@ debug("Done loading inline Commands");
 
 if(MODE === "development"){
     debug("On development mode, adding experimental commands");
+    debug("================ Loading Experimental Commands ================");
     for(const command of commands.experimental.commands){
         allCommandList.set(command.name, command);
         debug(`successfully created experimental command ${command.name}`);
@@ -47,11 +49,11 @@ if(MODE === "development"){
 }
 
 debug("======= list of commands =======");
-debug(`create Message: ${allCommandList.filter(command => command.chat).map((_, key) => key)}`);
-debug(`slash Commands: ${allCommandList.filter(command => command.slash).map((_, key) => `/${key} `)}`);
-debug(`inline Commands: ${_inlineCommands.map((_, key) => key)}`);
-debug(`private Commands: ${allCommandList.filter(command => command.status === "private").map((_, key) => key)}`);
-debug(`hidden Commands: ${allCommandList.filter(command => command.status === "hidden").map((_, key) => key)}`);
+debug(`create Message: ${allCommandList.filter(command => command.chat).map((_, key) => key).join(", ")}`);
+debug(`slash Commands: ${allCommandList.filter(command => command.slash).map((_, key) => `/${key}`).join(", ")}`);
+debug(`inline Commands: ${_inlineCommands.map((_, key) => key).join(", ")}`);
+debug(`private Commands: ${allCommandList.filter(command => command.status === "private").map((_, key) => key).join(", ")}`);
+debug(`hidden Commands: ${allCommandList.filter(command => command.status === "hidden").map((_, key) => key).join(", ")}`);
 
 export const aliasCriteriaMap = _aliasCriteriaMap;
 export const inlineCommands = _inlineCommands;
