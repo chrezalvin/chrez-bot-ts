@@ -58,6 +58,6 @@ export const quote_get_by_id = async (req: Request, res: Response) => {
 
     if(!quote)
         throw new Error("Quote not found!");
-
+  
     res.json(quote);
 }
