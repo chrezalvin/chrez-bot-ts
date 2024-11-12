@@ -10,46 +10,28 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
     if(!message.channel || message.channel.type !== ChannelType.GuildText)
         return new ErrorValidation("command_restricted", "quote", "guild text channel");
 
-    // let index: number = args?.index ?? rngInt(0, quotes.length - 1);
-
-    // if(index >= quotes.length)
-    //     return new ErrorValidation("index_out_of_bounds", 0, quotes.length - 1);
-    // if(index < 0)
-    //     return new ErrorValidation("index_negative");
-
     const embed = new MyEmbedBuilder();
 
     let quote: Quote | undefined;
     if(args?.index){
-        try{
-            quote = await QuoteService.getQuoteById(args.index);
-        }
-        catch(e){
-            return new ErrorValidation("something_not_found", "quote");
-        }
+        quote = await QuoteService.getQuoteById(args.index);
     }
     else 
-        quote = await QuoteService.getRandomQuote(args?.isNsfw ?? undefined);
+        quote = await QuoteService.getRandomQuote(true);
 
     if(!quote)
         return new ErrorValidation("something_not_found", "quote");
 
-    if(quote.nsfw && !message.channel.nsfw)
-        return new ErrorValidation("forbidden", "quote is nsfw");
+    embed.setDescription(quote.nsfw ?  `||${quote.description.join("\n")}||` : quote.description.join("\n"))
 
     if(quote.memberRef){
         const member = getProfileByID(quote.memberRef);
-        embed.setDescription(quote.description.join("\n"))
-            .setAuthor({name: quote.author, iconURL: `https://cdn.discordapp.com/avatars/${quote.memberRef}/${member?.avatarID}.webp`})
-            .setFooter({text: `quote #${quote.id}`});
-    }
-    else{
-        embed.setDescription(quote.description.join("\n"))
-            .setTitle(`Quote #${quote.id}`)
-            .setFooter({text: `this quote is made by ${quote.author}`});
+        embed.setAuthor({name: quote.author, iconURL: `https://cdn.discordapp.com/avatars/${quote.memberRef}/${member?.avatarID}.webp`})
     }
 
-    return [embed];
+    embed.setFooter({text: `quote #${quote.id}`});
+
+    return {embeds: [embed], content: quote.nsfw ? "this quote is spoilered because it's NSFW" : undefined};
 }
 
 interface I_Quote{
@@ -72,19 +54,14 @@ const quote = new CommandBuilder<I_Quote>()
                 option
                 .setName("index")
                 .setDescription("Index to target a quote")
-                )
-            .addBooleanOption(option => option
-                .setName("nsfw")
-                .setDescription("Get nsfw quote")
-                .setRequired(false)
-            ),
+                ),
         interact: async (interaction, args) => {
             const embeds = await run(interaction, args);
 
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
 
-            await interaction.reply({embeds});
+            await interaction.reply(embeds);
         },
         getParameter(interaction) {
             const getOpt = interaction.options.getInteger("index", false) ?? rngInt(0, quotes.length - 1);
@@ -110,7 +87,7 @@ const quote = new CommandBuilder<I_Quote>()
             if(ErrorValidation.isErrorValidation(embeds))
                 return embeds;
 
-            await message.channel.send({embeds});
+            await message.channel.send(embeds);
         },
     })
 
