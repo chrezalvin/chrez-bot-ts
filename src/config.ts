@@ -30,7 +30,7 @@ export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.js
 /**
  * current bot version
  */
-export const botVersion = "1.7.0";
+export const botVersion = "1.7.1";
 
 // still string | undefined so i put null coalescing
 export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";
