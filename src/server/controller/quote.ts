@@ -55,4 +55,6 @@ export const quote_get_by_id = async (req: Request, res: Response) => {
         throw new Error("Invalid id!");
 
     const quote = await QuoteService.getQuoteById(id);
+
+    res.json(quote);
 }
