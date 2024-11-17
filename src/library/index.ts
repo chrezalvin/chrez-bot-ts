@@ -85,3 +85,7 @@ export {
 export {
     ServiceFirebase,
 } from "./ServiceFirebase";
+
+export {
+    calculateExpressionString,
+} from "./CalculateExpressionString"

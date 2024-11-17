@@ -284,7 +284,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
         else{
             debug(`running command ${this.name}`);
             if(args === undefined) return new ErrorValidation("no_argument_provided"); 
-            if(this.m_chat === undefined) return new ErrorValidation("chat_command_option_unavailable");
+            if(this.m_chat === undefined) return new ErrorValidation("no_argument_provided");
 
             params = this.m_chat.getParameter?.(message, args);
 

@@ -5,7 +5,8 @@ export class UserService {
     protected static readonly dbName = "users_view";
 
     public static service = new ServiceSupabase<User, "id">("id", UserService.dbName, {
-        typeGuard: isUser
+        typeGuard: isUser,
+        useCache: true,
     });
 
     public static async getUser(userid: string): Promise<User>{
@@ -13,6 +14,21 @@ export class UserService {
 
         if(!find) 
             throw new Error("User not found");
+
+        return find;
+    }
+
+    public static async findUser(usernameOrAlias: string): Promise<User>{
+        const find = await UserService
+            .service
+            .queryBuilder(query => query
+                .select("*")
+                .or(`username.ilike.%${usernameOrAlias}%,aliases.cs.{${usernameOrAlias}}`)
+                .single()
+            );
+
+        if(Array.isArray(find))
+            throw new Error("Invalid response from database");
 
         return find;
     }
@@ -37,9 +53,9 @@ export class UserService {
         await UserService.service.delete(userid);
     }
 
-    public static findUser(pred: (user: User) => boolean){
-        return UserService.service.getWhere(pred);
-    }
+    // public static findUser(pred: (user: User) => boolean){
+    //     return UserService.service.getWhere(pred);
+    // }
 
     public static async createUser(user: User): Promise<User | undefined>{
         return await UserService.service.add(user);
