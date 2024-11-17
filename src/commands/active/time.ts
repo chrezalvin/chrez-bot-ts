@@ -1,11 +1,12 @@
 const debug = require("debug")("ChrezBot:time");
 
-import {MyEmbedBuilder, CommandBuilder} from "@library";
+import {MyEmbedBuilder, CommandBuilder, SenddableMessage} from "@library";
 
-import { SlashCommandBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 
 import { UserService } from "@services";
+import { User } from "@models";
 
 const run = async (args?: I_Time) => {
   let timezone: string | null = args?.timezone ?? null;
@@ -99,7 +100,7 @@ const chreztime = new CommandBuilder<I_Time>()
       }
     })
     .setChat({
-      getParameter: (_, args) => {
+      getParameter: (message, args) => {
         let timezone: string | null = null;
 
         if(args && args[0] !== undefined)
@@ -108,7 +109,13 @@ const chreztime = new CommandBuilder<I_Time>()
         return {timezone};
       },
       execute: async (message, args) => {
-        const embeds = await run(args);
+        let embeds: MyEmbedBuilder[];
+        if(args?.timezone === "me"){
+          const user = await UserService.getUser(message.author.id);
+          embeds = await run({timezone: user.username});
+        }
+        else
+          embeds = await run(args);
 
         message.channel.send({embeds});
       },
