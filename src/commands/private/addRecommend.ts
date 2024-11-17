@@ -38,7 +38,7 @@ const run = async (args?: Omit<Recommend, "id">): Promise<MessageCreateOptions |
     }
     catch(e: unknown){
         console.log(e);
-        return new ErrorValidation("message_error");
+        return new ErrorValidation("something_not_found", "image url");
     } 
 }
 

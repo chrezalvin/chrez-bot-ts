@@ -5,13 +5,14 @@ import {MyEmbedBuilder, CommandBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 
-import profiles from "@assets/data/profiles.json";
+import { UserService } from "@services";
 
-const run = (args?: I_Time) => {
+const run = async (args?: I_Time) => {
   let timezone: string | null = args?.timezone ?? null;
   
   const time = new Date();
   const embed = new MyEmbedBuilder();
+  ["- migrated Chrez time to based on database to keep the timezone in sync", "- fixed error on \`Chrez calculate\` where the expression with unit displayed incorrectly"];
 
   if(timezone == null){
     debug(`getting japanese time`);
@@ -47,15 +48,18 @@ const run = (args?: I_Time) => {
       }
     }
 
-    for(const profile of profiles){
-      if(profile.timezone)
-        if(profile.name.toLowerCase() === timezone.toLowerCase() || profile.alias.find(ali => ali.toLowerCase() === timezone?.toLowerCase()) !== undefined){
-          const localTime = time.toLocaleString('en-US', {timeZone: profile.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
-          embed.setTitle(`${profile.timezone} time`).setDescription(`**${localTime.join(" ")}**`);
-          return [embed];
-        }
+    try{
+      const user = await UserService.findUser(timezone);
+      if(user && user.timezone){
+        const localTime = time.toLocaleString('en-US', {timeZone: user.timezone, hour12: false, dateStyle: "full", timeStyle: "medium"}).split(' ');
+        embed.setTitle(`${user.timezone} time`).setDescription(`**${localTime.join(" ")}**`);
+        return [embed];
+      }
     }
-
+    catch(e){
+      debug(`error finding user: ${e}`);
+    }
+    
     throw new Error("timezone not found!");
   }
 } 
@@ -89,7 +93,7 @@ const chreztime = new CommandBuilder<I_Time>()
         return {timezone};
       },
       interact: async (interaction, args) => {
-        const embeds = run(args);
+        const embeds = await run(args);
 
         interaction.reply({embeds});
       }
@@ -104,7 +108,7 @@ const chreztime = new CommandBuilder<I_Time>()
         return {timezone};
       },
       execute: async (message, args) => {
-        const embeds = run(args);
+        const embeds = await run(args);
 
         message.channel.send({embeds});
       },

@@ -2,7 +2,7 @@
     "message_error": {
         "code": 0,
         "name": "message_error",
-        "description": "Index out of bounds, please choose between 0 to "
+        "description": "Something went wrong while sending message"
     },
     "slash_error": {
         "code": 1,
@@ -55,22 +55,22 @@
         "description": "Slash command is not available for command \"{0}\""
     },
     "command_is_private": {
-        "code": 9,
+        "code": 11,
         "name": "This Command is Private Command",
         "description": "This command is only available for private members!"
     },
     "command_user_not_found": {
-        "code": 10,
+        "code": 12,
         "name": "User Not Found",
         "description": "Cannot verify the sender of this command!"
     },
     "something_not_found": {
-        "code": 11,
+        "code": 13,
         "name": "Not Found",
         "description": "{0} not found"
     },
     "forbidden": {
-        "code": 12,
+        "code": 14,
         "name": "Forbidden",
         "description": "You are not allowed to do this action because {}"
     }

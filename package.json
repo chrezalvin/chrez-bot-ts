@@ -1,12 +1,12 @@
 {
   "name": "cbts",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "SET DEBUG=* && node test.js",
-    "test:ts": "ts-node -r tsconfig-paths/register ./src/test",
-    "devstart": "SET DEBUG=Server:*,ChrezBot:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
+    "test:ts": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/test",
+    "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
     "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
     "build": "tsc && tsc-alias",

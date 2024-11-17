@@ -9,6 +9,8 @@ import sad from "./sad";
 import dontYell from "./dontyell";
 import no from "./no";
 import itsokay from "./itsokay";
+import ee from "./ee";
+import yousuck from "./yousuck";
 
 export const commands: inlineCommandReturnTypes[] = [
     pewpew,
@@ -21,6 +23,8 @@ export const commands: inlineCommandReturnTypes[] = [
     dontYell,
     no,
     itsokay,
+    ee,
+    yousuck,
 ].filter(command => !command.unavailable);
 
 export default commands;
