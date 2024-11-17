@@ -5,3 +5,4 @@ test*
 firebase.json
 output
 /uploads
+cloudflaredConfig.yaml
