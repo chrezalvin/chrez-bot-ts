@@ -6,6 +6,13 @@
         "I think this is what the message means",
         "Here's a list of possible meanings"
     ],
+    "noTranslates": [
+        "sorry, im not sure what the message even mean",
+        "I'm not sure what the message mean, sorry",
+        "Hmm, idk either",
+        "Can't help you with that one",
+        "Idk, I can't translate that message"
+    ],
     "translations": [
         {
             "name": "bozo",

@@ -30,6 +30,11 @@ const run = async (translateParams: I_Translate) => {
                 });
     }
 
+    if(contents.length === 0)
+        return {
+            content: translates.noTranslates[rngInt(0, translates.noTranslates.length - 1)]
+        };
+
     const embed = new MyEmbedBuilder();
 
     embed.setTitle("Translation")
