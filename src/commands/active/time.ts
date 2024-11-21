@@ -1,12 +1,11 @@
 const debug = require("debug")("ChrezBot:time");
 
-import {MyEmbedBuilder, CommandBuilder, SenddableMessage} from "@library";
+import {MyEmbedBuilder, CommandBuilder} from "@library";
 
-import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
 
 import { UserService } from "@services";
-import { User } from "@models";
 
 const run = async (args?: I_Time) => {
   let timezone: string | null = args?.timezone ?? null;
