@@ -1,0 +1,201 @@
+{
+    "sendMessage": [
+        "okay, translated the message for you",
+        "Here's what I think the message means",
+        "Here you go",
+        "I think this is what the message means",
+        "Here's a list of possible meanings"
+    ],
+    "translations": [
+        {
+            "name": "bozo",
+            "explanations": [
+                "A stupid person, fool or a dunce.",
+                "A clown"
+            ]
+        },
+        {
+            "name": "L",
+            "explanations": [
+                "can be translated to 'Loser' or 'Loss'",
+                "a short form of \"Loser\"",
+                "Slang for \"Loser\" or \"Loss\""
+            ]
+        },
+        {
+            "name": "lmao+",
+            "explanations": [
+                "Slang for \"**L**aughing **M**y **A**ss **O**ff\""
+            ]
+        },
+        {
+            "name": "W",
+            "explanations": [
+                "Slang for \"Win\"",
+                "A short version of \"Win\""
+            ]
+        },
+        {
+            "name": "queen",
+            "explanations": [
+                "It means that the said person is awesome"
+            ]
+        },
+        {
+            "name": ["twerk", "twerking"],
+            "explanations": [
+                "A sensual dance on which the person is shaking their buttocks"
+            ]
+        },
+        {
+            "name": "gyatt",
+            "explanations": [
+                "a person's buttocks or a way to say goddamn (as in \"gyatt-damn\")"
+            ]
+        },
+        {
+            "name": "rizz",
+            "explanations": [
+                "a word to describe the charm of a person",
+                "a way to describe a person's good style or attractiveness"
+            ]
+        },
+        {
+            "name": ["sigma", "alpha"],
+            "explanations": [
+                "a cool person",
+                "a word to describe a cool person"
+            ]
+        },
+        {
+            "name": "based",
+            "explanations": [
+                "a way to say that person is unique to his own self",
+                "a way to say that person is cool"
+            ]
+        },
+        {
+            "name": "sus",
+            "explanations": [
+                "shortened version of \"suspicious\""
+            ]
+        },
+        {
+            "name": ["soy boy", "soyboy", "soygirl", "snowflake", "beta"],
+            "explanations": [
+                "a way to describe a weak person",
+                "a way to describe a person that is easily offended"
+            ]
+        },
+        {
+            "name": "sla+y",
+            "explanations": [
+                "an expression that desceibe a person that has done exceptionally well"
+            ]
+        },
+        {
+            "name": "simp",
+            "explanations": [
+                "simpleton, a person that is overly submissive to a person of the opposite sex"
+            ]
+        },
+        {
+            "name": ["pog", "poggers", "pogchamp"],
+            "explanations": [
+                "**P**lay **O**f a **G**ame: an expression of excitement or amazement"
+            ]
+        },
+        {
+            "name": "cap",
+            "explanations": [
+                "a way to say that someone is lying",
+                "a shorthand for lying"
+            ]
+        },
+        {
+            "name": "bussin",
+            "explanations": [
+                "a way to say that the food is delicious"
+            ]
+        },
+        {
+            "name": "fr",
+            "explanations": [
+                "shortened version of \"for real\""
+            ]
+        },
+        {
+            "name": "lmbo+",
+            "explanations": [
+                "Slang for \"**L**aughing **M**y **B**utt **O**ff\""
+            ]
+        },
+        {
+            "name": "lmfao+",
+            "explanations": [
+                "Slang for \"**L**aughing **M**y **F**ucking **A**ss **O**ff\""
+            ]
+        },
+        {
+            "name": "fam",
+            "explanations": [
+                "shortened version of \"family\"",
+                "**fam**ily: a substitute of \"buddy\""
+            ]
+        },
+        {
+            "name": "yolo",
+            "explanations": [
+                "shortened version of **Y**ou **O**nly **L**ive **O**nce"
+            ]
+        },
+        {
+            "name": "wawa",
+            "explanations": [
+                "A slang for water"
+            ]
+        },
+        {
+            "name": "skibidi",
+            "explanations": [
+                "Has no meaning but to express a popular youtube channel called \"Skibidi Toilet\""
+            ]
+        },
+        {
+            "name": "yee+t",
+            "explanations": [
+                "A word to say when someone is throwing something"
+            ]
+        },
+        {
+            "name": "ree+",
+            "explanations": [
+                "A word to describe excitement"
+            ]
+        },
+        {
+            "name": ["brainrot", "brain rot"],
+            "explanations": [
+                "A word to describe an internet content that is of a low quality or value"
+            ]
+        },
+        {
+            "name": "rofl",
+            "explanations": [
+                "Slang for \"**R**olling **O**n the **F**loor, **L**aughing\""
+            ]
+        },
+        {
+            "name": "g",
+            "explanations": [
+                "Slang for \"Gangster\""
+            ]
+        },
+        {
+            "name": "rekt",
+            "explanations": [
+                "Slang for \"Wrecked\""
+            ]
+        }
+    ]
+}

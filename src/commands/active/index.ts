@@ -22,6 +22,7 @@ import embedify from "./embedify";
 import hug from "./hug";
 import event from "./event";
 import registlet from "./registlet";
+import translate from "./translate";
 
 const c: (CommandBuilder<any>)[] = [
     hello, 
@@ -44,6 +45,7 @@ const c: (CommandBuilder<any>)[] = [
     hug,
     event,
     registlet,
+    translate,
 ].filter(command => command.mode !== "unavailable");
 
 // hidden command will not shown on Chrez help
