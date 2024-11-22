@@ -6,28 +6,78 @@ import { MessageType } from "discord.js";
 import { prefixes } from "@config";
 import translates from "@assets/messages/active/translate.json";
 
+function getConotationMessage(positive: number, negative: number, neutral: number): string{
+    // if all are 0 except positive
+    if(positive > 0 && negative === 0 && neutral === 0)
+        return "I think they meant well";
+
+    // if all are 0 except negative
+    if(negative > 0 && positive === 0 && neutral === 0)
+        return "It's a negative message";
+
+    // if all are 0 except neutral
+    if(neutral > 0 && positive === 0 && negative === 0)
+        return "It's not really a good or bad message, they just said something";
+
+    // if neutral is 0 but positive is greater than negative
+    if(neutral === 0 && positive > negative)
+        return "It's mixed, but I think they meant well";
+
+    // if neutral is 0 but negative is greater than positive
+    if(neutral === 0 && negative > positive)
+        return "It's mixed, but I think it's a bad message";
+
+    // if positive is 0 but negative is greater than neutral
+    if(positive === 0 && negative > neutral)
+        return "It's some bad message";
+
+    // if positive is 0 but neutral is greater than negative
+    if(positive === 0 && neutral > negative)
+        return "They just saying something, but may be bad";
+
+    // if negative is 0 but positive is greater than neutral
+    if(negative === 0 && positive > neutral)
+        return "It's some good message";
+
+    // if negative is 0 but neutral is greater than positive
+    if(negative === 0 && neutral > positive)
+        return "the message is good";
+
+    return "";
+}
+
+type Conotation = "positive" | "negative" | "neutral";
 const run = async (translateParams: I_Translate) => {
     debug(`translating message: ${translateParams.message}`);
 
     const message = translateParams.message.toLowerCase();
 
+    let countConotations: {[key in Conotation]: number} = {
+        positive: 0,
+        negative: 0,
+        neutral: 0
+    };
     const contents: {name: string, description: string}[] = []; 
     for(const translate of translates.translations){
         if(Array.isArray(translate.name))
             for(const name of translate.name){
-                if(message.match(`(\\s${name}\\s)|(^${name}\\s)|(\\s${name}$)`))
+                if(message.match(`(\\s|+${name}\\s|+)|(^${name}\\s|+)|(\\s|+${name}$)`)){
+                    countConotations[translate.conotation as Conotation] += 1;                    
                     contents.push({
                         // remove symbols from the name
                         name: name.replace(/[^a-zA-Z0-9]/g, ""),
                         description: translate.explanations[rngInt(0, translate.explanations.length - 1)]
                     });
+                }
             }
         else
-            if(message.match(`(\\s${translate.name}\\s)|(^${translate.name}\\s)|(\\s${translate.name}$)`))
+            if(message.match(`(\\s|+${translate.name}\\s|+)|(^${translate.name}\\s|+)|(\\s|+${translate.name}$)`)){
+                countConotations[translate.conotation as Conotation] += 1;
                 contents.push({
                     name: translate.name.replace(/[^a-zA-Z0-9]/g, ""), 
                     description: translate.explanations[rngInt(0, translate.explanations.length - 1)]
                 });
+            }
     }
 
     if(contents.length === 0)
@@ -39,6 +89,7 @@ const run = async (translateParams: I_Translate) => {
 
     embed.setTitle("Translation")
     embed.setDescription(contents.map(content => `\`${content.name}\`: ${content.description}`).join("\n"));
+    embed.setFooter({text: getConotationMessage(countConotations.positive, countConotations.negative, countConotations.neutral)});
     
     return {content: translates.sendMessage[rngInt(0, translates.sendMessage.length - 1)], embeds: [embed]};
 } 
@@ -49,7 +100,7 @@ interface I_Translate{
 
 const update = new CommandBuilder<I_Translate>()
     .setName("translate")
-    .setAlias(["explain", "define", "meaning"])
+    .setAlias(["explain", "define", "meaning", "slang"])
     .setDescription("Gives you translation of slangs")
     .setExamples([
         {command: `${prefixes[0]} update`, description: "give latest update"},
