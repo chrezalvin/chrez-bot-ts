@@ -19,190 +19,263 @@
             "explanations": [
                 "A stupid person, fool or a dunce.",
                 "A clown"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
-            "name": "L",
+            "name": "l",
             "explanations": [
                 "can be translated to 'Loser' or 'Loss'",
                 "a short form of \"Loser\"",
                 "Slang for \"Loser\" or \"Loss\""
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": "lmao+",
             "explanations": [
                 "Slang for \"**L**aughing **M**y **A**ss **O**ff\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
-            "name": "W",
+            "name": "w",
             "explanations": [
                 "Slang for \"Win\"",
                 "A short version of \"Win\""
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": "queen",
             "explanations": [
                 "It means that the said person is awesome"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": ["twerk", "twerking"],
             "explanations": [
                 "A sensual dance on which the person is shaking their buttocks"
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "gyatt",
             "explanations": [
                 "a person's buttocks or a way to say goddamn (as in \"gyatt-damn\")"
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "rizz",
             "explanations": [
                 "a word to describe the charm of a person",
                 "a way to describe a person's good style or attractiveness"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": ["sigma", "alpha"],
             "explanations": [
                 "a cool person",
                 "a word to describe a cool person"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": "based",
             "explanations": [
                 "a way to say that person is unique to his own self",
                 "a way to say that person is cool"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": "sus",
             "explanations": [
                 "shortened version of \"suspicious\""
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": ["soy boy", "soyboy", "soygirl", "snowflake", "beta"],
             "explanations": [
                 "a way to describe a weak person",
                 "a way to describe a person that is easily offended"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": "sla+y",
             "explanations": [
                 "an expression that desceibe a person that has done exceptionally well"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
-            "name": "simp",
+            "name": ["simp", "simping"],
             "explanations": [
                 "simpleton, a person that is overly submissive to a person of the opposite sex"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": ["pog", "poggers", "pogchamp"],
             "explanations": [
                 "**P**lay **O**f a **G**ame: an expression of excitement or amazement"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": "cap",
             "explanations": [
                 "a way to say that someone is lying",
                 "a shorthand for lying"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": "bussin",
             "explanations": [
                 "a way to say that the food is delicious"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": "fr",
             "explanations": [
                 "shortened version of \"for real\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "lmbo+",
             "explanations": [
                 "Slang for \"**L**aughing **M**y **B**utt **O**ff\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "lmfao+",
             "explanations": [
                 "Slang for \"**L**aughing **M**y **F**ucking **A**ss **O**ff\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "fam",
             "explanations": [
                 "shortened version of \"family\"",
                 "**fam**ily: a substitute of \"buddy\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "yolo",
             "explanations": [
                 "shortened version of **Y**ou **O**nly **L**ive **O**nce"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": "wawa",
             "explanations": [
                 "A slang for water"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": "skibidi",
             "explanations": [
                 "Has no meaning but to express a popular youtube channel called \"Skibidi Toilet\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "yee+t",
             "explanations": [
                 "A word to say when someone is throwing something"
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "ree+",
             "explanations": [
                 "A word to describe excitement"
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": ["brainrot", "brain rot"],
             "explanations": [
                 "A word to describe an internet content that is of a low quality or value"
-            ]
+            ],
+            "conotation": "negative"
         },
         {
             "name": "rofl",
             "explanations": [
                 "Slang for \"**R**olling **O**n the **F**loor, **L**aughing\""
-            ]
+            ],
+            "conotation": "positive"
         },
         {
             "name": "g",
             "explanations": [
                 "Slang for \"Gangster\""
-            ]
+            ],
+            "conotation": "neutral"
         },
         {
             "name": "rekt",
             "explanations": [
                 "Slang for \"Wrecked\""
-            ]
+            ],
+            "conotation": "negative"
+        },
+        {
+            "name": ["goat", "g.o.a.t", "goated"],
+            "explanations": [
+                "Slang for \"**G**reatest **O**f **A**ll **T**ime\""
+            ],
+            "conotation": "positive"
+        },
+        {
+            "name": "detroit",
+            "explanations": [
+                "A slang for a city in Michigan that is usually depicted as a bad place"
+            ],
+            "conotation": "negative"
+        },
+        {
+            "name": "maga",
+            "explanations": [
+                "A slang for \"**M**ake **A**merica **G**reat **A**gain\"",
+                "**M**ake **A**merica **G**reat **A**gain: a slogan used by the president of the United States, Donald Trump"
+            ],
+            "conotation": "neutral"
+        },
+        {
+            "name": ["vibe", "vibing", "vibe check"],
+            "explanations": [
+                "A way to describe a person's mood or feeling"
+            ],
+            "conotation": "neutral"
+        },
+        {
+            "name": ["cook", "cooking"],
+            "explanations": [
+                "A way to describe a person's expertise of a skill"
+            ],
+            "conotation": "positive"
+        },
+        {
+            "name": "lit",
+            "explanations": [
+                "A way to describe a person's excitement or exciting situation"
+            ],
+            "conotation": "positive"
         }
     ]
 }
