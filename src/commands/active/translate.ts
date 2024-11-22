@@ -43,6 +43,12 @@ function getConotationMessage(positive: number, negative: number, neutral: numbe
     if(negative === 0 && neutral > positive)
         return "the message is good";
 
+    if(positive > negative)
+        return "It's a mostly positive message";
+
+    if(negative > positive)
+        return "It's a mostly negative message";
+
     return "";
 }
 
@@ -61,7 +67,7 @@ const run = async (translateParams: I_Translate) => {
     for(const translate of translates.translations){
         if(Array.isArray(translate.name))
             for(const name of translate.name){
-                if(message.match(`(\\s|+${name}\\s|+)|(^${name}\\s|+)|(\\s|+${name}$)`)){
+                if(message.match(`((\\s|\\+)${name}(\\s|\\+))|(^${name}(\\s|\\+))|((\\s|\\+)${name}$)`)){
                     countConotations[translate.conotation as Conotation] += 1;                    
                     contents.push({
                         // remove symbols from the name
@@ -71,7 +77,7 @@ const run = async (translateParams: I_Translate) => {
                 }
             }
         else
-            if(message.match(`(\\s|+${translate.name}\\s|+)|(^${translate.name}\\s|+)|(\\s|+${translate.name}$)`)){
+            if(message.match(`((\\s|\\+)${translate.name}(\\s|\\+))|(^${translate.name}(\\s|\\+))|((\\s|\\+)${translate.name}$)`)){
                 countConotations[translate.conotation as Conotation] += 1;
                 contents.push({
                     name: translate.name.replace(/[^a-zA-Z0-9]/g, ""), 
@@ -85,12 +91,13 @@ const run = async (translateParams: I_Translate) => {
             content: translates.noTranslates[rngInt(0, translates.noTranslates.length - 1)]
         };
 
+    const conotationMessage = getConotationMessage(countConotations.positive, countConotations.negative, countConotations.neutral);
     const embed = new MyEmbedBuilder();
 
     embed.setTitle("Translation")
     embed.setDescription(contents.map(content => `\`${content.name}\`: ${content.description}`).join("\n"));
-    embed.setFooter({text: getConotationMessage(countConotations.positive, countConotations.negative, countConotations.neutral)});
-    
+    if(conotationMessage !== "")
+        embed.setFooter({text: conotationMessage});
     return {content: translates.sendMessage[rngInt(0, translates.sendMessage.length - 1)], embeds: [embed]};
 } 
 
