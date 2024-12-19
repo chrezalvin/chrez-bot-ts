@@ -6,8 +6,6 @@ import fs from "fs";
 export const activeEvents_get_all = async (req: Request, res: Response) => {
     const name = req.query.name as unknown;
 
-    console.log(name);
-
     if(typeof name === "string" && name.length < 5)
         throw new Error("Search query is too short");
 

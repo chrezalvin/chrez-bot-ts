@@ -1,4 +1,4 @@
-const debug = require("debug")("ServiceFileSupabase");
+const debug = require("debug")("library:ServiceFileSupabase");
 
 import { supabase } from "@config";
 import { randomUUID } from "crypto";
@@ -13,7 +13,9 @@ export class ServiceFileSupabase<
     OmittedKey extends Extract<keyof DataType, string> = never,
     FileKey extends keyof DataType = never,
 >{
-    protected m_useCache: boolean = false;
+    public static s_services: ServiceFileSupabase<any, any, any, any>[] = [];
+
+    protected m_useCache: boolean;
     protected m_cache: Map<DataType[IdKey], DataType> = new Map();
 
     // table
@@ -36,12 +38,13 @@ export class ServiceFileSupabase<
     get storagePath(): string { return this.m_storagePath; }
 
     get cache(): DataType[]{
-        return [...this.m_cache.values()];
+        return [...this.m_cache.values()].map(value => this.translateFileToUrl(value));
     }
 
     get useCache(): boolean{ return this.m_useCache; }
 
     public translateFileToUrl(data: DataType): DataType {
+        console.log(data, this.m_fileKeyName);
         debug(`translating file to url for data with ${this.m_keyName}: ${data[this.m_keyName]}`);
 
         if(!this.m_fileKeyName){
@@ -70,6 +73,7 @@ export class ServiceFileSupabase<
         keyName: IdKey,
         tableOption: {
             tableName: string,
+            useCache?: boolean,
             typeGuard?: (value: unknown) => value is DataType,
         },
         ...storageOption: ([FileKey] extends [never] ? [] : [{
@@ -80,13 +84,18 @@ export class ServiceFileSupabase<
     ){
         // table
         this.m_keyName = keyName;
+
         this.m_tableName = tableOption.tableName;
         this.m_typeGuard = tableOption.typeGuard;
+        this.m_useCache = tableOption.useCache ?? true;
         
         // storage
         this.m_storageBucket = storageOption[0]?.bucketName.replace(/\/$/, "") ?? "";
         this.m_fileKeyName = storageOption[0]?.fileKey ?? null;
         this.m_storagePath = storageOption[0]?.storagePath ?? "";
+
+        // add to the services
+        ServiceFileSupabase.s_services.push(this);
     }
 
     // these are private methods that returns non-translated data
@@ -435,7 +444,7 @@ export class ServiceFileSupabase<
             for(const ele of data)
                 this.m_cache.set(ele[this.m_keyName], ele);
 
-        return data.map(this.translateFileToUrl);
+        return data.map(value => this.translateFileToUrl(value));
     }
 
     /**
@@ -491,7 +500,7 @@ export class ServiceFileSupabase<
                 for(const ele of data)
                     this.m_cache.set(ele[this.m_keyName], ele);
 
-            return data.map(this.translateFileToUrl);
+            return data.map(value => this.translateFileToUrl(value));
         }
         else {
             if(this.m_useCache)
@@ -513,6 +522,6 @@ export class ServiceFileSupabase<
             for(const ele of data)
                 this.m_cache.set(ele[this.m_keyName], ele);
 
-        return data.map(this.translateFileToUrl);
+        return data.map(value => this.translateFileToUrl(value));
     }
 }

@@ -1,19 +1,15 @@
-import { ServiceSupabase } from "@library";
+import { ServiceFileSupabase } from "@library";
 import { isQuote, Quote } from "@models";
 
 export class QuoteService{
     protected static readonly quotePath = "quotes";
     protected static readonly randomQuoteView = "quotes_random";
 
-    static quoteSupabase = new ServiceSupabase<Quote, "id">("id", QuoteService.quotePath, {
+    static quoteSupabase = new ServiceFileSupabase<Quote, "id">("id", {
+        tableName: QuoteService.quotePath,
         typeGuard: isQuote,
         useCache: true,
     });
-
-    // static nsfwQuoteSupabase = new ServiceSupabase<Quote, "id">("id", QuoteService.randomQuoteView, {
-    //     typeGuard: isQuote,
-    //     useCache: false
-    // });
 
     static getQuoteList(){
         return QuoteService.quoteSupabase.cache;

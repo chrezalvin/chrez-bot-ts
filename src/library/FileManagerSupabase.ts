@@ -27,6 +27,11 @@ export class FileManagerSupabase{
     get cache(){ return this.m_cache.map((path) => this.translateToUrl(path)); }
 
     /**
+     * the filenames of the files in the storage
+     */
+    get fileNames(){ return this.m_cache; }
+
+    /**
      * the path of the storage
      */
     get path(){ return this.m_path; }
@@ -41,6 +46,11 @@ export class FileManagerSupabase{
      */
     get length(){ return this.m_cache.length; }
 
+    /**
+     * translates the filename to downloadable url format
+     * @param fileName the filename to translate
+     * @returns the url of the file
+     */
     translateToUrl(fileName: string): string{
         return supabase
             .storage

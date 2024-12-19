@@ -21,7 +21,7 @@ export const recommend_get_by_id = async (req: Request, res: Response) => {
     if(isNaN(id))
         throw new Error("Invalid id!");
 
-    const recommend = await RecommendService.service.get(id);
+    const recommend = await RecommendService.recommendSupabase.get(id);
 
     res.json(recommend);
 }
