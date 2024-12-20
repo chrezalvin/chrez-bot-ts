@@ -17,8 +17,6 @@ export const yomama_post_add = async (req: Request, res: Response) => {
 
     const yomama = req.body.yomama as unknown;
 
-    console.log(yomama);
-
     if(!isYomamaWithoutId(yomama))
         throw new Error("invalid yomama object");
 

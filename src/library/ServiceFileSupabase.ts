@@ -2,6 +2,7 @@ const debug = require("debug")("library:ServiceFileSupabase");
 
 import { supabase } from "@config";
 import { randomUUID } from "crypto";
+import { inferType } from "./InferType";
 
 type PostgrestQueryBuilder = ReturnType<typeof supabase.from>;
 type PostgrestFilterBuilder = ReturnType<ReturnType<typeof supabase.from>["select"]>;
@@ -44,7 +45,6 @@ export class ServiceFileSupabase<
     get useCache(): boolean{ return this.m_useCache; }
 
     public translateFileToUrl(data: DataType): DataType {
-        console.log(data, this.m_fileKeyName);
         debug(`translating file to url for data with ${this.m_keyName}: ${data[this.m_keyName]}`);
 
         if(!this.m_fileKeyName){
@@ -67,6 +67,27 @@ export class ServiceFileSupabase<
             ...data,
             [this.m_fileKeyName]: downloadUrl,
         };
+    }
+
+    private async getAllDataDebugless(): Promise<DataType[]>{
+        const response = await supabase
+            .from(this.m_tableName)
+            .select("*");
+
+        if(response.error)
+            throw new Error(response.error.message);
+
+        const data = response.data as unknown[];
+
+        if(this.m_typeGuard)
+            if(data.every(value => this.m_typeGuard!(value)))
+                return data;
+            else {
+                debug(`failed to typeguard the data, data type is:\n${inferType(data)}`);
+                throw new Error("Typeguard failed");
+            }
+        else
+            return response.data as DataType[];
     }
 
     constructor(
@@ -94,6 +115,29 @@ export class ServiceFileSupabase<
         this.m_fileKeyName = storageOption[0]?.fileKey ?? null;
         this.m_storagePath = storageOption[0]?.storagePath ?? "";
 
+        // updates the cache
+        if(this.m_useCache)
+            this.getAllDataDebugless()
+                .then((data) => {
+                    for(const ele of data){
+                        if(this.m_fileKeyName){
+                            const downloadUrl = supabase
+                                .storage
+                                .from(this.m_storageBucket)
+                                .getPublicUrl(ele[this.m_fileKeyName] as string)
+                                .data
+                                .publicUrl;
+
+                            ele[this.m_fileKeyName] = downloadUrl as DataType[FileKey];
+                        }
+
+                        this.m_cache.set(ele[this.m_keyName], ele);
+                    }
+
+                    debug(`successfully cached ${data.length} data from ${this.m_tableName}`)
+                })
+                .catch((e) => debug(`failed to load all data from ${this.m_tableName}, error: ${e.message}`));
+
         // add to the services
         ServiceFileSupabase.s_services.push(this);
     }
@@ -118,8 +162,10 @@ export class ServiceFileSupabase<
         if(this.m_typeGuard)
             if(this.m_typeGuard(data))
                 return data as DataType;
-            else 
+            else {
+                debug(`failed to typeguard the data, data type is:\n${inferType(data)}`);
                 throw new Error("Typeguard failed");
+            }
         else
             return data as DataType;
     }
@@ -141,8 +187,10 @@ export class ServiceFileSupabase<
         if(this.m_typeGuard)
             if(data.every(this.m_typeGuard))
                 return data;
-            else 
+            else {
+                debug(`failed to typeguard the data, data type is:\n${inferType(data)}`);
                 throw new Error("Typeguard failed");
+            }
         else 
             return data as DataType[];
     }
@@ -237,8 +285,10 @@ export class ServiceFileSupabase<
         if(this.m_typeGuard){
             if(this.m_typeGuard(addedData))
                 return addedData;
-            else
+            else{
+                debug(`failed to typeguard the data, data type is:\n${inferType(addedData)}`);
                 throw new Error("Typeguard failed");
+            }
         }
         else
             return addedData as DataType;
@@ -327,8 +377,10 @@ export class ServiceFileSupabase<
         if(this.m_typeGuard){
             if(this.m_typeGuard(updatedData))
                 return updatedData;
-            else
+            else{
+                debug(`failed to typeguard the data, data type is:\n${inferType(updatedData)}`);
                 throw new Error("Typeguard failed");
+            }
         }
         else
             return updatedData as DataType;
@@ -351,8 +403,10 @@ export class ServiceFileSupabase<
         if(this.m_typeGuard)
             if(data.every(this.m_typeGuard))
                 return data;
-            else 
+            else {
+                debug(`failed to typeguard the data, data type is:\n${inferType(data)}`);
                 throw new Error("Typeguard failed");
+            }
         else
             return data as DataType[];
     }
@@ -373,14 +427,18 @@ export class ServiceFileSupabase<
             if(Array.isArray(data)){
                 if(data.every(this.m_typeGuard))
                     return data as DataType[];
-                else 
+                else {
+                    debug(`failed to typeguard the data, data type is:\n${inferType(data)}`);
                     throw new Error("Typeguard failed");
+                }
             }
             else {
                 if(this.m_typeGuard(data))
                     return data as DataType;
-                else 
+                else {
+                    debug(`failed to typeguard the data, data type is:\n${inferType(data)}`);
                     throw new Error("Typeguard failed");
+                }
             }
         }
         else

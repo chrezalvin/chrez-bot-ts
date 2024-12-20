@@ -49,8 +49,6 @@ export const activeEvents_post_add = async (req: Request, res: Response) => {
     const activeEvent = JSON.parse(req.body.activeEvent);
     const image = req.file;
 
-    console.log(activeEvent);
-
     if(!isActiveEventWithoutId(activeEvent))
         throw new Error("Invalid activeEvent object");
 

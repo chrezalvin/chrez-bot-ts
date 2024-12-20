@@ -93,3 +93,7 @@ export {
 export {
     ServiceFileSupabase,
 } from "./ServiceFileSupabase";
+
+export {
+    inferType
+} from "./InferType";

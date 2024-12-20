@@ -55,7 +55,7 @@ export class ActiveEventService {
     }
 
     static async getActiveEvent(): Promise<ActiveEvent[]>{
-        const date = new Date().toISOString();
+        const date = new Date().toLocaleString();
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder((query => query
@@ -89,7 +89,7 @@ export class ActiveEventService {
      * get all incoming events from now
      */
     static async getIncomingEvent(): Promise<ActiveEvent[]>{
-        const date = (new Date()).toISOString();
+        const date = (new Date()).toLocaleString();
 
         const res = await ActiveEventService
             .activeEventManager

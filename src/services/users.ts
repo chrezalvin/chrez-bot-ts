@@ -1,4 +1,4 @@
-import { ServiceFileSupabase, ServiceSupabase } from "@library";
+import { ServiceFileSupabase } from "@library";
 import { isUser, User } from "@models";
 
 export class UserService {
@@ -36,8 +36,8 @@ export class UserService {
         return await UserService.service.getAll();
     }
 
-    public static async setUserRole(userid: string, role: User["rolename"]){
-        await UserService.service.update(userid, {rolename: role});
+    public static async setUserRole(userid: string, role: User["role"]){
+        await UserService.service.update(userid, {role: role});
     }
 
     public static async deleteUser(userid: string){
@@ -53,7 +53,7 @@ export class UserService {
             const user = await UserService.service.get(discordId);
             if(!user) throw new Error("User not found");
 
-            switch(user.rolename){
+            switch(user.role){
                 case "admin":
                 case "vice":
                 case "owner":

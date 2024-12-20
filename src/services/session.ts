@@ -19,10 +19,6 @@ export class SessionService{
 
     static async getSession(id: string): Promise<SessionView>{
         const res = await SessionService.sessionViewSupabase.get(id);
-
-        if(!res)
-            throw new Error("Session not found");
-
         return res;
     }
 
