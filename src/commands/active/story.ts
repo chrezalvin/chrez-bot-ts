@@ -5,7 +5,7 @@ import { prefixes } from "@config";
 import { StoryService } from "@services";
 
 const run = async (args?: I_Story) => {
-    const length = StoryService.serviceSupabase.length;
+    const length = StoryService.serviceSupabase.cache.length;
     let index: number = args?.index ?? rngInt(0, length - 1);
 
     if(index >= length)
@@ -70,14 +70,14 @@ const story = new CommandBuilder<I_Story>()
                 await interaction.reply({embeds});
             },
             getParameter: (interaction) => {
-                const index = interaction.options.getInteger("index", false) ?? rngInt(0, StoryService.serviceSupabase.length - 1);
+                const index = interaction.options.getInteger("index", false) ?? rngInt(0, StoryService.serviceSupabase.cache.length - 1);
     
                 return {index};
             }
         })
         .setChat({
             getParameter: (_, args) => {
-                let index = rngInt(0, StoryService.serviceSupabase.length - 1);
+                let index = rngInt(0, StoryService.serviceSupabase.cache.length - 1);
                 if(args && args[0] !== undefined){
                     let num = parseInt(args[0]);
                     if(!isNaN(num))

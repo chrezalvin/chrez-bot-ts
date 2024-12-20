@@ -1,26 +1,20 @@
-import {rngInt, ServiceSupabase} from "@library";
+import {rngInt, ServiceFileSupabase} from "@library";
 import { Story, isStory } from "@models";
 
 export class StoryService{
     protected static readonly dbName = "story";
 
-    public static serviceSupabase = new ServiceSupabase<Story, "id">(
-                "id", 
-                StoryService.dbName, 
+    public static serviceSupabase = new ServiceFileSupabase<Story, "id">(
+                "id",  
                 {
+                    tableName: StoryService.dbName,
                     typeGuard: isStory,
                     useCache: true
                 }
             );
 
     public static async getStory(id: number): Promise<Story>{
-        const find = await StoryService.serviceSupabase.get(id);
-
-        if(!find)
-            throw new Error("story not found!");
-
-        // return first occurence
-        return find;
+        return await StoryService.serviceSupabase.get(id);
     }
 
     public static async getAllStories(): Promise<Story[]>{
@@ -28,11 +22,6 @@ export class StoryService{
     }
 
     public static async deleteStory(id: number): Promise<void>{
-        const find = await StoryService.serviceSupabase.get(id);
-
-        if(!find)
-            throw new Error("story not found");
-
         await StoryService.serviceSupabase.delete(id);
     }
 

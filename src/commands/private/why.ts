@@ -9,7 +9,7 @@ const run = async (args?: I_Why) => {
         return "I don't know why you're asking me this.";
 
     const user = await UserService.getUser(args.discordId);
-    const pickWhy = user.rolename == "user" ? "normal": "exclusive";
+    const pickWhy = user.role == "user" ? "normal": "exclusive";
 
     const why = whys[pickWhy][rngInt(0, whys[pickWhy].length - 1)];
 
@@ -18,7 +18,7 @@ const run = async (args?: I_Why) => {
         description: why
             .description
             .replace("[name]", user.username)
-            .replace("[role]", user.rolename),
+            .replace("[role]", user.role),
         footer: {text: why.footer}
     })
 

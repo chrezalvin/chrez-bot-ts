@@ -8,7 +8,7 @@ import { UserService } from "@services/users";
 import SessionService from "@services/session";
 
 export async function authenticate_get(req: Request, res: Response){
-  console.log("authenticate_get");
+  debug("authenticate_get");
   const accessCode = req.query.code;
   
   if(typeof accessCode !== "string"){

@@ -88,4 +88,12 @@ export {
 
 export {
     calculateExpressionString,
-} from "./CalculateExpressionString"
+} from "./CalculateExpressionString";
+
+export {
+    ServiceFileSupabase,
+} from "./ServiceFileSupabase";
+
+export {
+    inferType
+} from "./InferType";

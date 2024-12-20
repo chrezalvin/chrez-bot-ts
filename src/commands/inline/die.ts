@@ -13,8 +13,8 @@ const command: inlineCommandReturnTypes = {
         const user = await UserService.getUser(message.author.id);
         let dieMessage: string  = "";
 
-        if(user && (user.rolename === "owner" || user.rolename === "vice"))
-            dieMessage = dieMessages[user.rolename][rngInt(0, dieMessages.owner.length - 1)]
+        if(user && (user.role === "owner" || user.role === "vice"))
+            dieMessage = dieMessages[user.role][rngInt(0, dieMessages.owner.length - 1)]
                             .replace("[name]", message.author.username);
         else
             dieMessage = dieMessages.normal[rngInt(0, dieMessages.normal.length - 1)].replace("[name]", message.author.username);

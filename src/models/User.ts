@@ -5,7 +5,7 @@ export interface User{
     username: string;
     timezone: string | null;
     aliases: string[] | null;
-    rolename: RoleName;
+    role: RoleName;
 }
 
 export function isUser(value: unknown): value is User{
@@ -24,7 +24,7 @@ export function isUser(value: unknown): value is User{
     if(!("aliases" in value) || (!Array.isArray(value.aliases) && value.aliases !== null))
         return false;
 
-    if(!("rolename" in value) || typeof value.rolename !== "string" || !["owner", "vice", "admin", "user"].includes(value.rolename))
+    if(!("role" in value) || typeof value.role !== "string" || !["owner", "vice", "admin", "user"].includes(value.role))
         return false;
 
 
@@ -47,7 +47,7 @@ export function isUserWithoutId(value: unknown): value is Omit<User, "id">{
     if("aliases" in value && (!Array.isArray(value.aliases) && value.aliases !== null))
         return false;
 
-    if("rolename" in value && (typeof value.rolename !== "string" || !["owner", "vice", "admin", "user"].includes(value.rolename)))
+    if("role" in value && (typeof value.role !== "string" || !["owner", "vice", "admin", "user"].includes(value.role)))
         return false;
 
     return true;
@@ -69,7 +69,7 @@ export function isPartialUser(value: unknown): value is Partial<User>{
     if("aliases" in value && (!Array.isArray(value.aliases) && value.aliases !== null))
         return false;
 
-    if("rolename" in value && (typeof value.rolename !== "string" || !["owner", "vice", "admin", "user"].includes(value.rolename)))
+    if("role" in value && (typeof value.role !== "string" || !["owner", "vice", "admin", "user"].includes(value.role)))
         return false;
 
     return true;

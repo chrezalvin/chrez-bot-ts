@@ -1,118 +1,56 @@
-import { rngInt } from "@library";
-import {ServiceSupabase} from "@library";
-import { FileManagerFirebase } from "@library/FileManagerFirebase";
+import { rngInt, ServiceFileSupabase } from "@library";
 import { isRecommend, Recommend } from "@models";
 
 export class RecommendService{
     protected static readonly recommend = "recommend";
+    protected static readonly recommendImgPath = "images/recommend";
+    protected static readonly recommendBucket = "images";
 
-    protected static readonly firebaseImgPath = "images/recommend";
-
-    public static service = new ServiceSupabase<Recommend, "id">( 
-        "id", 
-        RecommendService.recommend, 
-        {typeGuard: isRecommend,}
+    public static recommendSupabase = new ServiceFileSupabase<Recommend, "id", never, "imgUrl">("id", 
+        {
+            tableName: RecommendService.recommend,
+            typeGuard: isRecommend,
+            useCache: true,
+        },
+        {
+            bucketName: RecommendService.recommendBucket,
+            storagePath: RecommendService.recommendImgPath,
+            fileKey: "imgUrl",
+        }
     );
 
-    protected static async changeImgUrlToUrl(recommend: Recommend): Promise<Recommend>{
-        return recommend.imgUrl ? {...recommend, imgUrl: await RecommendService.fileManager2.getUrlFromPath(recommend.imgUrl)} : {...recommend, id: recommend.id};
-    }
-
-    // public static fileManager = new FileManagerSupabase(RecommendService.bucket, RecommendService.recommendedPath);
-    public static fileManager2 = new FileManagerFirebase(RecommendService.firebaseImgPath);
-
     public static async getAlldata(): Promise<Recommend[]>{
-        const res = await RecommendService.service.getAll();
-        return Promise.all(res.map(async (val) => await RecommendService.changeImgUrlToUrl(val)));
+        return await RecommendService.recommendSupabase.getAll();
     }
 
     public static async getRandomRecommend(): Promise<Recommend>{
-        const recommends = RecommendService.service.cache;
+        const recommends = RecommendService.recommendSupabase.cache;
         const recommend = recommends[rngInt(0, recommends.length - 1)];
-        return await RecommendService.changeImgUrlToUrl(recommend);
+
+        return recommend;
     }
 
     public static async createNewRecommend(recommend: Omit<Recommend, "id">, imgBlob?: Blob): Promise<Recommend>{
         // load the recommend first without the imgUrl
-        const newRecommend = await RecommendService.service.add({...recommend, imgUrl: null});
+        const newRecommend = await RecommendService.recommendSupabase.add(recommend, {
+            file: imgBlob ?? null,
+            fileName: recommend.title.toLowerCase().replace(/ /g, "_"),
+        });
 
-        if(!newRecommend)
-            throw new Error("Failed to create new Recommend");
-
-        if(!imgBlob)
-            return await RecommendService.changeImgUrlToUrl(newRecommend);
-        
-        const fileName: string = recommend.title.toLowerCase().replace(/ /g, "_");
-        const res = await RecommendService.fileManager2.uploadImage(imgBlob, fileName);
-
-        if(!res)
-            throw new Error("Failed to upload image");
-
-        const data = await RecommendService.service.update(newRecommend.id, {imgUrl: res.metadata.fullPath});
-
-        if(!data)
-            throw new Error("Failed to update Recommend");
-
-        return await RecommendService.changeImgUrlToUrl(data);
+        return newRecommend;
     }
 
     static async updateRecommend(id: Recommend["id"], editedRecommend: Partial<Omit<Recommend, "id" | "imgUrl">>, imgBlob?: Blob): Promise<Recommend>{
-        const recommend = await RecommendService.service.get(id);
+        const recommend = await RecommendService.recommendSupabase.get(id);
+        const fileName = (editedRecommend.title ?? recommend.title).toLowerCase().replace(/ /g, "_");
 
-        if(!recommend)
-            throw new Error("Recommend not found!");
-
-        const updatedRecommend = await RecommendService.service.update(id, editedRecommend);
-
-        if(!updatedRecommend)
-            throw new Error("Failed to update Recommend!");
-
-        if(!imgBlob)
-            return RecommendService.changeImgUrlToUrl(updatedRecommend);
-
-        if(recommend.imgUrl){
-            const fileName = recommend.imgUrl.split("/").pop();
-            
-            if(!fileName)
-                throw new Error("Failed to get image name!");
-            
-            await RecommendService.fileManager2.deleteImage(fileName);
-        }
-
-        let fileName: string;
-        if(editedRecommend.title)
-            fileName = editedRecommend.title.toLowerCase().replace(/ /g, "_");
+        if(imgBlob)
+            return await RecommendService.recommendSupabase.update(id, editedRecommend, {file: imgBlob, fileName});
         else
-            fileName = recommend.title.toLowerCase().replace(/ /g, "_");
-
-        const fileNameRes =  await RecommendService.fileManager2.uploadImage(imgBlob, fileName);
-
-        if(!fileNameRes)
-            throw new Error("Failed to upload image!");
-
-        const updatedImageRecommend = await RecommendService.service.update(id, {imgUrl: fileNameRes.metadata.fullPath});
-
-        if(!updatedImageRecommend)
-            throw new Error("Failed to update Recommend!");
-
-        return await RecommendService.changeImgUrlToUrl(updatedImageRecommend);
+            return await RecommendService.recommendSupabase.update(id, editedRecommend);
     }
 
     static async deleteRecommend(id: Recommend["id"]): Promise<void>{
-        const recommend = await RecommendService.service.get(id);
-
-        if(!recommend)
-            throw new Error("Recommend not found!");
-
-        if(recommend.imgUrl){
-            const fileName = recommend.imgUrl.split("/").pop();
-
-            if(!fileName)
-                throw new Error("Failed to get image name!");
-
-            await RecommendService.fileManager2.deleteImage(fileName);
-        }
-
-        await RecommendService.service.delete(id);
+        await RecommendService.recommendSupabase.delete(id);
     }
 }

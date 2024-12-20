@@ -12,10 +12,10 @@ const command: inlineCommandReturnTypes = {
         // exclusive for vice and owner only!
         const user = await UserService.getUser(message.author.id);
         if(user){
-            if(user.rolename === "owner" || user.rolename === "vice"){
+            if(user.role === "owner" || user.role === "vice"){
                 message.channel.send(greet.exclusive[rngInt(0, greet.exclusive.length - 1)]
                     .replace("[name]", message.author.username)
-                    .replace("[role]", user.rolename)
+                    .replace("[role]", user.role)
                     .replace("[alias]", user.aliases ? user.aliases[rngInt(0, user.aliases.length - 1)] : "")
                 );
                 return;

@@ -15,7 +15,7 @@ export default function recommend(client: Client<boolean>){
         // send to crystal phoenix
         const ch = await client.channels.fetch("739696962097512452");
 
-        const recommends = await RecommendService.service.getAll();
+        const recommends = await RecommendService.recommendSupabase.getAll();
 
         const recommend = recommends[rngInt(0, recommends.length - 1)];
 
