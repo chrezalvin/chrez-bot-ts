@@ -6,8 +6,6 @@ import fs from "fs";
 export const activeEvents_get_all = async (req: Request, res: Response) => {
     const name = req.query.name as unknown;
 
-    console.log(name);
-
     if(typeof name === "string" && name.length < 5)
         throw new Error("Search query is too short");
 
@@ -56,8 +54,6 @@ export const activeEvents_get_by_id = async (req: Request, res: Response) => {
 export const activeEvents_post_add = async (req: Request, res: Response) => {
     const activeEvent = JSON.parse(req.body.activeEvent);
     const image = req.file;
-
-    console.log(activeEvent);
 
     if(!isActiveEventWithoutId(activeEvent))
         throw new Error("Invalid activeEvent object");

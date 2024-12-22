@@ -114,8 +114,10 @@ function embedCreator(event: Event | ActiveEvent, tag: "ongoing" | "incoming" | 
             })
         }
         if(tag === "incoming"){
+            const remainingDays = Math.floor((new Date(event.start_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+
             embed.setFooter({
-                text: `incoming update at ${event.start_date.replaceAll("-", "/")}`
+                text: `incoming update at ${event.start_date.replaceAll("-", "/")} (in ${remainingDays} days)`
             });
         }
     }

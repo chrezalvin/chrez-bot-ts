@@ -26,6 +26,11 @@ export function sessionCheck(): RequestHandler{
             next();
         }
         catch(err){
+            if(err instanceof Error)
+                debug(`caught an error: ${err.message}`);
+            else
+                debug(`caught an unknown error: ${err}`);
+            
             res.status(401).send({error: 401, message: "Unknown error"});
         }
     }

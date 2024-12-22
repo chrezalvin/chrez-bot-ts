@@ -1,6 +1,5 @@
 export interface Event{
     id: number;
-    event_type: number;
     title: string;
     img_path: string | null;
     link: string | null;
@@ -16,9 +15,6 @@ export function isEvent(obj: unknown): obj is Event{
     if(typeof obj !== "object" || obj === null) return false;
 
     if(!("id" in obj) || typeof obj.id !== "number") 
-        return false;
-
-    if(!("event_type" in obj) || typeof obj.event_type !== "number")
         return false;
 
     if(!("title" in obj) || typeof obj.title !== "string")
@@ -57,9 +53,6 @@ export function isEventWithoutId(obj: unknown): obj is Omit<Event, "id">{
     if("id" in obj)
         return false
 
-    if("event_type" in obj && typeof obj.event_type !== "number")
-        return false;
-
     if("title" in obj && typeof obj.title !== "string")
         return false;
 
@@ -94,9 +87,6 @@ export function isPartialEvent(obj: unknown): obj is Partial<Event>{
     if(typeof obj !== "object" || obj === null) return false;
 
     if("id" in obj && typeof obj.id !== "number") 
-        return false;
-
-    if("event_type" in obj && typeof obj.event_type !== "number")
         return false;
 
     if("title" in obj && typeof obj.title !== "string")

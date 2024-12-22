@@ -13,7 +13,7 @@ import { isDiscordUser } from "@models/DiscordUser";
  * authenticate user through discord oauth2, returns session_key
  */
 export async function authenticate_get(req: Request, res: Response){
-  console.log("authenticate_get");
+  debug("authenticate_get");
   const accessCode = req.query.code;
   
   if(typeof accessCode !== "string"){
