@@ -61,8 +61,8 @@ export class ActiveEventService {
         return Promise.all(res.map(ActiveEventService.translateImageToUrl));
     }
 
-    static async getActiveEvent(): Promise<ActiveEvent[]>{
-        const date = new Date().toISOString();
+    static async getOngoingActiveEvent(): Promise<ActiveEvent[]>{
+        const date = new Date().toLocaleString();
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder((query => query

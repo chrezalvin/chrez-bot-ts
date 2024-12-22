@@ -151,7 +151,7 @@ const run = async (args?: I_Event) => {
             break;
         }
         case "ongoing":{
-            const event = await ActiveEventService.getActiveEvent();
+            const event = await ActiveEventService.getOngoingActiveEvent();
 
             eventRes = {
                 content: `found ${event.length} ongoing events`,

@@ -22,13 +22,19 @@ export const activeEvents_get_all = async (req: Request, res: Response) => {
 }
 
 export const activeEvents_get_current = async (_: Request, res: Response) => {
-    const activeEvents = await ActiveEventService.getActiveEvent();
+    const activeEvents = await ActiveEventService.getOngoingActiveEvent();
 
     res.json(activeEvents);
 }
 
 export const activeEvents_get_incoming = async (_: Request, res: Response) => {
     const activeEvents = await ActiveEventService.getIncomingEvent();
+
+    res.json(activeEvents);
+}
+
+export const activeEvents_get_ongoing = async (_: Request, res: Response) => {
+    const activeEvents = await ActiveEventService.getOngoingActiveEvent();
 
     res.json(activeEvents);
 }
