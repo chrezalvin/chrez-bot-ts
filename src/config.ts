@@ -30,7 +30,7 @@ export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.js
 /**
  * current bot version
  */
-export const botVersion = "1.8.0";
+export const botVersion = "1.8.1";
 
 // still string | undefined so i put null coalescing
 export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";
@@ -46,6 +46,8 @@ export const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
 
 export const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
 export const SUPABASE_KEY = process.env.SUPABASE_KEY ?? "";
+
+export const CORS_ORIGIN= process.env.CORS_ORIGIN ?? "";
 
 // FROM HERE IS THE CHECKING FOR .env
 
@@ -76,6 +78,11 @@ if(SUPABASE_URL === "" || SUPABASE_KEY === "") {
     console.warn("Warning: Couldn't find SUPABASE DATABASE credentials in .env");
     console.warn("Warning: database feature will be disabled");
 }
+
+// checking for CORS in .env
+if(MODE === "production")
+    if(CORS_ORIGIN === "")
+        throw new Error("Couldn't find CORS_ORIGIN in .env");
 
 
 // muted variable to share across all modules

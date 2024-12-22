@@ -1,6 +1,7 @@
 import { isUser, isUserWithoutId, User } from "./User";
 
-export interface SessionView extends Omit<User, "id">{
+// using type union to prevent duck typing
+export type SessionView = Omit<User, "id"> & {
     id: string;
     user_id: string;
     ends_at: string;

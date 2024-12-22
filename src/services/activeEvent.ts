@@ -54,7 +54,7 @@ export class ActiveEventService {
         return res;
     }
 
-    static async getActiveEvent(): Promise<ActiveEvent[]>{
+    static async getOngoingActiveEvent(): Promise<ActiveEvent[]>{
         const date = new Date().toLocaleString();
         const res = await ActiveEventService
             .activeEventManager

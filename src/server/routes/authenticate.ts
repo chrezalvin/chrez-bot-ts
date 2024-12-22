@@ -1,17 +1,11 @@
 import { RouterInterface } from "@library";
-import { authenticate_get, authenticate_post, authenticate_server, getUserProfile } from "server/controller/authenticate";
+import { authenticate_get, authenticate_server, get_discord_profile, getUserProfile } from "server/controller/authenticate";
 
 export const routes: RouterInterface[] = [
     {
         path: "/authenticate",
         handler: authenticate_get,
         method: "get",
-        accessType: "public",
-    },
-    {
-        path: "/authenticate",
-        handler: authenticate_post,
-        method: "post",
         accessType: "public",
     },
     {
@@ -23,6 +17,12 @@ export const routes: RouterInterface[] = [
     {
         path: "/profile",
         handler: getUserProfile,
+        method: "get",
+        accessType: "private",
+    },
+    {
+        path: "/profile/discord",
+        handler: get_discord_profile,
         method: "get",
         accessType: "private",
     }
