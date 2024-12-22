@@ -12,15 +12,13 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
 
     const embed = new MyEmbedBuilder();
 
-    let quote: Quote | undefined;
-    if(args?.index){
-        quote = await QuoteService.getQuoteById(args.index);
-    }
-    else 
-        quote = await QuoteService.getRandomQuote(true);
+    const quotes = QuoteService.quoteSupabase.cache;
+
+    const index = args?.index ?? rngInt(0, quotes.length - 1);
+    let quote: Quote | undefined = quotes[index];
 
     if(!quote)
-        return new ErrorValidation("something_not_found", "quote");
+        return new ErrorValidation("index_out_of_bounds", 0, quotes.length - 1);
 
     embed.setDescription(quote.nsfw ?  `||${quote.description.join("\n")}||` : quote.description.join("\n"))
 
@@ -29,7 +27,7 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
         embed.setAuthor({name: quote.author, iconURL: `https://cdn.discordapp.com/avatars/${quote.memberRef}/${member?.avatarID}.webp`})
     }
 
-    embed.setFooter({text: `quote #${quote.id}`});
+    embed.setFooter({text: `quote #${index}`});
 
     return {embeds: [embed], content: quote.nsfw ? "this quote is spoilered because it's NSFW" : undefined};
 }

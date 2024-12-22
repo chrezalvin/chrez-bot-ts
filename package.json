@@ -8,7 +8,7 @@
     "test:ts": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/test",
     "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
-    "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
+    "start": "tsc && tsc-alias && node ./output/registerSlashCommand && node ./output/index",
     "build": "tsc && tsc-alias",
     "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand",
     "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
