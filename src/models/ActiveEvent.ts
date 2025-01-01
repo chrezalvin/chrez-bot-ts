@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface ActiveEvent{
-    id: number;
+    active_event_id: number;
     title: string;
     img_path: string | null;
     link: string | null;
@@ -12,7 +14,7 @@ export interface ActiveEvent{
 export function isActiveEvent(obj: unknown): obj is ActiveEvent{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if(!("id" in obj) || typeof obj.id !== "number") 
+    if(!("active_event_id" in obj) || typeof obj.active_event_id !== "number") 
         return false;
 
     if(!("title" in obj) || typeof obj.title !== "string")
@@ -39,10 +41,10 @@ export function isActiveEvent(obj: unknown): obj is ActiveEvent{
     return true;
 }
 
-export function isActiveEventWithoutId(obj: unknown): obj is Omit<ActiveEvent, "id">{
+export function isActiveEventWithoutId(obj: unknown): obj is StrictOmit<ActiveEvent, "active_event_id">{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj)
+    if("active_event_id" in obj)
         return false
 
     if("title" in obj && typeof obj.title !== "string") 
@@ -72,7 +74,7 @@ export function isActiveEventWithoutId(obj: unknown): obj is Omit<ActiveEvent, "
 export function isPartialActiveEvent(obj: unknown): obj is Partial<ActiveEvent>{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj && typeof obj.id !== "number") 
+    if("active_event_id" in obj && typeof obj.active_event_id !== "number") 
         return false;
 
     if("title" in obj && typeof obj.title !== "string")

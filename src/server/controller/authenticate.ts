@@ -40,7 +40,7 @@ export async function authenticate_get(req: Request, res: Response){
   const session = await SessionService.setNewSession(user.id);
   
   res.json({
-    SESSION_KEY: session.id
+    SESSION_KEY: session.session_id
   });
 }
 
@@ -72,7 +72,7 @@ export async function authenticate_server(req: Request, res: Response){
 
   debug(`collected user ${user.username} - ${user.id}`);
 
-  res.json({SESSION_KEY: resSession.id});
+  res.json({SESSION_KEY: resSession.session_id});
 }
 
 /**
@@ -94,7 +94,10 @@ export async function get_discord_profile(req: Request, res: Response){
   if(req.user === undefined)
     throw new Error("no session_key provided");
 
-  const user = await client.users.fetch(req.user.id) as unknown;
+  const user = (await client.users.fetch(req.user.user_id)).toJSON();
+  
+  debug(`fetched user ${user}`);
+
 
   if(isDiscordUser(user))
     res.json(user);

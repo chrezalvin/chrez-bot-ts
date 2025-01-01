@@ -1,11 +1,14 @@
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
 import { CommandBuilder, MyEmbedBuilder, CommandReturnTypes, isChatInputCommandInteraction } from "@library";
 
-import { prefixes } from "@config";
+import { MODE, prefixes } from "@config";
 import { UserService } from "@services";
 
 // , privateCommands: CommandReturnTypes[]
-function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateCommands: (CommandReturnTypes | CommandBuilder<any>)[]){
+function help(
+    index: CommandBuilder<any>[], 
+    privateCommands: CommandBuilder<any>[]
+){
     const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType> , args?: I_Help) => {
         let command: string | null = args?.command ?? null;
         const embed = new MyEmbedBuilder();
@@ -14,7 +17,22 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
             // displays all active commands
             embed.setTitle("Chrez-Bot active command help menu")
                 .setDescription("here are the list of commands that chrezbot can use")
-                .setFields(index.map(idx => {return {name: `\`${prefixes[0]} ${idx.name}\``, value: idx.description, inline: true}}));
+
+            for(const command of index){
+                // only safe to show public commands
+                if(
+                    command.status === "private" || 
+                    command.status === "hidden" || 
+                    command.mode === "unavailable" || 
+                    (MODE === "production" && command.mode === "experimental")
+                ) continue;
+
+                embed.addFields({
+                    name: `\`${prefixes[0]} ${command.name}\``, 
+                    value: command.description,
+                    inline: true
+                });
+            }
         }
         else if(command === "private"){
             let user: User;
@@ -38,6 +56,8 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
             ]});
         }
         else{
+            // if user search for a specific command, then hidden command can be accessed
+
             const find = index.find(idx => {
                 if(idx.name === command) return true;
                 if(idx.alias)
@@ -71,8 +91,16 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
             .setDescription("give all commands for chrezbot or specify which command to check").
             addStringOption(opt => {
                 opt.setName("command").setDescription("command to check");
-                for(const idx of index)
+                for(const idx of index){
+                    if(
+                        idx.status === "private" || 
+                        idx.status === "hidden" || 
+                        idx.mode === "unavailable" || 
+                        (MODE === "production" && idx.mode === "experimental")
+                    ) continue;
+
                     opt.addChoices({name: `${prefixes[0]} ${idx.name}`, value: idx.name})
+                }
 
                 return opt;
             });
@@ -96,7 +124,10 @@ function help(index: (CommandReturnTypes | CommandBuilder<any>)[], privateComman
         })
         .setChat({
             execute: async (message, args) => {
+                console.log(`executing help with args: ${args}`);
                 const embeds = await run(message, args);
+
+                console.log(embeds);
 
                 await message.channel.send({embeds});
             },

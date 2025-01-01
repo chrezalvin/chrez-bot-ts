@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Recommend{
-    id: number;
+    recommend_id: number;
     title: string;
     description: string;
     imgUrl: string | null;
@@ -10,7 +12,7 @@ export interface Recommend{
 export function isRecommend(obj: unknown): obj is Recommend{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if(!("id" in obj) || typeof obj.id !== "number") 
+    if(!("recommend_id" in obj) || typeof obj.recommend_id !== "number") 
         return false;
 
     if(!("title" in obj) || typeof obj.title !== "string")
@@ -30,10 +32,10 @@ export function isRecommend(obj: unknown): obj is Recommend{
     return true;
 }
 
-export function isRecommendWithoutId(obj: unknown): obj is Omit<Recommend, "id">{
+export function isRecommendWithoutId(obj: unknown): obj is StrictOmit<Recommend, "recommend_id">{
     if(typeof obj !== "object" || obj === null) return false;
    
-    if("id" in obj)
+    if("recommend_id" in obj)
         return false;
 
     if("title" in obj && typeof obj.title !== "string")
@@ -56,7 +58,7 @@ export function isRecommendWithoutId(obj: unknown): obj is Omit<Recommend, "id">
 export function isPartialRecommend(obj: unknown): obj is Partial<Recommend>{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj && typeof obj.id !== "number") return false;
+    if("recommend_id" in obj && typeof obj.recommend_id !== "number") return false;
 
     if("title" in obj && typeof obj.title !== "string") return false;
 

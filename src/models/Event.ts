@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Event{
-    id: number;
+    event_id: number;
     title: string;
     img_path: string | null;
     link: string | null;
@@ -14,7 +16,7 @@ export interface Event{
 export function isEvent(obj: unknown): obj is Event{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if(!("id" in obj) || typeof obj.id !== "number") 
+    if(!("event_id" in obj) || typeof obj.event_id !== "number") 
         return false;
 
     if(!("title" in obj) || typeof obj.title !== "string")
@@ -47,10 +49,10 @@ export function isEvent(obj: unknown): obj is Event{
     return true;
 }
 
-export function isEventWithoutId(obj: unknown): obj is Omit<Event, "id">{
+export function isEventWithoutId(obj: unknown): obj is StrictOmit<Event, "event_id">{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj)
+    if("event_id" in obj)
         return false
 
     if("title" in obj && typeof obj.title !== "string")
@@ -86,7 +88,7 @@ export function isEventWithoutId(obj: unknown): obj is Omit<Event, "id">{
 export function isPartialEvent(obj: unknown): obj is Partial<Event>{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj && typeof obj.id !== "number") 
+    if("event_id" in obj && typeof obj.event_id !== "number") 
         return false;
 
     if("title" in obj && typeof obj.title !== "string")

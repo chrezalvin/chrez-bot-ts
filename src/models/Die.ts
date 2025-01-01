@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Die{
-    id: number;
+    die_id: number;
     message: string;
     role: number;
 }
@@ -8,7 +10,7 @@ export function isDie(value: unknown): value is Die {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if(!("id" in value) || typeof value.id !== "number")
+    if(!("die_id" in value) || typeof value.die_id !== "number")
         return false;
 
     if(!("message" in value) || typeof value.message !== "string")
@@ -20,11 +22,11 @@ export function isDie(value: unknown): value is Die {
     return true;
 }
 
-export function isDieWithoutId(value: unknown): value is Omit<Die, "id"> {
+export function isDieWithoutId(value: unknown): value is StrictOmit<Die, "die_id"> {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if("id" in value)
+    if("die_id" in value)
         return false;
 
     if("message" in value && typeof value.message !== "string")
@@ -40,7 +42,7 @@ export function isPartialDie(value: unknown): value is Partial<Die> {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if("id" in value && typeof value.id !== "number")
+    if("die_id" in value && typeof value.die_id !== "number")
         return false;
 
     if("message" in value && typeof value.message !== "string")

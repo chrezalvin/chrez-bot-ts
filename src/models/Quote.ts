@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Quote{
-    id: number;
+    quote_id: number;
     author: string;
     description: string[];
     memberRef: string | null;
@@ -10,7 +12,7 @@ export function isQuote(value: unknown): value is Quote {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if(!("id" in value) || typeof value.id !== "number")
+    if(!("quote_id" in value) || typeof value.quote_id !== "number")
         return false;
 
     if(!("author" in value) || typeof value.author !== "string")
@@ -28,11 +30,11 @@ export function isQuote(value: unknown): value is Quote {
     return true;
 }
 
-export function isQuoteWithoutId(value: unknown): value is Omit<Quote, "id"> {
+export function isQuoteWithoutId(value: unknown): value is StrictOmit<Quote, "quote_id"> {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if("id" in value)
+    if("quote_id" in value)
         return false;
 
     if("author" in value && typeof value.author !== "string")
@@ -54,7 +56,7 @@ export function isPartialQuote(value: unknown): value is Partial<Quote> {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if("id" in value && typeof value.id !== "number")
+    if("quote_id" in value && typeof value.quote_id !== "number")
         return false;
 
     if("author" in value && typeof value.author !== "string")

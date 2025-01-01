@@ -1,56 +1,37 @@
-import { isUser, isUserWithoutId, User } from "./User";
+import { StrictOmit } from "@library/CustomTypes";
+import { isPartialSession, isSession, isSessionWithoutId, Session } from "./Session";
+import { isPartialUser, isUser, isUserWithoutId, User } from "./User";
 
 // using type union to prevent duck typing
-export type SessionView = Omit<User, "id"> & {
-    id: string;
-    user_id: string;
-    ends_at: string;
-    avatar_url: string | null;
+export interface SessionView extends Session, User{
+
 }
 
 export function isSessionView(value: unknown): value is SessionView{
     if(!isUser(value))
         return false;
-
-    if(!("ends_at" in value) || typeof value.ends_at !== "string")
-        return false;
-
-    if(!("user_id" in value) || typeof value.user_id !== "string")
-        return false;
-
-    if(("avatar_url" in value) && typeof value.avatar_url !== "string")
+    
+    if(!isSession(value))
         return false;
 
     return true;
 }
 
-export function isSessionViewWithoutId(value: unknown): value is Omit<SessionView, "id">{
+export function isSessionViewWithoutId(value: unknown): value is StrictOmit<SessionView, "user_id" | "session_id">{
     if(!isUserWithoutId(value))
         return false;
 
-    if("ends_at" in value && typeof value.ends_at !== "string")
-        return false;
-
-    if("user_id" in value && typeof value.user_id !== "string")
-        return false;
-
-    if("avatar_url" in value && typeof value.avatar_url !== "string")
+    if(!isSessionWithoutId(value))
         return false;
 
     return true;
 }
 
 export function isPartialSessionView(value: unknown): value is Partial<SessionView>{
-    if(!isUser(value))
+    if(!isPartialUser(value))
         return false;
 
-    if("ends_at" in value && typeof value.ends_at !== "string")
-        return false;
-
-    if("user_id" in value && typeof value.user_id !== "string")
-        return false;
-
-    if("avatar_url" in value && typeof value.avatar_url !== "string")
+    if(!isPartialSession(value))
         return false;
 
     return true;
