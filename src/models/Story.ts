@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Story {
-    id: number;
+    story_id: number;
     title: string;
     author: string;
     description: string[];
@@ -10,7 +12,7 @@ export function isStory(value: unknown): value is Story {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if(!("id" in value) || typeof value.id !== "number")
+    if(!("story_id" in value) || typeof value.story_id !== "number")
         return false;
 
     if(!("title" in value) || typeof value.title !== "string")
@@ -28,11 +30,11 @@ export function isStory(value: unknown): value is Story {
     return true;
 }
 
-export function isStoryWithoutId(value: unknown): value is Omit<Story, "id"> {
+export function isStoryWithoutId(value: unknown): value is StrictOmit<Story, "story_id"> {
     if(typeof value !== "object" || value === null)
         return false;
 
-    if("id" in value)
+    if("story_id" in value)
         return false;
 
     if("title" in value && typeof value.title !== "string")

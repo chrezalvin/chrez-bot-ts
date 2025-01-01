@@ -1,3 +1,5 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Update{
     version: string;
     bugfix: string[] | null;
@@ -20,7 +22,7 @@ export function isUpdate(value: unknown): value is Update{
     return true;
 }
 
-export function isUpdateWithoutVersion(value: unknown): value is Omit<Update, "version">{
+export function isUpdateWithoutVersion(value: unknown): value is StrictOmit<Update, "version">{
     if(typeof value !== "object" || value === null)
         return false;
 

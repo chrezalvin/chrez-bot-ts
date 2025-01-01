@@ -3,8 +3,9 @@ import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 import { Recommend } from "@models";
 import { RecommendService } from "services/recommend";
+import { StrictOmit } from "@library/CustomTypes";
 
-const run = async (args?: Omit<Recommend, "id">): Promise<MessageCreateOptions | ErrorValidation> => {
+const run = async (args?: StrictOmit<Recommend, "recommend_id">): Promise<MessageCreateOptions | ErrorValidation> => {
     if(!args)
         return new ErrorValidation("no_argument_provided");
 
@@ -71,7 +72,7 @@ const slashCommand = new SlashCommandBuilder()
             .setRequired(false)
         );
 
-const addrecommend = new CommandBuilder<Omit<Recommend, "id">>()
+const addrecommend = new CommandBuilder<StrictOmit<Recommend, "recommend_id">>()
         .setName("addrecommend")
         .setDescription("Recommend a random thing")
         .setSlash({
@@ -83,7 +84,7 @@ const addrecommend = new CommandBuilder<Omit<Recommend, "id">>()
                 const link = interaction.options.getString("link", false);
                 const category = interaction.options.getString("category", false)?.split(",").map((cat) => cat.trim());
                 
-                let data: Omit<Recommend, "id"> = {
+                let data: StrictOmit<Recommend, "recommend_id"> = {
                     title,
                     description,
                     link: link,

@@ -1,8 +1,8 @@
 const debug = require("debug")("Bot:registerSlashCommand");
 
+import { allCommands } from "@shared";
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
-import { CLIENT_ID, guildIDs, DISCORD_TOKEN, MODE} from './config';
-import commands from "./commands";
+import { CLIENT_ID, guildIDs, DISCORD_TOKEN } from './config';
 
 if(DISCORD_TOKEN === undefined){
     console.error("Error: Discord token is not defined!");
@@ -10,17 +10,10 @@ if(DISCORD_TOKEN === undefined){
 }
 
 const slashCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = []
-for(const command of [...commands.active, ...commands.c_private]){
+for(const [_, command] of allCommands){
     if(command.slash && command.status !== "hidden")
         slashCommands.push(command.slash.slashCommand.toJSON());
 }
-
-if(MODE === "development")
-    console.log("On development mode, running experimental commands");
-    for(const command of commands.experimental.commands){
-        if(command.slash?.slashCommand !== undefined && command.status !== "hidden")
-            slashCommands.push(command.slash.slashCommand.toJSON());
-    }
 
 // Construct and prepare an instance of the REST module
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);

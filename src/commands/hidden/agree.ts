@@ -26,6 +26,7 @@ const slashCommand = new SlashCommandBuilder()
 const agree = new CommandBuilder<I_Agree>()
         .setName("agree")
         .setAlias(["agrees", "agreed", "approve", "youagree?", "agree?"])
+        .setStatus("hidden")
         .setDescription("Agrees with you")
         .setSlash({
             slashCommand,

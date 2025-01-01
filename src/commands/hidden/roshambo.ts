@@ -82,6 +82,7 @@ const chrezRoshambo = new CommandBuilder<I_Roshambo>()
     .setName("roshambo")
     .setAlias(["rps"])
     .setDescription("plays rock paper scissor")
+    .setStatus("hidden")
     .setExamples([
         {command: `${prefixes[0]} roshambo rock`, description: ""}
     ])

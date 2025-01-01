@@ -3,7 +3,7 @@ const debug = require("debug")("ChrezBot:sharedcommands");
 
 import {MODE} from "@config";
 import { CommandBuilder, inlineCommandReturnTypes } from "@library";
-import commands from "../commands";
+import commands from "@commands";
 import { Collection } from "discord.js";
 
 const allCommandList = new Collection<string, CommandBuilder<any>>();

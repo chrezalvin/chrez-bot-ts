@@ -1,5 +1,7 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export interface Registlet {
-    id: number;
+    registlet_id: number;
     name: string;
     description: string;
     max_level: number;
@@ -10,7 +12,7 @@ export interface Registlet {
 export function isRegistlet(obj: unknown): obj is Registlet{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if(!("id" in obj) || typeof obj.id !== "number") 
+    if(!("registlet_id" in obj) || typeof obj.registlet_id !== "number") 
         return false;
 
     if(!("name" in obj) || typeof obj.name !== "string")
@@ -31,10 +33,10 @@ export function isRegistlet(obj: unknown): obj is Registlet{
     return true;
 }
 
-export function isRegistletWithoutId(obj: unknown): obj is Omit<Registlet, "id">{
+export function isRegistletWithoutId(obj: unknown): obj is StrictOmit<Registlet, "registlet_id">{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj)
+    if("registlet_id" in obj)
         return false;
 
     if("name" in obj && typeof obj.name !== "string")
@@ -58,7 +60,7 @@ export function isRegistletWithoutId(obj: unknown): obj is Omit<Registlet, "id">
 export function isPartialRegistlet(obj: unknown): obj is Partial<Registlet>{
     if(typeof obj !== "object" || obj === null) return false;
 
-    if("id" in obj && typeof obj.id !== "number") 
+    if("registlet_id" in obj && typeof obj.registlet_id !== "number") 
         return false;
 
     if("name" in obj && typeof obj.name !== "string")

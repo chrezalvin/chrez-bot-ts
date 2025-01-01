@@ -1,4 +1,5 @@
 import { rngInt, ServiceFileSupabase } from "@library";
+import { StrictOmit } from "@library/CustomTypes";
 import { isRecommend, Recommend } from "@models";
 
 export class RecommendService{
@@ -6,7 +7,7 @@ export class RecommendService{
     protected static readonly recommendImgPath = "images/recommend";
     protected static readonly recommendBucket = "images";
 
-    public static recommendSupabase = new ServiceFileSupabase<Recommend, "id", never, "imgUrl">("id", 
+    public static recommendSupabase = new ServiceFileSupabase<Recommend, "recommend_id", never, "imgUrl">("recommend_id", 
         {
             tableName: RecommendService.recommend,
             typeGuard: isRecommend,
@@ -30,7 +31,7 @@ export class RecommendService{
         return recommend;
     }
 
-    public static async createNewRecommend(recommend: Omit<Recommend, "id">, imgBlob?: Blob): Promise<Recommend>{
+    public static async createNewRecommend(recommend: StrictOmit<Recommend, "recommend_id">, imgBlob?: Blob): Promise<Recommend>{
         // load the recommend first without the imgUrl
         const newRecommend = await RecommendService.recommendSupabase.add(recommend, {
             file: imgBlob ?? null,
@@ -40,7 +41,7 @@ export class RecommendService{
         return newRecommend;
     }
 
-    static async updateRecommend(id: Recommend["id"], editedRecommend: Partial<Omit<Recommend, "id" | "imgUrl">>, imgBlob?: Blob): Promise<Recommend>{
+    static async updateRecommend(id: Recommend["recommend_id"], editedRecommend: Partial<StrictOmit<Recommend, "recommend_id" | "imgUrl">>, imgBlob?: Blob): Promise<Recommend>{
         const recommend = await RecommendService.recommendSupabase.get(id);
         const fileName = (editedRecommend.title ?? recommend.title).toLowerCase().replace(/ /g, "_");
 
@@ -50,7 +51,7 @@ export class RecommendService{
             return await RecommendService.recommendSupabase.update(id, editedRecommend);
     }
 
-    static async deleteRecommend(id: Recommend["id"]): Promise<void>{
+    static async deleteRecommend(id: Recommend["recommend_id"]): Promise<void>{
         await RecommendService.recommendSupabase.delete(id);
     }
 }

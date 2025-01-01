@@ -1,4 +1,5 @@
 import { ServiceFileSupabase } from "@library";
+import { StrictOmit } from "@library/CustomTypes";
 import { Update, isUpdate } from "@models";
 
 export class UpdateService{
@@ -28,7 +29,7 @@ export class UpdateService{
         return await UpdateService.serviceSupabase.add(update);
     }
 
-    public static async editUpdate(version: string, update: Partial<Omit<Update, "id">>): Promise<Update | undefined>{
+    public static async editUpdate(version: Update["version"], update: Partial<StrictOmit<Update, "version">>): Promise<Update | undefined>{
         return await UpdateService.serviceSupabase.update(version, update);
     }
 }

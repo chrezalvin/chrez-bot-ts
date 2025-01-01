@@ -181,3 +181,8 @@ export type NonNullableFields<T> = {
 };
 
 export type SenddableMessage = OmitPartialGroupDMChannel<Message<boolean>>;
+
+/**
+ * Strict version of Omit
+ */
+export type StrictOmit<T, K extends keyof T> = Omit<T, K>;

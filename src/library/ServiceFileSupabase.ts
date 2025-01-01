@@ -3,6 +3,7 @@ const debug = require("debug")("library:ServiceFileSupabase");
 import { supabase } from "@config";
 import { randomUUID } from "crypto";
 import { inferType } from "./InferType";
+import { StrictOmit } from "./CustomTypes";
 
 type PostgrestQueryBuilder = ReturnType<typeof supabase.from>;
 type PostgrestFilterBuilder = ReturnType<ReturnType<typeof supabase.from>["select"]>;
@@ -227,7 +228,7 @@ export class ServiceFileSupabase<
     }
 
     async _add(
-        data: Omit<DataType, IdKey | OmittedKey | FileKey>, 
+        data: StrictOmit<DataType, IdKey | OmittedKey | FileKey>, 
         ...fileOption: ([FileKey] extends [never] ? 
             [] 
             : 
@@ -296,7 +297,7 @@ export class ServiceFileSupabase<
 
     async _update(
         id: DataType[IdKey], 
-        data: Partial<Omit<DataType, IdKey | OmittedKey | FileKey>>, 
+        data: Partial<StrictOmit<DataType, IdKey | OmittedKey | FileKey>>, 
         ...fileOption: ([FileKey] extends [never] ? 
             [] 
             : 
@@ -454,7 +455,7 @@ export class ServiceFileSupabase<
      * @returns the added data
      */
     async add(
-        data: Omit<DataType, IdKey | OmittedKey | FileKey>, 
+        data: StrictOmit<DataType, IdKey | OmittedKey | FileKey>, 
         ...fileOption: ([FileKey] extends [never] ? 
             [] 
             : 
@@ -516,7 +517,7 @@ export class ServiceFileSupabase<
      */
     async update(
         key: DataType[IdKey], 
-        data: Partial<Omit<DataType, IdKey | OmittedKey | FileKey>>, 
+        data: Partial<StrictOmit<DataType, IdKey | OmittedKey | FileKey>>, 
         ...fileOption: ([FileKey] extends [never] ? 
             [] 
             : 

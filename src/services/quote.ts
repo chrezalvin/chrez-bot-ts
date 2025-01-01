@@ -1,11 +1,12 @@
 import { ServiceFileSupabase } from "@library";
+import { StrictOmit } from "@library/CustomTypes";
 import { isQuote, Quote } from "@models";
 
 export class QuoteService{
     protected static readonly quotePath = "quotes";
     protected static readonly randomQuoteView = "quotes_random";
 
-    static quoteSupabase = new ServiceFileSupabase<Quote, "id">("id", {
+    static quoteSupabase = new ServiceFileSupabase<Quote, "quote_id">("quote_id", {
         tableName: QuoteService.quotePath,
         typeGuard: isQuote,
         useCache: true,
@@ -29,19 +30,19 @@ export class QuoteService{
         return quote[0];
     }
 
-    static async getQuoteById(quoteId: Quote["id"]): Promise<Quote | undefined>{
+    static async getQuoteById(quoteId: Quote["quote_id"]): Promise<Quote | undefined>{
         return await QuoteService.quoteSupabase.get(quoteId);
     }
 
-    static async setNewQuote(quote: Omit<Quote, "id">){
+    static async setNewQuote(quote: StrictOmit<Quote, "quote_id">){
         return QuoteService.quoteSupabase.add(quote);
     }
 
-    static async updateQuote(quoteId: Quote["id"], quote: Partial<Omit<Quote, "id">>){
+    static async updateQuote(quoteId: Quote["quote_id"], quote: Partial<StrictOmit<Quote, "quote_id">>){
         return await QuoteService.quoteSupabase.update(quoteId, quote);
     }
 
-    static async deleteQuote(quoteId: Quote["id"]){
+    static async deleteQuote(quoteId: Quote["quote_id"]){
         return await QuoteService.quoteSupabase.delete(quoteId);
     }
 }

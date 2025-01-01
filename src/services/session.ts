@@ -5,28 +5,28 @@ import { isSession, isSessionView, Session, SessionView } from "@models";
 export class SessionService{
     protected static readonly sessionViewPath = "sessions_view";
     protected static readonly sessionPath = "sessions";
-    static sessionViewSupabase = new ServiceFileSupabase<SessionView, "id">("id", {
+    static sessionViewSupabase = new ServiceFileSupabase<SessionView, "session_id">("session_id", {
         tableName: SessionService.sessionViewPath,
         typeGuard: isSessionView,
         useCache: false,
     });
 
-    static sessionSupabase = new ServiceFileSupabase<Session, "id">("id", {
+    static sessionSupabase = new ServiceFileSupabase<Session, "session_id", "created_at" | "updated_at">("session_id", {
         tableName: SessionService.sessionPath,
         typeGuard: isSession,
         useCache: false,
     });
 
-    static async getSession(id: string): Promise<SessionView>{
+    static async getSession(id: SessionView["session_id"]): Promise<SessionView>{
         const res = await SessionService.sessionViewSupabase.get(id);
         return res;
     }
 
-    static async deleteSession(id: string): Promise<void>{
+    static async deleteSession(id: SessionView["session_id"]): Promise<void>{
         await SessionService.sessionSupabase.delete(id);
     }
 
-    static async setNewSession(userId: string): Promise<SessionView>{
+    static async setNewSession(userId: SessionView["user_id"]): Promise<SessionView>{
         // time 2 hours from now
         const time = new Date();
 
@@ -38,7 +38,6 @@ export class SessionService{
 
         // session expired 2 hours from now
         const session = await SessionService.sessionSupabase.add({
-            ends_at: time.toISOString(),
             user_id: userId,
             avatar_url: userAvatar,
         });
@@ -46,7 +45,7 @@ export class SessionService{
         if(!session)
             throw new Error("Failed to create a new session");
 
-        const res = await SessionService.sessionViewSupabase.get(session.id);
+        const res = await SessionService.sessionViewSupabase.get(session.session_id);
 
         if(!res)
             throw new Error("Session not found");

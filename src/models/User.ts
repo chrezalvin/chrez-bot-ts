@@ -1,7 +1,9 @@
+import { StrictOmit } from "@library/CustomTypes";
+
 export type RoleName = "owner" | "vice" | "admin" | "user";
 
 export interface User{
-    id: string;
+    user_id: string;
     username: string;
     timezone: string | null;
     aliases: string[] | null;
@@ -12,7 +14,7 @@ export function isUser(value: unknown): value is User{
     if(value === null || typeof value !== "object")
         return false;
 
-    if(!("id" in value) || typeof value.id !== "string")
+    if(!("user_id" in value) || typeof value.user_id !== "string")
         return false;
 
     if(!("username" in value) || typeof value.username !== "string")
@@ -31,11 +33,11 @@ export function isUser(value: unknown): value is User{
     return true;
 }
 
-export function isUserWithoutId(value: unknown): value is Omit<User, "id">{
+export function isUserWithoutId(value: unknown): value is StrictOmit<User, "user_id">{
     if(value === null || typeof value !== "object")
         return false;
 
-    if("id" in value)
+    if("user_id" in value)
         return false;
 
     if("username" in value && typeof value.username !== "string")
@@ -57,7 +59,7 @@ export function isPartialUser(value: unknown): value is Partial<User>{
     if(value === null || typeof value !== "object")
         return false;
 
-    if("id" in value && typeof value.id !== "string")
+    if("user_id" in value && typeof value.user_id !== "string")
         return false;
 
     if("username" in value && typeof value.username !== "string")

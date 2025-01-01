@@ -1,6 +1,6 @@
 const debug = require("debug")("ChrezBot:time");
 
-import {MyEmbedBuilder, CommandBuilder} from "@library";
+import {MyEmbedBuilder, CommandBuilder, getCurrentTime} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import timeChoices from "@assets/messages/active/timeChoices.json";
@@ -17,12 +17,13 @@ const run = async (args?: I_Time) => {
   if(timezone == null){
     debug(`getting japanese time`);
 
-    const japTime = time.toLocaleString('en-US', {timeZone: "Japan", hour12: false}).split(' ')[1];
+    const japTime = getCurrentTime("Japan", {hour12: false}).split(' ')[1];
 
     // calculate time left
     const timeLeft = {
       hour: 24 - (time.getUTCHours() + 10) % 24,
-      minute: 60 - time.getUTCMinutes()};
+      minute: 60 - time.getUTCMinutes()
+    };
     
     let myText;
     if(timeLeft.minute == 0)

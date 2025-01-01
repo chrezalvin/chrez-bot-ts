@@ -3,7 +3,7 @@ import { CommandBuilder } from "@library";
 const hello = new CommandBuilder<undefined>()
     .setName("hello")
     .setDescription("Says hello")
-    .setStatus("public")
+    .setStatus("hidden")
     .setMode("available")
     .setSlash({
         interact: async (interaction) => {

@@ -1,4 +1,5 @@
 import { ServiceFileSupabase } from "@library";
+import { StrictOmit } from "@library/CustomTypes";
 import { Event, isEvent } from "@models";
 
 export class EventService {
@@ -6,7 +7,7 @@ export class EventService {
     protected static readonly eventImgPath: string = "images/events";
     protected static readonly eventBucket: string = "images";
 
-    static eventManager = new ServiceFileSupabase<Event, "id", never, "img_path">("id", 
+    static eventManager = new ServiceFileSupabase<Event, "event_id", never, "img_path">("event_id", 
         {
             tableName: EventService.eventPath,
             typeGuard: isEvent,
@@ -60,7 +61,7 @@ export class EventService {
         return found;
     }
 
-    static async getEvent(id: Event["id"]): Promise<Event>{
+    static async getEvent(id: Event["event_id"]): Promise<Event>{
         return await EventService.eventManager.get(id);
     }
 
@@ -81,7 +82,7 @@ export class EventService {
         return res;
     }
 
-    static async addEvent(event: Omit<Event, "id" | "img_path">, imageBlob?: Blob): Promise<Event>{
+    static async addEvent(event: StrictOmit<Event, "event_id" | "img_path">, imageBlob?: Blob): Promise<Event>{
         const fileName = event.title.replace(/\s/g, "_").toLowerCase();
 
         const newEvent = await EventService.eventManager.add(event, {
@@ -92,7 +93,7 @@ export class EventService {
         return newEvent;
     }
 
-    static async updateEvent(id: Event["id"], event: Partial<Omit<Event, "id" | "img_path">>, imageBlob?: Blob): Promise<Event>{
+    static async updateEvent(id: Event["event_id"], event: Partial<StrictOmit<Event, "event_id" | "img_path">>, imageBlob?: Blob): Promise<Event>{
         const oldEvent = await EventService.eventManager.get(id);
         const fileName = (event.title ?? oldEvent.title).replace(/\s/g, "_").toLowerCase();
 
@@ -105,7 +106,7 @@ export class EventService {
             return await EventService.eventManager.update(id, event);
     }
 
-    static async deleteEvent(id: Event["id"]): Promise<void>{
+    static async deleteEvent(id: Event["event_id"]): Promise<void>{
         await EventService.eventManager.delete(id);
     }
 }

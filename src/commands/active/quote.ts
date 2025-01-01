@@ -29,7 +29,7 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
         embed.setAuthor({name: quote.author, iconURL: `https://cdn.discordapp.com/avatars/${quote.memberRef}/${member?.avatarID}.webp`})
     }
 
-    embed.setFooter({text: `quote #${quote.id}`});
+    embed.setFooter({text: `quote #${quote.quote_id}`});
 
     return {embeds: [embed], content: quote.nsfw ? "this quote is spoilered because it's NSFW" : undefined};
 }
