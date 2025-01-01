@@ -11,21 +11,12 @@ import events from "./events";
 
 import autoWorkersList from "autoWorkers";
 
-import { DisTube } from "distube";
-import DiscordYtPlayer from "@library/DiscordYtPlayer";
-
 export const client = new Client({intents: [
     GatewayIntentBits.Guilds, 
     GatewayIntentBits.GuildMessages, 
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildVoiceStates,
 ]});
-
-export const distube = new DisTube(client, {
-    emitNewSongOnly: true,
-    joinNewVoiceChannel: false,
-    nsfw: true,
-});
 
 for(const botEvent of events){
     for(const execute of botEvent.execute){
