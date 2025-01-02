@@ -1,12 +1,30 @@
 import { CommandBuilder} from "@library";
-import { SlashCommandBuilder } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { getDiscordYtPlayer } from "@shared";
+
+interface SkipParameter {
+    voiceChannel: VoiceBasedChannel;
+}
+
+function run(args: SkipParameter){
+    const discordYtPlayer = getDiscordYtPlayer(args.voiceChannel.guild.id);
+
+    if(!discordYtPlayer)
+        throw new Error("No player found");
+
+    const result = discordYtPlayer.skip();
+
+    if(result)
+        return "Skipped the song";
+    else
+        return "There are no songs to skip!";
+}
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("skip")
     .setDescription("Skips the current song");
 
-const skip = new CommandBuilder<undefined>()
+const skip = new CommandBuilder<SkipParameter>()
     .setName("skip")
     .setAlias(["s"])
     .setDescription("Skips the current song")
@@ -14,23 +32,39 @@ const skip = new CommandBuilder<undefined>()
     .setMode("available")
     .setSlash({
         slashCommand: slashCommandBuilder,
-        interact: async (interaction) => {
-            const isStopSuccess = discordYtPlayer.skip();
+        getParameter: (interaction) => {
+            const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
-            if(isStopSuccess)
-                await interaction.reply("Skipped the song");
-            else
-                await interaction.reply("There are no song to skip!");
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        interact: async (interaction, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = run(args);
+
+            await interaction.reply(res);
         },
     })
     .setChat({
-        execute: async (message) => {
-            const isStopSuccess = discordYtPlayer.skip();
+        getParameter: (message) => {
+            const voiceChannel = message.member?.voice.channel;
 
-            if(isStopSuccess)
-                await message.reply("Skipped the song");
-            else
-                await message.reply("There are no song to skip!");
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        execute: async (message, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = run(args);
+
+            await message.reply(res);
         },
     });
 

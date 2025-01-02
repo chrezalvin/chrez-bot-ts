@@ -27,6 +27,7 @@ export default class DiscordYtPlayer{
     private m_queue: DiscordYtPlayerItem[] = [];
     private m_subscription: PlayerSubscription | null = null;
     private m_currentAudioResource: AudioResource | null = null;
+    private m_repeat: boolean = false;
     private m_volume = 40 / 100;
 
     constructor(option?: {
@@ -53,10 +54,18 @@ export default class DiscordYtPlayer{
         return this.m_currentAudioResource?.playbackDuration;
     }
 
+    public get repeat(){
+        return this.m_repeat;
+    }
+
     // setter
     public set volume(volume: number){
         if(this.m_currentAudioResource)
             this.m_currentAudioResource.volume?.setVolume(volume);
+    }
+
+    public set repeat(repeat: boolean){
+        this.m_repeat = repeat;
     }
 
     /**
@@ -136,7 +145,12 @@ export default class DiscordYtPlayer{
 
                 // means the stream is done playing
                 if(oldState.status === AudioPlayerStatus.Playing && newState.status === AudioPlayerStatus.Idle){ 
-                    this.m_queue.shift(); // remove the current stream
+
+                    const item = this.m_queue.shift(); // remove the current stream
+
+                    // if repeat is on, push the current stream to the end of the queue
+                    if(this.m_repeat && item)
+                        this.m_queue.push(item);
 
                     // play next in queue
                     if(this.m_queue.length > 0){

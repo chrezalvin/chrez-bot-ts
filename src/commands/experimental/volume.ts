@@ -1,6 +1,6 @@
 import { CommandBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { getDiscordYtPlayer } from "@shared";
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("volume")
@@ -37,11 +37,19 @@ const volume = new CommandBuilder<VolumeParameter>()
             return { volume };
         },
         interact: async (interaction, args) => {
+            if(!interaction.guildId)
+                throw new Error("Invalid guild id");
+
             if(!args)
                 throw new Error("Invalid argument");
 
             if(args.volume < 10 || args.volume > 100)
                 throw new Error("Volume must be between 10 and 100");
+
+            const discordYtPlayer = getDiscordYtPlayer(interaction.guildId);
+
+            if(!discordYtPlayer)
+                throw new Error("No player found");
 
             const { volume } = args;
             discordYtPlayer.volume = volume / 100;
@@ -62,13 +70,22 @@ const volume = new CommandBuilder<VolumeParameter>()
 
             return { volume };
         },
-        execute: async (message) => {
-            const isStopSuccess = discordYtPlayer.skip();
+        execute: async (message, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
 
-            if(isStopSuccess)
-                await message.reply("Skipped the song");
-            else
-                await message.reply("There are no song to skip!");
+            if(!message.guild)
+                throw new Error("Invalid guild");
+
+            const discordYtPlayer = getDiscordYtPlayer(message.guild.id);
+
+            if(!discordYtPlayer)
+                throw new Error("No player found");
+
+            const { volume } = args;
+            discordYtPlayer.volume = volume / 100;
+
+            await message.channel.send(`Volume set to ${volume}%`);
         },
     });
 

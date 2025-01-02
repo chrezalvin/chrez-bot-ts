@@ -7,6 +7,7 @@ import resume from "./resume";
 import remove from "./remove";
 import queue from "./queue";
 import volume from "./volume";
+import repeat from "./repeat";
 
 const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
     play,
@@ -17,6 +18,7 @@ const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
     resume,
     remove,
     volume,
+    repeat,
 ];
 
 let commands: (CommandBuilder<any>)[] = [];
