@@ -1,6 +1,6 @@
 {
   "name": "cbts",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "test:ts": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/test",
     "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
-    "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
+    "start": "tsc && tsc-alias &&node ./output/registerSlashCommand &&node ./output/index",
     "build": "tsc && tsc-alias",
     "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand",
     "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
@@ -18,7 +18,6 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "^4.15.8",
     "@supabase/supabase-js": "^2.45.1",
     "convert-units": "^2.3.4",
     "cookie-parser": "^1.4.6",
@@ -26,7 +25,6 @@
     "cron": "^2.3.0",
     "debug": "^4.3.4",
     "discord.js": "^14.16.3",
-    "distube": "^5.0.4",
     "dotenv": "^16.4.7",
     "evaluatex": "^2.2.0",
     "express": "^4.18.2",
@@ -34,7 +32,6 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "pureimage": "^0.3.17",
-    "sodium-native": "^4.3.1",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.5",
     "tsconfig-paths": "^4.1.2",

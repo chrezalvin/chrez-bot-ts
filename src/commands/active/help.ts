@@ -1,5 +1,5 @@
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
-import { CommandBuilder, MyEmbedBuilder, CommandReturnTypes, isChatInputCommandInteraction } from "@library";
+import { CommandBuilder, MyEmbedBuilder, isChatInputCommandInteraction } from "@library";
 
 import { MODE, prefixes } from "@config";
 import { UserService } from "@services";
@@ -124,10 +124,7 @@ function help(
         })
         .setChat({
             execute: async (message, args) => {
-                console.log(`executing help with args: ${args}`);
                 const embeds = await run(message, args);
-
-                console.log(embeds);
 
                 await message.channel.send({embeds});
             },
