@@ -4,7 +4,7 @@ import { spawn } from "child_process";
 import internal from "stream";
 import { VoiceBasedChannel } from "discord.js";
 import { searchYoutube } from "./YoutubeSearch";
-import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription, VoiceConnectionStatus } from "@discordjs/voice";
+import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription, StreamType, VoiceConnectionStatus } from "@discordjs/voice";
 
 function createYtdlStream(videoUrl: string): internal.Readable {
     return spawn("yt-dlp", ["-f", "bestaudio", "--rm-cache-dir", "-o", "-", videoUrl]).stdout;
@@ -107,10 +107,10 @@ export default class DiscordYtPlayer{
         const player = createAudioPlayer();
         const stream = createYtdlStream(url);
         const resource = createAudioResource(stream, {
-            inlineVolume: true,
+            // inlineVolume: true,
         });
 
-        resource.volume?.setVolume(this.m_volume);
+        // resource.volume?.setVolume(this.m_volume);
 
         player.play(resource);
 
@@ -143,9 +143,9 @@ export default class DiscordYtPlayer{
                         const newUrl = this.m_queue[0].videoUrl;
                         const stream = createYtdlStream(newUrl);
                         const resource = createAudioResource(stream, {
-                            inlineVolume: true,
+                            // inlineVolume: true,
                         });
-                        resource.volume?.setVolume(this.m_volume);
+                        // resource.volume?.setVolume(this.m_volume);
 
                         this.m_currentAudioResource = resource;
                 

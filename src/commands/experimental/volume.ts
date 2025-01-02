@@ -28,7 +28,7 @@ const volume = new CommandBuilder<VolumeParameter>()
         }
     ])
     .setStatus("public")
-    .setMode("available")
+    .setMode("unavailable")
     .setSlash({
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {
