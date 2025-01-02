@@ -1,6 +1,23 @@
 import { CommandBuilder} from "@library";
-import { SlashCommandBuilder } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { getDiscordYtPlayer } from "@shared";
+
+function run(args: RemoveArgs){
+    const discordYtPlayer = getDiscordYtPlayer(args.voiceChannel.guild.id);
+
+    if(!discordYtPlayer)
+        throw new Error("No player found");
+
+    if(args.index < 0 || args.index >= discordYtPlayer.queue.length)
+        throw new Error("Invalid index");
+
+    const removedSong = discordYtPlayer.removeQueue(args.index);
+
+    if(removedSong)
+        return `removed ${removedSong.title} by ${removedSong.author}`;
+    else
+        return "There are no songs to be played!";
+}
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("remove")
@@ -9,6 +26,7 @@ const slashCommandBuilder = new SlashCommandBuilder()
 
 interface RemoveArgs {
     index: number;
+    voiceChannel: VoiceBasedChannel;
 }
 
 const remove = new CommandBuilder<RemoveArgs>()
@@ -21,21 +39,20 @@ const remove = new CommandBuilder<RemoveArgs>()
         getParameter: (interaction) => {
             const index = interaction.options.getInteger("index", true);
 
-            return { index };
+            const voiceChannel = (interaction.member as GuildMember).voice.channel;
+
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { index, voiceChannel };
         },
         interact: async (interaction, args) => {
             if(!args)
                 throw new Error("Invalid arguments");
 
-            if(args.index < 0 || args.index >= discordYtPlayer.queue.length)
-                throw new Error(`Invalid index. The index should be between 0 and ${discordYtPlayer.queue.length - 1}`);
+            const res = run(args);
 
-            const removedSong = discordYtPlayer.removeQueue(args.index);
-
-            if(removedSong)
-                await interaction.reply(`removed ${removedSong.title} by ${removedSong.author}`);
-            else
-                await interaction.reply("There are no songs to be played!");
+            await interaction.reply(res);
         },
     })
     .setChat({
@@ -45,21 +62,20 @@ const remove = new CommandBuilder<RemoveArgs>()
             if(isNaN(index))
                 throw new Error("Invalid arguments");
 
-            return { index };
+            const voiceChannel = message.member?.voice.channel;
+
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { index, voiceChannel };
         },
         execute: async (message, args) => {
             if(!args)
                 throw new Error("Invalid arguments");
 
-            if(args.index < 0 || args.index >= discordYtPlayer.queue.length)
-                throw new Error("Invalid index");
+            const res = run(args);
 
-            const removedSong = discordYtPlayer.removeQueue(args.index);
-
-            if(removedSong)
-                await message.reply(`removed ${removedSong.title} by ${removedSong.author}`);
-            else
-                await message.reply("There are no songs to be played!");
+            await message.reply(res);
         },
     });
 

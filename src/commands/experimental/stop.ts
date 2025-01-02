@@ -1,35 +1,69 @@
 import { CommandBuilder} from "@library";
-import { SlashCommandBuilder } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { getDiscordYtPlayer } from "@shared";
+
+interface StopParameter {
+    voiceChannel: VoiceBasedChannel;
+}
+
+function run(args: StopParameter){
+    const discordYtPlayer = getDiscordYtPlayer(args.voiceChannel.guild.id);
+
+    if(!discordYtPlayer)
+        throw new Error("No player found");
+
+    const result = discordYtPlayer.stop();
+
+    if(result)
+        return "Stopped the songs";
+    else
+        return "There are no songs to stop!";
+}
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("stop")
     .setDescription("Stops all the songs in the queue");
 
-const stop = new CommandBuilder<undefined>()
+const stop = new CommandBuilder<StopParameter>()
     .setName("stop")
     .setDescription("Stops all the songs in the queue")
     .setStatus("public")
     .setMode("available")
     .setSlash({
         slashCommand: slashCommandBuilder,
-        interact: async (interaction) => {
-            const isStopSuccess = discordYtPlayer.stop();
+        getParameter: (interaction) => {
+            const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
-            if(isStopSuccess)
-                await interaction.reply("Stopped the songs");
-            else
-                await interaction.reply("There are no songs to stop");
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        interact: async (interaction, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = run(args);
+
+            await interaction.reply(res);
         },
     })
     .setChat({
-        execute: async (message) => {
-            const isStopSuccess = discordYtPlayer.stop();
+        getParameter: (message) => {
+            const voiceChannel = message.member?.voice.channel;
 
-            if(isStopSuccess)
-                await message.reply("Stopped the songs");
-            else
-                await message.reply("There are no songs to stop");
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        execute: async (message, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = run(args);
+
+            await message.reply(res);
         },
     });
 

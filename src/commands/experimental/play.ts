@@ -1,6 +1,6 @@
 import { CommandBuilder, MyEmbedBuilder } from "@library";
 import { CacheType, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Message, MessageCreateOptions, MessagePayload, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { createDiscordYtPlayerIfNotExist, deleteDiscordYtPlayer, discordYtPlayerMap } from "@shared";
 import { prefixes } from "@config";
 
 const slashCommandBuilder = new SlashCommandBuilder()
@@ -29,12 +29,25 @@ async function run(
     if(!args)
         return {content: "You need to provide a search query"};
 
+    const discordYtPlayer = createDiscordYtPlayerIfNotExist(args.voiceChannel.guild.id);
+
     await discordYtPlayer.play(args.query, args.voiceChannel, {
         requester: {
             name: args.requester.name,
             iconUrl: args.requester.iconUrl,
         },
-        onSongEnd: () => {
+        onSongEnd: async () => {
+            // check if there are still users in the voice channel
+            const voiceChannel = await args.voiceChannel.fetch();
+            if(voiceChannel.members.size <= 1){
+                if(message.channel?.isSendable())
+                    message.channel.send("No users left in the voice channel, stopping the queue");
+
+                discordYtPlayer.stop();
+                deleteDiscordYtPlayer(args.voiceChannel.guild.id);
+                return;
+            }
+
             const embed = new MyEmbedBuilder();
 
             const current = discordYtPlayer.current;
@@ -61,10 +74,14 @@ async function run(
                 message.channel.send({embeds: [embed]});
         },
         onQueueEnd: () => {
+            deleteDiscordYtPlayer(args.voiceChannel.guild.id);
+
             if(message.channel?.isSendable())
                 message.channel.send("Queue has ended");
         },
         onError: (error) => {
+            deleteDiscordYtPlayer(args.voiceChannel.guild.id);
+
             if(message.channel?.isSendable())
                 message.channel.send(`Error: ${error.message}`);
         }
@@ -127,11 +144,9 @@ const play = new CommandBuilder<PlayParameter>()
             return { query, voiceChannel, requester: { name, iconUrl: avatarUrl } };
         },
         interact: async (interaction, args) => {
-            interaction.deferReply();
-
             const res = await run(interaction, args);
             
-            await interaction.editReply(res);
+            await interaction.reply(res);
         },
     })
     .setChat({

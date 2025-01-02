@@ -1,8 +1,13 @@
 import { CommandBuilder, MyEmbedBuilder} from "@library";
-import { SlashCommandBuilder } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { getDiscordYtPlayer } from "@shared";
 
-async function run(){
+async function run(params: QueueParameter){
+    const discordYtPlayer = getDiscordYtPlayer(params.voiceChannel.guild.id);
+
+    if(!discordYtPlayer)
+        throw new Error("No player found");
+
     const queue = discordYtPlayer.queue;
 
     if(queue.length === 0 )
@@ -51,26 +56,55 @@ async function run(){
     }
 }
 
+interface QueueParameter {
+    voiceChannel: VoiceBasedChannel;
+}
+
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("queue")
     .setDescription("shows the playlist");
 
-const queue = new CommandBuilder<undefined>()
+const queue = new CommandBuilder<QueueParameter>()
     .setName("queue")
     .setDescription("shows the playlist")
     .setStatus("public")
     .setMode("available")
     .setSlash({
         slashCommand: slashCommandBuilder,
-        interact: async (interaction) => {
-            const res = await run();
+        getParameter: (interaction) => {
+            if(!interaction.guildId)
+                throw new Error("Invalid guild id");
+
+            const voiceChannel = (interaction.member as GuildMember).voice.channel;
+
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        interact: async (interaction, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = await run(args);
 
             await interaction.reply(res);
         },
     })
     .setChat({
-        execute: async (message) => {
-            const res = await run();
+        getParameter: (message) => {
+            const voiceChannel = message.member?.voice.channel;
+
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        execute: async (message, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = await run(args);
 
             await message.reply(res);
         },

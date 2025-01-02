@@ -1,12 +1,30 @@
 import { CommandBuilder} from "@library";
-import { SlashCommandBuilder } from "discord.js";
-import { discordYtPlayer } from "@shared";
+import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { getDiscordYtPlayer } from "@shared";
+
+interface PauseParameter {
+    voiceChannel: VoiceBasedChannel;
+}
+
+function run(args: PauseParameter){
+    const discordYtPlayer = getDiscordYtPlayer(args.voiceChannel.guild.id);
+
+    if(!discordYtPlayer)
+        throw new Error("No player found");
+
+    const result = discordYtPlayer.pause();
+
+    if(result)
+        return "Paused the song";
+    else
+        return "There are no songs to pause!";
+}
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("pause")
     .setDescription("Pauses the current song");
 
-const pause = new CommandBuilder<undefined>()
+const pause = new CommandBuilder<PauseParameter>()
     .setName("pause")
     .setDescription("Pauses the current song")
     .setStatus("public")
@@ -16,23 +34,42 @@ const pause = new CommandBuilder<undefined>()
     ])
     .setSlash({
         slashCommand: slashCommandBuilder,
-        interact: async (interaction, args) => {
-            const isStopSuccess = discordYtPlayer.pause();
+        getParameter: (interaction) => {
+            if(!interaction.guildId)
+                throw new Error("Invalid guild id");
 
-            if(isStopSuccess)
-                await interaction.reply("Paused the song");
-            else
-                await interaction.reply("There are no songs to pause!");
+            const voiceChannel = (interaction.member as GuildMember).voice.channel;
+
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        interact: async (interaction, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = run(args);
+
+            await interaction.reply(res);
         },
     })
     .setChat({
-        execute: async (message, args) => {
-            const isStopSuccess = discordYtPlayer.pause();
+        getParameter: (message) => {
+            const voiceChannel = message.member?.voice.channel;
 
-            if(isStopSuccess)
-                await message.reply("Paused the song");
-            else
-                await message.reply("There are no songs to pause!");
+            if(!voiceChannel)
+                throw new Error("You must be in a voice channel to use this command");
+
+            return { voiceChannel };
+        },
+        execute: async (message, args) => {
+            if(!args)
+                throw new Error("Invalid argument");
+
+            const res = run(args);
+
+            await message.reply(res);
         },
     });
 
