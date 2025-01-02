@@ -30,10 +30,10 @@ const remove = new CommandBuilder<RemoveArgs>()
             if(args.index < 0 || args.index >= discordYtPlayer.queue.length)
                 throw new Error(`Invalid index. The index should be between 0 and ${discordYtPlayer.queue.length - 1}`);
 
-            const isremoveSuccess = discordYtPlayer.removeQueue(args.index);
+            const removedSong = discordYtPlayer.removeQueue(args.index);
 
-            if(isremoveSuccess)
-                await interaction.reply("removed the songs");
+            if(removedSong)
+                await interaction.reply(`removed ${removedSong.title} by ${removedSong.author}`);
             else
                 await interaction.reply("There are no songs to be played!");
         },
@@ -54,10 +54,10 @@ const remove = new CommandBuilder<RemoveArgs>()
             if(args.index < 0 || args.index >= discordYtPlayer.queue.length)
                 throw new Error("Invalid index");
 
-            const isremoveSuccess = discordYtPlayer.removeQueue(args.index);
+            const removedSong = discordYtPlayer.removeQueue(args.index);
 
-            if(isremoveSuccess)
-                await message.reply("removed the songs");
+            if(removedSong)
+                await message.reply(`removed ${removedSong.title} by ${removedSong.author}`);
             else
                 await message.reply("There are no songs to be played!");
         },

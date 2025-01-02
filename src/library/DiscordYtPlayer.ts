@@ -223,12 +223,10 @@ export default class DiscordYtPlayer{
      * @param index 
      * @returns 
      */
-    public removeQueue(index: number){
+    public removeQueue(index: number): DiscordYtPlayerItem | undefined{
         if(index < 1 || index > this.m_queue.length)
-            return false;
+            return;
 
-        this.m_queue.splice(index, 1);
-
-        return true;
+        return this.m_queue.splice(index, 1)[0];
     }
 }
