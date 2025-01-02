@@ -27,6 +27,12 @@ async function run(){
             if(current.thumbnailUrl)
                 currentEmbed.setThumbnail(current.thumbnailUrl);
 
+            if(current.requester)
+                currentEmbed.setAuthor({
+                    name: `requested by: ${current.requester.name}`,
+                    iconURL: current.requester.iconUrl,
+                })
+
             const duration = new Date(discordYtPlayer.durationMs ?? 0);
             const s = duration.getUTCSeconds();
             const m = duration.getUTCMinutes();

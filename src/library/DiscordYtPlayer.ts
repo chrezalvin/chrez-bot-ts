@@ -16,7 +16,10 @@ export interface DiscordYtPlayerItem{
     author: string;
     duration: string;
     thumbnailUrl?: string;
-    requesterAvatarUrl?: string;
+    requester?: {
+        iconUrl: string;
+        name: string;
+    };
 }
 
 export default class DiscordYtPlayer{
@@ -65,7 +68,7 @@ export default class DiscordYtPlayer{
             term: string, 
             channel: VoiceBasedChannel,
             options?: {
-                requesterAvatarUrl?: string;
+                requester?: DiscordYtPlayerItem["requester"];
                 onSongEnd?: () => void;
                 onQueueEnd?: () => void;
                 onError?: (error: Error) => void;
@@ -88,7 +91,7 @@ export default class DiscordYtPlayer{
             thumbnailUrl: item.thumbnail.thumbnails[0].url,
             author: item.channelTitle,
             duration: item.length.simpleText,
-            requesterAvatarUrl: options?.requesterAvatarUrl
+            requester: options?.requester,
         });
 
         if(this.m_queue.length > 1)

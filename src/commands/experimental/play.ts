@@ -15,7 +15,10 @@ const slashCommandBuilder = new SlashCommandBuilder()
 interface PlayParameter {
     query: string;
     voiceChannel: VoiceBasedChannel;
-    requesterAvatarUrl?: string;
+    requester: {
+        name: string;
+        iconUrl: string;
+    }
 }
 
 async function run(
@@ -27,7 +30,10 @@ async function run(
         return {content: "You need to provide a search query"};
 
     await discordYtPlayer.play(args.query, args.voiceChannel, {
-        requesterAvatarUrl: args.requesterAvatarUrl,
+        requester: {
+            name: args.requester.name,
+            iconUrl: args.requester.iconUrl,
+        },
         onSongEnd: () => {
             const embed = new MyEmbedBuilder();
 
@@ -38,6 +44,12 @@ async function run(
                 
                 if(current.thumbnailUrl)
                     embed.setThumbnail(current.thumbnailUrl);
+
+                if(current.requester)
+                    embed.setAuthor({
+                        name: `requested by: ${current.requester.name}`,
+                        iconURL: current.requester.iconUrl,
+                    })
 
                 embed.addFields([
                     {name: "Duration", value: current.duration, inline: true},
@@ -70,6 +82,12 @@ async function run(
     if(queueToSend.thumbnailUrl)
         embed.setThumbnail(queueToSend.thumbnailUrl);
 
+    if(queueToSend.requester)
+        embed.setAuthor({
+            name: `requested by: ${queueToSend.requester.name}`,
+            iconURL: queueToSend.requester.iconUrl,
+        })
+
     embed.addFields({
         name: "Duration",
         value: queueToSend.duration,
@@ -101,11 +119,12 @@ const play = new CommandBuilder<PlayParameter>()
 
             const voiceChannel = (interaction.member as GuildMember).voice.channel;
             const avatarUrl = interaction.user.displayAvatarURL();
+            const name = interaction.user.username;
 
             if(!voiceChannel)
                 throw new Error("You need to be in a voice channel to play music");
 
-            return { query, voiceChannel, requesterAvatarUrl: avatarUrl };
+            return { query, voiceChannel, requester: { name, iconUrl: avatarUrl } };
         },
         interact: async (interaction, args) => {
             interaction.deferReply();
@@ -123,14 +142,15 @@ const play = new CommandBuilder<PlayParameter>()
                 throw new Error("You need to be in a voice channel to play music");
 
             const avatarUrl = message.author.displayAvatarURL();
+            const name = message.author.username;
 
-            return { query, voiceChannel: message.member.voice.channel, requesterAvatarUrl: avatarUrl };
+            return { query, voiceChannel: message.member.voice.channel, requester: { name, iconUrl: avatarUrl } };
         },
         execute: async (message, args) => {
             if(!args)
                 throw new Error("You need to provide a search query");
 
-            const res = await run(message, { query: args.query, voiceChannel: args.voiceChannel });
+            const res = await run(message, args);
 
             await message.channel.send(res);
         },
