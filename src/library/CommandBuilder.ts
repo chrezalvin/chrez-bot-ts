@@ -1,4 +1,4 @@
-import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
+import { ButtonBuilder, CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import { isChatInputCommandInteraction, ErrorValidation } from "@library";
 import { SenddableMessage } from "./CustomTypes";
 const debug = require("debug")("ChrezBot:command");
@@ -34,6 +34,11 @@ export interface I_ChatCommand<_T> {
     getParameter?: (message: SenddableMessage, args: string[]) => (_T | ErrorValidation);
 }
 
+export interface I_ButtonCommand<_T>{
+    button: ButtonBuilder;
+    interact: (interaction: ChatInputCommandInteraction<CacheType>) => Promise<ErrorValidation | void>;
+}
+
 export interface CommandData<_T>{
     name: string;
     alias: string[]; 
@@ -43,6 +48,7 @@ export interface CommandData<_T>{
     examples: ExampleField[];
     slash?: I_SlashCommand<_T>;
     chat?: I_ChatCommand<_T>;
+    buttons?: I_ButtonCommand<_T>[];
 }
 
 export class CommandBuilder<_T> implements CommandData<_T>{
@@ -60,6 +66,9 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     protected m_slash: CommandData<_T>["slash"] = undefined;
     protected m_chat: CommandData<_T>["chat"] = undefined;
     protected m_commandStatus: CommandData<_T>["status"] = "public";
+    protected m_buttons: CommandData<_T>["buttons"] = undefined;
+
+    // protected m_button: 
 
     public examples: ExampleField[] = [];
 
@@ -125,6 +134,13 @@ export class CommandBuilder<_T> implements CommandData<_T>{
      * get the command mode
      */
     get mode(){ return this.m_mode; }
+
+    /**
+     * get the buttons
+     */
+    get buttons(){
+        return this.m_buttons;
+    }
 
     // setters
     /**
@@ -255,6 +271,16 @@ export class CommandBuilder<_T> implements CommandData<_T>{
      */
     setChat(chat: I_ChatCommand<_T>){
         this.m_chat = chat;
+
+        return this;
+    }
+
+    /**
+     * sets a new button command
+     * @param button button command
+     */
+    setButton(button: I_ButtonCommand<_T>){
+        this.m_buttons = [button];
 
         return this;
     }

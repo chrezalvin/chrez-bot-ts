@@ -13,7 +13,14 @@ export interface YoutubeSearchResultItem{
     title: string;
     channelTitle: string;
     shortBylineText: unknown;
-    length: unknown;
+    length: {
+        accessibility: {
+           accessibilityData: {
+              label: string
+           }
+        };
+        simpleText: string
+    };
     isLive: boolean;
 }
 

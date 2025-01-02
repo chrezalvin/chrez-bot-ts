@@ -98,3 +98,4 @@ export * from "./InferType";
 export * from "./Chronos";
 
 export * from "./DiscordYtPlayer";
+export * from "./YoutubeSearch";

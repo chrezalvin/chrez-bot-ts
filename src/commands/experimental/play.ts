@@ -1,4 +1,4 @@
-import { CommandBuilder, DiscordYtPlayerItem, MyEmbedBuilder } from "@library";
+import { CommandBuilder, MyEmbedBuilder } from "@library";
 import { CacheType, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Message, MessageCreateOptions, MessagePayload, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { discordYtPlayer } from "@shared";
 import { prefixes } from "@config";
@@ -15,34 +15,47 @@ const slashCommandBuilder = new SlashCommandBuilder()
 interface PlayParameter {
     query: string;
     voiceChannel: VoiceBasedChannel;
+    requester: {
+        name: string;
+        iconUrl: string;
+    }
 }
 
-function createSongQueueEmbed(queue: DiscordYtPlayerItem[]){
-    const myEmbed = new MyEmbedBuilder();
-
-    if(queue.length !== 0){
-        myEmbed.setTitle(`Playing: ${queue[0].title} by ${queue[0].author}`);
-
-        if(queue[0].thumbnailUrl)
-            myEmbed.setThumbnail(queue[0].thumbnailUrl);
-    }
-
-    if(queue.length > 1){
-        myEmbed.setDescription(queue.slice(1).map((item, index) => {
-            return `#${index + 1} ${item.title} by ${item.author}`;
-        }).join("\n"));
-    }
-
-    return myEmbed;
-}
-
-async function run(message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: PlayParameter): Promise<MessagePayload | (InteractionReplyOptions & MessageCreateOptions)>{
+async function run(
+        message: Message<boolean> | ChatInputCommandInteraction<CacheType>, 
+        args?: PlayParameter
+    ): Promise<MessagePayload | (InteractionReplyOptions & MessageCreateOptions)>{
+    
     if(!args)
         return {content: "You need to provide a search query"};
 
     await discordYtPlayer.play(args.query, args.voiceChannel, {
+        requester: {
+            name: args.requester.name,
+            iconUrl: args.requester.iconUrl,
+        },
         onSongEnd: () => {
-            const embed = createSongQueueEmbed(discordYtPlayer.queue);
+            const embed = new MyEmbedBuilder();
+
+            const current = discordYtPlayer.current;
+
+            if(current){
+                embed.setTitle(`Playing: ${current.title} by ${current.author}`);
+                
+                if(current.thumbnailUrl)
+                    embed.setThumbnail(current.thumbnailUrl);
+
+                if(current.requester)
+                    embed.setAuthor({
+                        name: `requested by: ${current.requester.name}`,
+                        iconURL: current.requester.iconUrl,
+                    })
+
+                embed.addFields([
+                    {name: "Duration", value: current.duration, inline: true},
+                    {name: "Volume", value: (discordYtPlayer.volume * 100).toFixed(0) + "%", inline: true}
+                ]);
+            }
 
             if(message.channel?.isSendable())
                 message.channel.send({embeds: [embed]});
@@ -58,23 +71,34 @@ async function run(message: Message<boolean> | ChatInputCommandInteraction<Cache
     });
 
     const queue = discordYtPlayer.queue;
-    const embed = createSongQueueEmbed(queue);
+    const embed = new MyEmbedBuilder();
+    const queueToSend = queue.length === 1 ? queue[0] : queue[queue.length - 1];
 
-    if(queue.length === 1){
-        const queueToSend = queue[0];
-
+    if(queue.length === 1)
         embed.setTitle(`Now playing: ${queueToSend.title} by ${queueToSend.author}`);
-
-        if(queueToSend.thumbnailUrl)
-            embed.setThumbnail(queueToSend.thumbnailUrl);
-    }
-    else{
-        const queueToSend = queue[queue.length - 1];
+    else
         embed.setTitle(`Queued: ${queueToSend.title} by ${queueToSend.author}`);
 
-        if(queueToSend.thumbnailUrl)
-            embed.setThumbnail(queueToSend.thumbnailUrl);
-    }
+    if(queueToSend.thumbnailUrl)
+        embed.setThumbnail(queueToSend.thumbnailUrl);
+
+    if(queueToSend.requester)
+        embed.setAuthor({
+            name: `requested by: ${queueToSend.requester.name}`,
+            iconURL: queueToSend.requester.iconUrl,
+        })
+
+    embed.addFields({
+        name: "Duration",
+        value: queueToSend.duration,
+        inline: true
+    });
+
+    embed.addFields({
+        name: "Volume",
+        value: (discordYtPlayer.volume * 100).toFixed(0) + "%",
+        inline: true
+    });
 
     return {embeds: [embed]};
 }
@@ -94,16 +118,20 @@ const play = new CommandBuilder<PlayParameter>()
             const query = interaction.options.getString("search", true);
 
             const voiceChannel = (interaction.member as GuildMember).voice.channel;
+            const avatarUrl = interaction.user.displayAvatarURL();
+            const name = interaction.user.username;
 
             if(!voiceChannel)
                 throw new Error("You need to be in a voice channel to play music");
 
-            return { query, voiceChannel };
+            return { query, voiceChannel, requester: { name, iconUrl: avatarUrl } };
         },
         interact: async (interaction, args) => {
+            interaction.deferReply();
+
             const res = await run(interaction, args);
             
-            await interaction.reply(res);
+            await interaction.editReply(res);
         },
     })
     .setChat({
@@ -113,13 +141,16 @@ const play = new CommandBuilder<PlayParameter>()
             if(!message.member?.voice.channel)
                 throw new Error("You need to be in a voice channel to play music");
 
-            return { query, voiceChannel: message.member.voice.channel };
+            const avatarUrl = message.author.displayAvatarURL();
+            const name = message.author.username;
+
+            return { query, voiceChannel: message.member.voice.channel, requester: { name, iconUrl: avatarUrl } };
         },
         execute: async (message, args) => {
             if(!args)
                 throw new Error("You need to provide a search query");
 
-            const res = await run(message, { query: args.query, voiceChannel: args.voiceChannel });
+            const res = await run(message, args);
 
             await message.channel.send(res);
         },

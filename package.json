@@ -1,6 +1,6 @@
 {
   "name": "cbts",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "test:ts": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/test",
     "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
-    "start": "tsc && tsc-alias &&npm run loadSlashCommands &&node ./output/index",
+    "start": "tsc && tsc-alias &&node ./output/registerSlashCommand &&node ./output/index",
     "build": "tsc && tsc-alias",
     "loadSlashCommands": "tsc && tsc-alias && node ./output/registerSlashCommand",
     "loadSlashCommands:dev": "SET DEBUG=Bot:* && tsc && tsc-alias && node ./output/registerSlashCommand"
@@ -31,7 +31,6 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "pureimage": "^0.3.17",
-    "sodium-native": "^4.3.1",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.5",
     "tsconfig-paths": "^4.1.2",

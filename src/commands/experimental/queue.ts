@@ -1,24 +1,54 @@
-import { CommandBuilder, DiscordYtPlayerItem, MyEmbedBuilder} from "@library";
+import { CommandBuilder, MyEmbedBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
 import { discordYtPlayer } from "@shared";
 
-function createSongQueueEmbed(queue: DiscordYtPlayerItem[]){
-    const myEmbed = new MyEmbedBuilder();
+async function run(){
+    const queue = discordYtPlayer.queue;
 
-    if(queue.length !== 0){
-        myEmbed.setTitle(`Playing: ${queue[0].title} by ${queue[0].author}`);
+    if(queue.length === 0 )
+        return "There are no songs to be played!";
+    else{
+        const queueEmbed = new MyEmbedBuilder();
 
-        if(queue[0].thumbnailUrl)
-            myEmbed.setThumbnail(queue[0].thumbnailUrl);
-    }
-
-    if(queue.length > 1){
-        myEmbed.setDescription(queue.slice(1).map((item, index) => {
-            return `#${index + 1} ${item.title} by ${item.author}`;
+        queueEmbed.setDescription(queue.map((item, index) => {
+            if(index === 0)
+                return `**[current]** [${item.title}](${item.videoUrl}) by ${item.author} [${item.duration}]`; 
+            else
+                return `#${index} [${item.title}](${item.videoUrl}) by ${item.author} [${item.duration}]`;
         }).join("\n"));
-    }
 
-    return myEmbed;
+        const currentEmbed = new MyEmbedBuilder();
+
+        const current = discordYtPlayer.current;
+
+        if(current){
+            currentEmbed.setTitle(`Playing: ${current.title} by ${current.author}`);
+            
+            if(current.thumbnailUrl)
+                currentEmbed.setThumbnail(current.thumbnailUrl);
+
+            if(current.requester)
+                currentEmbed.setAuthor({
+                    name: `requested by: ${current.requester.name}`,
+                    iconURL: current.requester.iconUrl,
+                })
+
+            const duration = new Date(discordYtPlayer.durationMs ?? 0);
+            const s = duration.getUTCSeconds();
+            const m = duration.getUTCMinutes();
+            const h = duration.getUTCHours();
+
+            // format the duration 00:00:00 -> hh:mm:ss or mm:ss, use trailing zero
+            const durationString = `${h ? h + ":" : ""}${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}`;
+            
+            currentEmbed.addFields([
+                {name: "Duration", value: `${durationString}/${current.duration.replaceAll(".", ":")}`, inline: true},
+                {name: "Volume", value: (discordYtPlayer.volume * 100).toFixed(0) + "%", inline: true}
+            ]);
+        }
+
+        return {embeds: [queueEmbed, currentEmbed]};
+    }
 }
 
 const slashCommandBuilder = new SlashCommandBuilder()
@@ -33,27 +63,16 @@ const queue = new CommandBuilder<undefined>()
     .setSlash({
         slashCommand: slashCommandBuilder,
         interact: async (interaction) => {
-            const queue = discordYtPlayer.queue;
+            const res = await run();
 
-            if(queue.length === 0 )
-                await interaction.reply("There are no songs to be played!");
-            else{
-                const embed = createSongQueueEmbed(queue);
-                await interaction.reply({embeds: [embed]});
-            }
-            
+            await interaction.reply(res);
         },
     })
     .setChat({
         execute: async (message) => {
-            const queue = discordYtPlayer.queue;
+            const res = await run();
 
-            if(queue.length === 0 )
-                await message.reply("There are no songs to be played!");
-            else{
-                const embed = createSongQueueEmbed(queue);
-                await message.reply({embeds: [embed]});
-            }
+            await message.reply(res);
         },
     });
 
