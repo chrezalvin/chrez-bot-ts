@@ -101,7 +101,7 @@ export function isActiveEvent(obj: unknown): obj is ActiveEvent{
     return true;
 }
 
-export function isActiveEventWithoutId(obj: unknown): obj is StrictOmit<ActiveEvent, "active_event_id">{
+export function isActiveEventWithoutId(obj: unknown): obj is StrictOmit<ActiveEvent, "active_event_id" | "img_path">{
     if(typeof obj !== "object" || obj === null) {
         debug("object is not defined or null");
         return false;
@@ -109,11 +109,6 @@ export function isActiveEventWithoutId(obj: unknown): obj is StrictOmit<ActiveEv
 
     if(!("title" in obj)){
         debug("property title is not defined");
-        return false;
-    }
-
-    if(!("img_path" in obj)){
-        debug("property img_path is not defined");
         return false;
     }
 
@@ -144,11 +139,6 @@ export function isActiveEventWithoutId(obj: unknown): obj is StrictOmit<ActiveEv
 
     if(typeof obj.title !== "string"){
         debug("property title is not a string");
-        return false;
-    }
-
-    if(obj.img_path !== null && typeof obj.img_path !== "string"){
-        debug("property img_path is not a string or null");
         return false;
     }
 

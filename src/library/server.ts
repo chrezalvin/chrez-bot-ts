@@ -1,4 +1,4 @@
-const debug = require("debug")("Server:error");
+const debug = require("debug")("library:error");
 
 import { NextFunction, Request, RequestHandler, Response } from "express";
 

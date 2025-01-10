@@ -1,6 +1,6 @@
 import { INLINE_COMMAND_COLDOWN_TIME } from "@config";
 
-const debugs = require("debug")("ChrezBot:TemporaryArray");
+const debugs = require("debug")("library:TemporaryArray");
 
 /**
  * TemporaryArray is an array that the data will be deleted after a certain time

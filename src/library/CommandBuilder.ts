@@ -1,7 +1,7 @@
 import { ButtonBuilder, CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import { isChatInputCommandInteraction, ErrorValidation } from "@library";
 import { SenddableMessage } from "./CustomTypes";
-const debug = require("debug")("ChrezBot:command");
+const debug = require("debug")("library:command");
 
 export interface ExampleField{
     command: string;

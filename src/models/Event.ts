@@ -70,10 +70,60 @@ export function isEvent(obj: unknown): obj is Event{
         return false;
     }
 
+    if(typeof obj.event_id !== "number") {
+        debug("property event_id is not a number");
+        return false;
+    }
+
+    if(typeof obj.title !== "string"){
+        debug("property title is not a string");
+        return false;
+    }
+
+    if(obj.img_path !== null && typeof obj.img_path !== "string"){
+        debug("property img_path is not a string or null");
+        return false;
+    }
+
+    if(obj.link !== null && typeof obj.link !== "string"){
+        debug("property link is not a string or null");
+        return false;
+    }
+
+    if(obj.description !== null && typeof obj.description !== "string"){
+        debug("property description is not a string or null");
+        return false;
+    }
+
+    if(typeof obj.start_month !== "number"){
+        debug("property start_month is not a number");
+        return false;
+    }
+
+    if(typeof obj.end_month !== "number"){
+        debug("property end_month is not a number");
+        return false;
+    }
+
+    if(obj.start_day !== null && typeof obj.start_day !== "number"){
+        debug("property start_day is not a number or null");
+        return false;
+    }
+
+    if(obj.end_day !== null && typeof obj.end_day !== "number"){
+        debug("property end_day is not a number or null");
+        return false;
+    }
+
+    if(obj.short_description !== null && typeof obj.short_description !== "string"){
+        debug("property short_description is not a string or null");
+        return false;
+    }
+
     return true;
 }
 
-export function isEventWithoutId(obj: unknown): obj is StrictOmit<Event, "event_id">{
+export function isEventWithoutId(obj: unknown): obj is StrictOmit<Event, "event_id" | "img_path">{
     if(typeof obj !== "object" || obj === null) {
         debug("object is not defined or null");
         return false;
@@ -81,11 +131,6 @@ export function isEventWithoutId(obj: unknown): obj is StrictOmit<Event, "event_
 
     if(!("title" in obj)){
         debug("property title is not defined");
-        return false;
-    }
-
-    if(!("img_path" in obj)){
-        debug("property img_path is not defined");
         return false;
     }
 
@@ -121,6 +166,46 @@ export function isEventWithoutId(obj: unknown): obj is StrictOmit<Event, "event_
 
     if(!("short_description" in obj)){
         debug("property short_description is not defined");
+        return false;
+    }
+
+    if(obj.title !== null && typeof obj.title !== "string"){
+        debug("property title is not a string or null");
+        return false;
+    }
+
+    if(obj.link !== null && typeof obj.link !== "string"){
+        debug("property link is not a string or null");
+        return false;
+    }
+
+    if(obj.description !== null && typeof obj.description !== "string"){
+        debug("property description is not a string or null");
+        return false;
+    }
+
+    if(typeof obj.start_month !== "number"){
+        debug("property start_month is not a number");
+        return false;
+    }
+
+    if(typeof obj.end_month !== "number"){
+        debug("property end_month is not a number");
+        return false;
+    }
+
+    if(obj.start_day !== null && typeof obj.start_day !== "number"){
+        debug("property start_day is not a number or null");
+        return false;
+    }
+
+    if(obj.end_day !== null && typeof obj.end_day !== "number"){
+        debug("property end_day is not a number or null");
+        return false;
+    }
+
+    if(obj.short_description !== null && typeof obj.short_description !== "string"){
+        debug("property short_description is not a string or null");
         return false;
     }
 

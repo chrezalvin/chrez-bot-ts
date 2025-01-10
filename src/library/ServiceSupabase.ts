@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-const debug = require("debug")("Server:Service");
+const debug = require("debug")("library:ServiceSupabase");
 
 type PostgrestQueryBuilder = ReturnType<SupabaseClient["from"]>;
 type PostgrestFilterBuilder = ReturnType<ReturnType<SupabaseClient["from"]>["select"]>;

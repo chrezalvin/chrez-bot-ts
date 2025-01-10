@@ -79,7 +79,7 @@ export function isRegistlet(obj: unknown): obj is Registlet{
     return true;
 }
 
-export function isRegistletWithoutId(obj: unknown): obj is StrictOmit<Registlet, "registlet_id">{
+export function isRegistletWithoutId(obj: unknown): obj is StrictOmit<Registlet, "registlet_id" | "img_path">{
     if(typeof obj !== "object" || obj === null){
         debug("object is not defined or null");
         return false;
@@ -110,11 +110,6 @@ export function isRegistletWithoutId(obj: unknown): obj is StrictOmit<Registlet,
         return false;
     }
 
-    if(!("img_path" in obj)){
-        debug("property img_path is not defined");
-        return false;
-    }
-
     if(typeof obj.name !== "string"){
         debug("property name is not a string");
         return false;
@@ -132,11 +127,6 @@ export function isRegistletWithoutId(obj: unknown): obj is StrictOmit<Registlet,
 
     if(!Array.isArray(obj.stoodie_levels)){
         debug("property stoodie_levels is not an array");
-        return false;
-    }
-
-    if(obj.img_path !== null && typeof obj.img_path !== "string"){
-        debug("property img_path is not a string");
         return false;
     }
 

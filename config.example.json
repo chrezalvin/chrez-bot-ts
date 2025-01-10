@@ -1,16 +1,16 @@
 {
-    "MODE": "development",
+    "MODE": "development | production",
 
-    "DISCORD_TOKEN": "",
-    "DISCORD_APPLICATION_ID": "",
-    "DISCORD_PUBLIC_KEY": "",
-    "DISCORD_CLIENT_ID": "",
-    "DISCORD_CLIENT_SECRET": "",
+    "DISCORD_TOKEN": "<discord-token-here>",
+    "DISCORD_APPLICATION_ID": "<application-id-here>",
+    "DISCORD_PUBLIC_KEY": "<public-key-here>",
+    "DISCORD_CLIENT_ID": "<client-id-here>",
+    "DISCORD_CLIENT_SECRET": "<client-secret-here>",
     "DISCORD_OAUTH2_REDIRECT_URL": "http://localhost:3001/Authenticate",
     "DISCORD_OAUTH2_REDIRECT_URL_SERVER": "http://localhost:3000/Authenticate_server",
 
     "SUPABASE_URL": "https://iyiagjaadfnwvixxthwl.supabase.co",
-    "SUPABASE_KEY": "",
+    "SUPABASE_KEY": "<your-supabase-key-here>",
     
     "CORS_ORIGIN": "http://localhost:3001",
     "SESSION_SECRET": "secret",
@@ -21,7 +21,7 @@
     "BOT_OWNER_ID": "696693247350931488",
     "BOT_CLIENT_ID": "823688014786068500",
     "BOT_GUILD_IDS": ["822912738875146261", "739696962097512449"],
-    "BOT_PREFIXES": ["Chrezt", "Cbt"],
+    "BOT_PREFIXES": ["Chrez", "Cb"],
     "BOT_TRUSTED_IDS": [
         "467054650181550113", 
         "558614543929180171", 

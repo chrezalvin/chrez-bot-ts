@@ -71,7 +71,7 @@ export function isRecommend(obj: unknown): obj is Recommend{
     return true;
 }
 
-export function isRecommendWithoutId(obj: unknown): obj is StrictOmit<Recommend, "recommend_id">{
+export function isRecommendWithoutId(obj: unknown): obj is StrictOmit<Recommend, "recommend_id" | "imgUrl">{
     if(typeof obj !== "object" || obj === null) {
         debug("object is not defined or null");
         return false;
@@ -84,11 +84,6 @@ export function isRecommendWithoutId(obj: unknown): obj is StrictOmit<Recommend,
 
     if(!("description" in obj)){
         debug("property description is not defined");
-        return false;
-    }
-
-    if(!("imgUrl" in obj)){
-        debug("property imgUrl is not defined");
         return false;
     }
 
@@ -106,11 +101,6 @@ export function isRecommendWithoutId(obj: unknown): obj is StrictOmit<Recommend,
 
     if(typeof obj.description !== "string"){
         debug("property description is not a string");
-        return false;
-    }
-
-    if(typeof obj.imgUrl !== "string" && obj.imgUrl !== null){
-        debug("property imgUrl is not a string or null");
         return false;
     }
 

@@ -1,4 +1,4 @@
-const debug = require("debug")("Server:ServiceFirebase");
+const debug = require("debug")("library:ServiceFirebase");
 
 import { FirebaseApp } from "firebase/app";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, writeBatch } from "firebase/firestore/lite";

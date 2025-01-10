@@ -1,6 +1,6 @@
 import { INLINE_COMMAND_COLDOWN_TIME } from "@config";
 
-const debug = require("debug")("ChrezBot:TemporaryArray");
+const debug = require("debug")("library:TemporaryMap");
 
 /**
  * TemporaryMap is a map that the data will be deleted after a certain time

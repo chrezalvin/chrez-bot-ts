@@ -34,7 +34,7 @@ export class RecommendService{
         return recommend;
     }
 
-    public static async createNewRecommend(recommend: StrictOmit<Recommend, "recommend_id">, imgBlob?: Blob): Promise<Recommend>{
+    public static async createNewRecommend(recommend: StrictOmit<Recommend, "recommend_id" | "imgUrl">, imgBlob?: Blob): Promise<Recommend>{
         // load the recommend first without the imgUrl
         const newRecommend = await RecommendService.recommendSupabase.add(recommend, {
             file: imgBlob ?? null,

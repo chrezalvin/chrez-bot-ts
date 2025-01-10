@@ -44,7 +44,7 @@ export class RegistletService {
         return res;
     }
 
-    static async setNewRegistlet(registlet: StrictOmit<Registlet, "registlet_id">, imgBlob?: Blob): Promise<Registlet>{
+    static async setNewRegistlet(registlet: StrictOmit<Registlet, "registlet_id" | "img_path">, imgBlob?: Blob): Promise<Registlet>{
         const fileName = registlet.name.replace(/\s/g, "_").toLowerCase();
         const newRegistlet = await RegistletService.serviceSupabase.add(registlet, {
             file: imgBlob ?? null,

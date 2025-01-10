@@ -1,4 +1,4 @@
-const debug = require("debug")("Server:FileManager");
+const debug = require("debug")("library:FileManager");
 
 import { getStorage, UploadResult, uploadBytes, deleteObject, getDownloadURL, listAll, ref, StorageReference } from "firebase/storage";
 import { randomUUID } from "crypto";
