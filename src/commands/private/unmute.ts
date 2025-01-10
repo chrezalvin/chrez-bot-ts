@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 
 import { MyEmbedBuilder, CommandBuilder } from "@library";
-import { muted, setMute } from "@config";
+import { muted, setMute } from "@shared/isMute";
 
 const run = () => {    
     const embed = new MyEmbedBuilder();

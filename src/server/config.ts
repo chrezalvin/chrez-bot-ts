@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import routes from "./routes";
-import { sessionCheck, page404 } from "./middlewares";
+import { sessionCheck, page404, loggerRoute } from "./middlewares";
 import { CORS_ORIGIN } from "@config";
 
 const express = Express();
@@ -20,6 +20,8 @@ express.use(logger("dev"));
 express.use(Express.json());
 express.use(Express.urlencoded());
 express.use(cookieParser());
+
+express.use(loggerRoute());
 express.use(sessionCheck());
 
 express.use(routes);

@@ -1,6 +1,6 @@
-import { CommandBuilder} from "@library";
+import { CommandBuilder, ErrorValidation} from "@library";
 import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
-import { getDiscordYtPlayer } from "@shared";
+import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 interface PauseParameter {
     voiceChannel: VoiceBasedChannel;
@@ -10,7 +10,7 @@ function run(args: PauseParameter){
     const discordYtPlayer = getDiscordYtPlayer(args.voiceChannel.guild.id);
 
     if(!discordYtPlayer)
-        throw new Error("No player found");
+        return new ErrorValidation("something_not_found", "discord yt player");
 
     const result = discordYtPlayer.pause();
 
@@ -36,20 +36,23 @@ const pause = new CommandBuilder<PauseParameter>()
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {
             if(!interaction.guildId)
-                throw new Error("Invalid guild id");
+                return new ErrorValidation("something_not_found", "guild id");
 
             const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
             if(!voiceChannel)
-                throw new Error("You must be in a voice channel to use this command");
+                return new ErrorValidation("forbidden", "you must be in a voice channel to use this command");
 
             return { voiceChannel };
         },
         interact: async (interaction, args) => {
             if(!args)
-                throw new Error("Invalid argument");
+                return new ErrorValidation("no_argument_provided");
 
             const res = run(args);
+
+            if(res instanceof ErrorValidation)
+                return res;
 
             await interaction.reply(res);
         },
@@ -59,15 +62,18 @@ const pause = new CommandBuilder<PauseParameter>()
             const voiceChannel = message.member?.voice.channel;
 
             if(!voiceChannel)
-                throw new Error("You must be in a voice channel to use this command");
+                return new ErrorValidation("forbidden", "you must be in a voice channel to use this command");
 
             return { voiceChannel };
         },
         execute: async (message, args) => {
             if(!args)
-                throw new Error("Invalid argument");
+                return new ErrorValidation("no_argument_provided");
 
             const res = run(args);
+
+            if(res instanceof ErrorValidation)
+                return res;
 
             await message.reply(res);
         },

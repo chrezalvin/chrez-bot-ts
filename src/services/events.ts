@@ -1,13 +1,16 @@
 import { ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { Event, isEvent } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class EventService {
     protected static readonly eventPath: string = "events";
     protected static readonly eventImgPath: string = "images/events";
     protected static readonly eventBucket: string = "images";
 
-    static eventManager = new ServiceFileSupabase<Event, "event_id", never, "img_path">("event_id", 
+    static eventManager = new ServiceFileSupabase<Event, "event_id", never, "img_path">(
+        supabase,
+        "event_id", 
         {
             tableName: EventService.eventPath,
             typeGuard: isEvent,

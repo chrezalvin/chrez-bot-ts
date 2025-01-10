@@ -1,16 +1,18 @@
+import { SupabaseClient } from "@supabase/supabase-js";
+
 const debug = require("debug")("Server:Service");
 
-import { supabase } from "@config";
-
-type PostgrestQueryBuilder = ReturnType<typeof supabase.from>;
-type PostgrestFilterBuilder = ReturnType<ReturnType<typeof supabase.from>["select"]>;
-type PostgrestBuilder = ReturnType<ReturnType<ReturnType<typeof supabase.from>["select"]>["single"]>;
+type PostgrestQueryBuilder = ReturnType<SupabaseClient["from"]>;
+type PostgrestFilterBuilder = ReturnType<ReturnType<SupabaseClient["from"]>["select"]>;
+type PostgrestBuilder = ReturnType<ReturnType<ReturnType<SupabaseClient["from"]>["select"]>["single"]>;
 
 /**
  * Service class to handle the database operation, this class will cache the data to reduce the payload
  */
 export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, string>>{
     public static s_services: ServiceSupabase<any, any>[] = [];
+
+    private m_supabase: SupabaseClient;
 
     protected m_cache: Map<_T[_K], _T> = new Map();
     protected m_keyName: _K;
@@ -32,7 +34,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     /**
      * the supabase's client
      */
-    get client() { return supabase.from(this.m_tableName); }
+    get client() { return this.m_supabase.from(this.m_tableName); }
 
     /**
      * the cached data in array form, it's supposed to return the full data in the database
@@ -66,6 +68,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
      * @param option optional typeguard to check the data type, if not set, it will assume the data is already _T[]
      */
     constructor(
+        supabaseClient: SupabaseClient,
         keyName: _K, 
         tableName: string,
         option: {
@@ -73,13 +76,14 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
             useCache?: boolean,
         }
     ){
+        this.m_supabase = supabaseClient;
         this.m_keyName = keyName;
         this.m_tableName = tableName;
         this.m_typeGuard = option.typeGuard;
         this.m_useCache = option.useCache ?? true;
 
         if(this.m_useCache){
-            supabase
+            this.m_supabase
                 .from(this.m_tableName)
                 .select("*")
                 .then(response => {
@@ -108,7 +112,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     async getAll(): Promise<_T[]>{
         debug(`getting all data from table ${this.m_tableName}`);
 
-        const res = await supabase.from(this.m_tableName).select("*");
+        const res = await this.m_supabase.from(this.m_tableName).select("*");
         if(res.error)
             throw new Error(res.error.message);
 
@@ -148,7 +152,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
             return item;
         else{
             // if not found, search on the database
-            const res = await supabase.from(this.m_tableName).select("*").eq(this.m_keyName, key);
+            const res = await this.m_supabase.from(this.m_tableName).select("*").eq(this.m_keyName, key);
 
             if(res.error)
                 throw new Error(res.error.message);
@@ -178,7 +182,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
 
         // remove the key from the value since key is permanent
         const data = keyValue ? {...value, [this.m_keyName]: keyValue} : value;
-        const res = await supabase
+        const res = await this.m_supabase
                 .from(this.m_tableName)
                 .insert(data)
                 .select();
@@ -234,7 +238,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
         if(this.m_keyName in value)
             throw new Error(`Illegal ${this.m_keyName} in value when updating!`);
 
-        const res = await supabase
+        const res = await this.m_supabase
                 .from(this.m_tableName)
                 .update(value)
                 .eq(this.m_keyName, key)
@@ -261,7 +265,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     async delete(key: _T[_K]): Promise<void>{
         debug(`deleting ${this.m_keyName}:${key} from table ${this.m_tableName}`);
 
-        const res = await supabase
+        const res = await this.m_supabase
             .from(this.m_tableName)
             .delete()
             .eq(this.m_keyName, key);
@@ -281,7 +285,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     async queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestQueryBuilder) => _R): Promise<_T | _T[]>{
         debug(`querying data from table ${this.m_tableName}`);
 
-        const res = await fcn(supabase.from(this.m_tableName));
+        const res = await fcn(this.m_supabase.from(this.m_tableName));
 
         if(res.error)
             throw new Error(res.error.message);
@@ -305,7 +309,7 @@ export class ServiceSupabase<_T extends Object, _K extends Extract<keyof _T, str
     async call(functionName: string, args: any): Promise<_T[]>{
         debug(`calling function ${functionName} from table ${this.m_tableName}`);
         
-        const res = await supabase.rpc(functionName, args);
+        const res = await this.m_supabase.rpc(functionName, args);
 
         if(res.error)
             throw new Error(res.error.message);

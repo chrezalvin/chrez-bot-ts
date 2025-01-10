@@ -1,10 +1,13 @@
 import { ServiceFileSupabase } from "@library";
 import { isUser, User } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class UserService {
     protected static readonly dbName = "users";
 
-    public static service = new ServiceFileSupabase<User, "user_id">("user_id",
+    public static service = new ServiceFileSupabase<User, "user_id">(
+        supabase,
+        "user_id",
         {
             tableName: UserService.dbName,
             typeGuard: isUser,

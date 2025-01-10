@@ -1,4 +1,4 @@
-import { inline_command_coldown_time } from "@config";
+import { INLINE_COMMAND_COLDOWN_TIME } from "@config";
 
 const debug = require("debug")("ChrezBot:TemporaryArray");
 
@@ -14,7 +14,7 @@ export class TemporaryMap<_K, _V> {
      * @param time time to delete the data in ms (defaults to 10 seconds)
      */
     constructor(
-        time: number = inline_command_coldown_time * 1000,
+        time: number = INLINE_COMMAND_COLDOWN_TIME * 1000,
         data?: Map<_K, _V>,
     ) {
         this.m_time = time;

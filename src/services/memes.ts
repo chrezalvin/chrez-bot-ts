@@ -1,5 +1,6 @@
 import { rngInt } from "@library";
 import {FileManagerSupabase} from "@library";
+import { supabase } from "@shared/supabase";
 
 export class MemeService{
     protected static readonly memePathSfw = "memes/sfw";
@@ -7,8 +8,8 @@ export class MemeService{
 
     protected static readonly bucketImage = "images";
 
-    public static fileManagerNsfw = new FileManagerSupabase(MemeService.bucketImage, MemeService.memePathNsfw);
-    public static fileManagerSfw = new FileManagerSupabase(MemeService.bucketImage, MemeService.memePathSfw);
+    public static fileManagerNsfw = new FileManagerSupabase(supabase, MemeService.bucketImage, MemeService.memePathNsfw);
+    public static fileManagerSfw = new FileManagerSupabase(supabase, MemeService.bucketImage, MemeService.memePathSfw);
 
     static getMemeList(nsfw: boolean = false){
         if(nsfw)

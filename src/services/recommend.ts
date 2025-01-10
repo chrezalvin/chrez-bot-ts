@@ -1,13 +1,16 @@
 import { rngInt, ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { isRecommend, Recommend } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class RecommendService{
     protected static readonly recommend = "recommend";
     protected static readonly recommendImgPath = "images/recommend";
     protected static readonly recommendBucket = "images";
 
-    public static recommendSupabase = new ServiceFileSupabase<Recommend, "recommend_id", never, "imgUrl">("recommend_id", 
+    public static recommendSupabase = new ServiceFileSupabase<Recommend, "recommend_id", never, "imgUrl">(
+        supabase,
+        "recommend_id", 
         {
             tableName: RecommendService.recommend,
             typeGuard: isRecommend,

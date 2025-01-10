@@ -1,13 +1,16 @@
 import { ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { isRegistlet, Registlet } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class RegistletService {
     static readonly tableName = "registlets";
     static readonly imgDir = "images/registlets";
     static readonly bucketName = "images";
 
-    static serviceSupabase = new ServiceFileSupabase<Registlet, "registlet_id", never, "img_path">("registlet_id", 
+    static serviceSupabase = new ServiceFileSupabase<Registlet, "registlet_id", never, "img_path">(
+        supabase,
+        "registlet_id", 
         {
             tableName: RegistletService.tableName,
             typeGuard: isRegistlet,

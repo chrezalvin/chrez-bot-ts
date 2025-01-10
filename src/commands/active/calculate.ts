@@ -1,6 +1,6 @@
 const debug = require("debug")("ChrezBot:calculate");
 
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import { MyEmbedBuilder, CommandBuilder, calculateExpressionString, ErrorValidation } from "@library";
 import { InteractionReplyOptions, MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 
@@ -75,8 +75,8 @@ const calculate = new CommandBuilder<I_Calculate>({
     alias: ["math", "m", "calc"],
     description: "Calculates a math expression",
     examples: [
-        {command: `${prefixes[0]} math 2 + 3`, description: "2 + 3 = 5"},
-        {command: `${prefixes[0]} math 2k + 2^3`, description: "2k + 2^3 = 2008"}
+        {command: `${BOT_PREFIXES[0]} math 2 + 3`, description: "2 + 3 = 5"},
+        {command: `${BOT_PREFIXES[0]} math 2k + 2^3`, description: "2k + 2^3 = 2008"}
     ],
     slash:{
         slashCommand: new SlashCommandBuilder()

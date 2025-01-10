@@ -1,68 +1,124 @@
-import { createClient } from "@supabase/supabase-js";
-import {config} from "dotenv"; config();
+import testConfig from "../config.json";
+import packageJson from "../package.json";
 
-// firebase for database;
-import { initializeApp } from "firebase/app";
-import {getFirestore} from "firebase/firestore/lite";
+const config = testConfig as Partial<typeof testConfig>;
+
+const defaultConfig = {
+    BOT_MAX_MESSAGE_ALLOWED: 100,
+    BOT_MESSAGE_DELETE_TIME: 10,
+    PORT: "3000",
+};
 
 type Mode = "development" | "production";
 // Note: production mode removes use of debug tools but some log (console) will still be used whenever error happen
-export let MODE: Mode = process.env.MODE as Mode | undefined ?? "development";
+export let MODE: Mode = config.MODE as Mode | undefined ?? "development";
 
 // basic configs
 /**
  * max character bot can allow, if message word count is higher then the message will be ignored
  * only used in text-based command
  */
-export const max_message_allowed = 100;
+export const MAX_MESSAGE_ALLOWED = config.BOT_MAX_MESSAGE_ALLOWED ?? defaultConfig.BOT_MAX_MESSAGE_ALLOWED;
 
 /**
  * time for error message to be deleted (in seconds)
  */
-export const message_delete_time = 10;
+export const MESSAGE_DELETE_TIME = config.BOT_MESSAGE_DELETE_TIME ?? defaultConfig.BOT_MESSAGE_DELETE_TIME;
 
 /**
  * cooldown time for inline command per user (in seconds)
  */
-export const inline_command_coldown_time = MODE === "development" ? 3 : 5;
-export {ownerID, prefixes, guildIDs, trustedID} from "./assets/configs/config.json";
+export const INLINE_COMMAND_COLDOWN_TIME = MODE === "development" ? 3 : 5;
+
+/**
+ * Bot's owner ID located in Developer Portal
+ */
+export const BOT_OWNER_ID = config.BOT_OWNER_ID ?? "";
+
+/**
+ * Bot's client ID located in Developer Portal
+ */
+export const BOT_CLIENT_ID = config.BOT_CLIENT_ID ?? "";
+
+/**
+ * Bot's Guild ID whitelist
+ */
+export const BOT_GUILD_IDS = config.BOT_GUILD_IDS ?? "";
+
+/**
+ * Bot's prefixes and their alternatives
+ */
+export const BOT_PREFIXES = config.BOT_PREFIXES ?? [];
+
+/**
+ * Bot's trusted user ID
+ */
+export const BOT_TRUSTED_IDS = config.BOT_TRUSTED_IDS ?? [];
 
 /**
  * current bot version
  */
-export const botVersion = "1.9.2";
+export const BOT_VERSION = packageJson.version;
 
 // still string | undefined so i put null coalescing
-export const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? "";
+export const DISCORD_TOKEN = config.DISCORD_TOKEN ?? "";
 
 // still string | undefined so i put null coalescing
-export const CLIENT_ID = process.env.CLIENT_ID ?? "";
+export const CLIENT_ID = config.DISCORD_CLIENT_ID ?? "";
 
-export const CLIENT_SECRET = process.env.CLIENT_SECRET ?? "";
-export const port = process.env.PORT ?? "3000";
-export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL ?? "";
-export const OAUTH2_REDIRECT_URL_SERVER = process.env.OAUTH2_REDIRECT_URL_SERVER ?? "";
-export const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
+/**
+ * Bot's Client secret used for OAuth2
+ */
+export const CLIENT_SECRET = config.DISCORD_CLIENT_SECRET ?? "";
 
-export const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
-export const SUPABASE_KEY = process.env.SUPABASE_KEY ?? "";
+/**
+ * Server's port (defaults to 3000)
+ */
+export const port = config.PORT ?? defaultConfig.PORT;
 
-export const CORS_ORIGIN= process.env.CORS_ORIGIN ?? "";
+/**
+ * Discord's OAuth2 Redirect URL, used for the app authentication
+ */
+export const OAUTH2_REDIRECT_URL = config.DISCORD_OAUTH2_REDIRECT_URL ?? "";
+
+/**
+ * Discord's OAuth2 Redirect URL, used for the server authentication
+ */
+export const OAUTH2_REDIRECT_URL_SERVER = config.DISCORD_OAUTH2_REDIRECT_URL_SERVER ?? "";
+
+/**
+ * Server's session secret
+ */
+export const SESSION_SECRET = config.SESSION_SECRET ?? "";
+
+/**
+ * Supabase URL
+ */
+export const SUPABASE_URL = config.SUPABASE_URL ?? "";
+
+/**
+ * Supabase key
+ */
+export const SUPABASE_KEY = config.SUPABASE_KEY ?? "";
+
+/**
+ * Whitelisted URL for CORS
+ */
+export const CORS_ORIGIN= config.CORS_ORIGIN ?? "";
 
 // FROM HERE IS THE CHECKING FOR .env
-
-if(process.env.MODE === "production" || process.env.MODE === "development")
-    MODE = process.env.MODE;
+if(config.MODE === "production" || config.MODE === "development")
+    MODE = config.MODE;
 else{
     console.warn("Cannot find either production or development mode, assuming development mode");
     MODE =  "development";
 }
 
-if(process.env.DISCORD_TOKEN === ""){
+if(config.DISCORD_TOKEN === ""){
     throw new Error("Couldn't find DISCORD_TOKEN in .env");
 }
 
-if(process.env.APPLICATION_ID === "")
+if(config.DISCORD_APPLICATION_ID === "")
     throw new Error("Couldn't find Bot ID in .env");
 
 if(SESSION_SECRET === "") throw new Error("Couldn't find SESSION_SECRET in .env");
@@ -84,49 +140,8 @@ if(MODE === "production")
     if(CORS_ORIGIN === "")
         throw new Error("Couldn't find CORS_ORIGIN in .env");
 
+if(!config.BOT_MAX_MESSAGE_ALLOWED)
+    console.warn("BOT_MAX_MESSAGE_ALLOWED is not defined, using default value instead");
 
-// muted variable to share across all modules
-/**
- * whether the bot is muted or not
- */
-export let muted = false;
-
-let timerMuted: NodeJS.Timeout| null = null;
-
-export function setMute(set: boolean, callback?: () => void){
-    if(timerMuted === null){
-        if(set)
-            timerMuted = setTimeout(() => {
-                muted = false;
-                timerMuted = null;
-                if(callback)
-                    callback();
-            }, 60 * 10 * 1000);
-    }
-    else{
-        if(set){
-            clearTimeout(timerMuted);
-            timerMuted = setTimeout(() => {
-                muted = false;
-                timerMuted = null;
-                if(callback)
-                    callback();
-            }, 60 * 10);
-        }
-        else{
-            clearTimeout(timerMuted);
-            timerMuted = null;
-        }
-    }
-    muted = set;
-}
-
-const firebase_config = JSON.parse(process.env.FIREBASE_CONFIG ?? "{}");
-// check if firebase_config actually have JSON data
-if(Object.keys(firebase_config).length === 0)
-    throw new Error("Couldn't find FIREBASE_CONFIG in .env");
-
-export const firebaseApp = initializeApp(firebase_config);
-export const firestore = getFirestore(firebaseApp);
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+if(!config.BOT_MESSAGE_DELETE_TIME)
+    console.warn("BOT_MESSAGE_DELETE_TIME is not defined, using default value instead");

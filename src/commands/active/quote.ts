@@ -2,7 +2,7 @@ import {MyEmbedBuilder, rngInt, getProfileByID, CommandBuilder, ErrorValidation}
 
 import { CacheType, ChannelType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import quotes from "@assets/messages/active/quote.json";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import QuoteService from "@services/quote";
 import { Quote } from "@models";
 
@@ -44,8 +44,8 @@ const quote = new CommandBuilder<I_Quote>()
     .setAlias(["q"])
     .setDescription("Creates a random quote")
     .setExamples([
-        {command: `${prefixes[0]} quote`, description: "give random quote"},
-        {command: `${prefixes[0]} quote 19`, description: "give quote #19"}
+        {command: `${BOT_PREFIXES[0]} quote`, description: "give random quote"},
+        {command: `${BOT_PREFIXES[0]} quote 19`, description: "give quote #19"}
     ])
     .setSlash({
         slashCommand: new SlashCommandBuilder().setName("quote")

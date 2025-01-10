@@ -1,15 +1,23 @@
-import { supabase } from "@config";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
 
 export class FileManagerSupabase{
     public static s_fileManagers: FileManagerSupabase[] = [];
+
+    private m_supabase: SupabaseClient;
 
     protected m_bucket: string;
     protected m_path: string;
     protected m_cache: string[] = [];
     protected m_useCache: boolean = true;
 
-    constructor(bucket: string, path: string, useCache: boolean = true){
+    constructor(
+            supabaseClient: SupabaseClient, 
+            bucket: string, 
+            path: string, 
+            useCache: boolean = true
+        ){
+        this.m_supabase = supabaseClient;
         this.m_bucket = bucket;
         this.m_path = path;
         this.m_useCache = useCache;
@@ -52,7 +60,7 @@ export class FileManagerSupabase{
      * @returns the url of the file
      */
     translateToUrl(fileName: string): string{
-        return supabase
+        return this.m_supabase
             .storage
             .from(this.m_bucket)
             .getPublicUrl(`${this.m_path}/${fileName}`)
@@ -91,7 +99,7 @@ export class FileManagerSupabase{
 
         const fileExtension = blob.type.split("/")[1];
 
-        const uploadFileRes = await supabase
+        const uploadFileRes = await this.m_supabase
             .storage
             .from(this.m_bucket)
             .upload(`${this.m_path}/${filename ?? randomUUID()}.${fileExtension}`, blob);
@@ -113,7 +121,7 @@ export class FileManagerSupabase{
     async uploadImageblob(blob: Blob, filename?: string): Promise<string>{
         const fileExtension = blob.type.split("/")[1];
 
-        const uploadFileRes = await supabase
+        const uploadFileRes = await this.m_supabase
             .storage
             .from(this.m_bucket)
             .upload(`${this.m_path}/${filename ?? randomUUID()}.${fileExtension}`, blob);
@@ -134,7 +142,7 @@ export class FileManagerSupabase{
      * @param fileName the filename to delete
      */
     async deleteImage(fileName: string): Promise<void>{
-        const deleteRes = await supabase
+        const deleteRes = await this.m_supabase
             .storage
             .from(this.m_bucket)
             .remove([`${this.m_path}/${fileName}`]);
@@ -155,7 +163,7 @@ export class FileManagerSupabase{
         if(this.m_useCache && this.m_cache.includes(fileName))
             return this.translateToUrl(fileName);
         else{
-            const file = await supabase
+            const file = await this.m_supabase
                 .storage
                 .from(this.m_bucket)
                 .exists(`${this.m_path}/${fileName}`);
@@ -174,7 +182,7 @@ export class FileManagerSupabase{
      * get all files in the storage in url format
      */
     async getAllFiles(): Promise<string[]>{
-        const allFiles = await supabase.storage.from(this.m_bucket).list(this.m_path);
+        const allFiles = await this.m_supabase.storage.from(this.m_bucket).list(this.m_path);
 
         if(allFiles.error)
             throw new Error(allFiles.error.message);

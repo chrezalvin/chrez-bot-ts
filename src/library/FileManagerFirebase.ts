@@ -1,8 +1,8 @@
 const debug = require("debug")("Server:FileManager");
 
-import { firebaseApp } from "@config";
 import { getStorage, UploadResult, uploadBytes, deleteObject, getDownloadURL, listAll, ref, StorageReference } from "firebase/storage";
 import { randomUUID } from "crypto";
+import { FirebaseApp } from "firebase/app";
 
 /**
  * @deprecated
@@ -11,14 +11,16 @@ export class FileManagerFirebase{
     // map all FileManagers
     public static s_filemanagers: FileManagerFirebase[] = [];
 
+    private m_firebaseApp: FirebaseApp;
+
     protected static readonly acceptedBlobTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    protected static storage = getStorage(firebaseApp);
 
     protected m_imgPath: string;
     protected m_cache: StorageReference[] = [];
 
-    constructor(imgPath: string){
+    constructor(firebaseApp: FirebaseApp, imgPath: string){
         this.m_imgPath = imgPath;
+        this.m_firebaseApp = firebaseApp;
 
         // fills cache when instanitized, no need to await
         this.getAllFiles();
@@ -36,7 +38,7 @@ export class FileManagerFirebase{
     }
 
     public async translateToUrl(fileName: string): Promise<string>{
-        return await getDownloadURL(ref(FileManagerFirebase.storage, `${this.m_imgPath}/${fileName}`));
+        return await getDownloadURL(ref(getStorage(this.m_firebaseApp), `${this.m_imgPath}/${fileName}`));
     }
 
     // private async base functions to only get data from database
@@ -45,7 +47,7 @@ export class FileManagerFirebase{
      * @returns list of data (might be limited per page)
      */
     protected async _getAllFiles(){
-        const imgRef = ref(FileManagerFirebase.storage, this.m_imgPath);
+        const imgRef = ref(getStorage(this.m_firebaseApp), this.m_imgPath);
         const list = await listAll(imgRef);
         
         return list.items;
@@ -75,7 +77,7 @@ export class FileManagerFirebase{
         if(!FileManagerFirebase.acceptedBlobTypes.includes(blob.type))
             throw new Error("Invalid image file!");
 
-        const imgRef = ref(FileManagerFirebase.storage, `${this.m_imgPath}/${filename ?? randomUUID()}.${fileExtension}`);
+        const imgRef = ref(getStorage(this.m_firebaseApp), `${this.m_imgPath}/${filename ?? randomUUID()}.${fileExtension}`);
         const uploadRes = await uploadBytes(imgRef, blob);
 
         return uploadRes;
@@ -86,7 +88,7 @@ export class FileManagerFirebase{
      * @param imgName the name of the image to be deleted
      */
     protected async _deleteImage(imgName: string): Promise<void>{
-        const storageRef = ref(FileManagerFirebase.storage, `${this.m_imgPath}/${imgName}`);
+        const storageRef = ref(getStorage(this.m_firebaseApp), `${this.m_imgPath}/${imgName}`);
         await deleteObject(storageRef);
     }
 
@@ -107,7 +109,7 @@ export class FileManagerFirebase{
      * @returns the download url of the image
      */
     protected async _getUrlFromPath(path: string): Promise<string>{
-        const imgRef = ref(FileManagerFirebase.storage, path);
+        const imgRef = ref(getStorage(this.m_firebaseApp), path);
         const imgUrl = await getDownloadURL(imgRef);
         return imgUrl;
     }

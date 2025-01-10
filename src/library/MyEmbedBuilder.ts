@@ -1,4 +1,4 @@
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import { APIEmbed, EmbedBuilder, EmbedData } from "discord.js";
 
 interface MyEmbedData{
@@ -12,7 +12,7 @@ export class MyEmbedBuilder extends EmbedBuilder{
         const embed = new MyEmbedBuilder()
             .setTitle(data.title ?? ":warning:     error   :warning:")
             .setDescription(data.description)
-            .setFooter({text: data.footer ?? `for command list, type ${prefixes[0]} help!`})
+            .setFooter({text: data.footer ?? `for command list, type ${BOT_PREFIXES[0]} help!`})
             .setColor("Red");
 
         return embed;

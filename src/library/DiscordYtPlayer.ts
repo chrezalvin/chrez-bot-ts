@@ -4,7 +4,7 @@ import { spawn } from "child_process";
 import internal from "stream";
 import { VoiceBasedChannel } from "discord.js";
 import { searchYoutube } from "./YoutubeSearch";
-import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription, StreamType, VoiceConnectionStatus } from "@discordjs/voice";
+import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription, VoiceConnectionStatus } from "@discordjs/voice";
 
 function createYtdlStream(videoUrl: string): internal.Readable {
     return spawn("yt-dlp", ["-f", "bestaudio", "--rm-cache-dir", "-o", "-", videoUrl]).stdout;
@@ -28,13 +28,23 @@ export default class DiscordYtPlayer{
     private m_subscription: PlayerSubscription | null = null;
     private m_currentAudioResource: AudioResource | null = null;
     private m_repeat: boolean = false;
+    private m_timeoutDurationMs = 5 * 60 * 1000;
+    private m_timeout: NodeJS.Timeout | null = null;
     private m_volume = 40 / 100;
 
+    /**
+     * creates a new discord yt player
+     * @param option 
+     */
     constructor(option?: {
         volume?: number;
+        timeoutDurationMs?: number;
     }){
         if(option?.volume)
             this.m_volume = option.volume;
+
+        if(option?.timeoutDurationMs)
+            this.m_timeoutDurationMs = option.timeoutDurationMs;
     }
 
     // getter
@@ -127,6 +137,21 @@ export default class DiscordYtPlayer{
         this.m_currentAudioResource = resource;
 
         if(this.m_subscription){
+            stream.on("error", (error) => {
+                debug(`stream error: ${error.message}`);
+                options?.onError?.(error); 
+            });
+
+            stream.on("data", (chunk) => {
+                debug(`stream data: ${chunk.length}`);
+            });
+
+            stream.on("end", () => {
+                debug("stream end");
+            });
+
+
+
             this.m_subscription.connection.on(VoiceConnectionStatus.Ready, (oldState, newState) => {
                 // starts playing the stream when the connection is ready
                 debug(`Connection ready: ${oldState.status} -> ${newState.status}`);
@@ -193,6 +218,12 @@ export default class DiscordYtPlayer{
         if(!this.m_subscription)
             return false;
 
+        // remove timer if stop
+        if(this.m_timeout){
+            clearTimeout(this.m_timeout);
+            this.m_timeout = null;
+        }
+
         this.m_subscription?.connection.destroy();
         this.m_subscription = null;
         this.m_queue = [];
@@ -208,6 +239,13 @@ export default class DiscordYtPlayer{
         if(!this.m_subscription)
             return false;
 
+        // check if the player is playing
+        // if it does, then add a timer to stop the stream after 5 minutes of not playing
+        if(this.m_subscription.player.state.status !== AudioPlayerStatus.Playing)
+        {
+            this.m_timeout = setTimeout(this.stop, this.m_timeoutDurationMs);
+        }
+
         return this.m_subscription.player.pause();
     }
 
@@ -218,6 +256,13 @@ export default class DiscordYtPlayer{
     public resume(){
         if(!this.m_subscription)
             return false;
+
+        // clear the timeout if it exists
+        if(this.m_timeout){
+            clearTimeout(this.m_timeout);
+            this.m_timeout = null;
+        }
+
         return this.m_subscription.player.unpause();
     }
 
@@ -229,11 +274,18 @@ export default class DiscordYtPlayer{
         if(!this.m_subscription)
             return false;
 
+        // remove timer if skip
+        if(this.m_timeout){
+            clearTimeout(this.m_timeout);
+            this.m_timeout = null;
+        }
+
         return this.m_subscription.player.stop();
     }
 
     /**
-     * removes a queue item by index, index starts from 1, cannot remove the current stream
+     * removes a queue item by index, index starts from 1
+     * cannot remove the current stream, use skip instead
      * @param index 
      * @returns 
      */

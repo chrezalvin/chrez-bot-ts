@@ -1,13 +1,13 @@
 const debug = require("debug")("library:ServiceFileSupabase");
 
-import { supabase } from "@config";
 import { randomUUID } from "crypto";
 import { inferType } from "./InferType";
 import { StrictOmit } from "./CustomTypes";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-type PostgrestQueryBuilder = ReturnType<typeof supabase.from>;
-type PostgrestFilterBuilder = ReturnType<ReturnType<typeof supabase.from>["select"]>;
-type PostgrestBuilder = ReturnType<ReturnType<ReturnType<typeof supabase.from>["select"]>["single"]>;
+type PostgrestQueryBuilder = ReturnType<SupabaseClient["from"]>;
+type PostgrestFilterBuilder = ReturnType<ReturnType<SupabaseClient["from"]>["select"]>;
+type PostgrestBuilder = ReturnType<ReturnType<ReturnType<SupabaseClient["from"]>["select"]>["single"]>;
 
 export class ServiceFileSupabase<
     DataType extends Object,
@@ -16,6 +16,8 @@ export class ServiceFileSupabase<
     FileKey extends keyof DataType = never,
 >{
     public static s_services: ServiceFileSupabase<any, any, any, any>[] = [];
+
+    private m_supabase: SupabaseClient;
 
     protected m_useCache: boolean;
     protected m_cache: Map<DataType[IdKey], DataType> = new Map();
@@ -55,7 +57,7 @@ export class ServiceFileSupabase<
 
         const filePath = data[this.m_fileKeyName] as string;
 
-        const downloadUrl = supabase
+        const downloadUrl = this.m_supabase
             .storage
             .from(this.m_storageBucket)
             .getPublicUrl(filePath)
@@ -71,7 +73,7 @@ export class ServiceFileSupabase<
     }
 
     private async getAllDataDebugless(): Promise<DataType[]>{
-        const response = await supabase
+        const response = await this.m_supabase
             .from(this.m_tableName)
             .select("*");
 
@@ -92,6 +94,7 @@ export class ServiceFileSupabase<
     }
 
     constructor(
+        supabaseClient: SupabaseClient,
         keyName: IdKey,
         tableOption: {
             tableName: string,
@@ -104,6 +107,8 @@ export class ServiceFileSupabase<
             fileKey: FileKey & DataType[FileKey] extends string ? FileKey : never,
         }])
     ){
+        this.m_supabase = supabaseClient;
+
         // table
         this.m_keyName = keyName;
 
@@ -122,7 +127,7 @@ export class ServiceFileSupabase<
                 .then((data) => {
                     for(const ele of data){
                         if(this.m_fileKeyName){
-                            const downloadUrl = supabase
+                            const downloadUrl = this.m_supabase
                                 .storage
                                 .from(this.m_storageBucket)
                                 .getPublicUrl(ele[this.m_fileKeyName] as string)
@@ -145,9 +150,9 @@ export class ServiceFileSupabase<
 
     // these are private methods that returns non-translated data
     private async _get(key: DataType[IdKey]): Promise<DataType>{
-        debug(`getting data with key: ${key}`);
+        debug(`getting ${this.m_tableName} data with key: ${key}`);
 
-        const response = await supabase
+        const response = await this.m_supabase
             .from(this.m_tableName)
             .select("*")
             .eq(this.m_keyName, key)
@@ -174,7 +179,7 @@ export class ServiceFileSupabase<
     private async _getAll(): Promise<DataType[]>{
         debug(`getting all data`);
 
-        const response = await supabase
+        const response = await this.m_supabase
             .from(this.m_tableName)
             .select("*");
 
@@ -208,14 +213,14 @@ export class ServiceFileSupabase<
                 if(!fileName)
                     throw new Error("Failed to get image name");
 
-                await supabase
+                await this.m_supabase
                     .storage
                     .from(this.m_storageBucket)
                     .remove([fileName]);
             }
         }
 
-        const response = await supabase
+        const response = await this.m_supabase
             .from(this.m_tableName)
             .delete()
             .eq(this.m_keyName, key);
@@ -257,7 +262,7 @@ export class ServiceFileSupabase<
                 const uploadedFileName = fileName ?? randomUUID();
                 const fileExtension = file.type.split("/")[1];
     
-                const response = await supabase
+                const response = await this.m_supabase
                     .storage
                     .from(this.m_storageBucket)
                     .upload(`${this.m_storagePath}/${uploadedFileName}.${fileExtension}`, file);
@@ -271,7 +276,7 @@ export class ServiceFileSupabase<
             }
         }
 
-        const response = await supabase
+        const response = await this.m_supabase
             .from(this.m_tableName)
             .insert(filePath !== undefined && this.m_fileKeyName ? {...data, [this.m_fileKeyName]: filePath} : data)
             .select();
@@ -325,7 +330,7 @@ export class ServiceFileSupabase<
                 if(!fileName)
                     throw new Error("Failed to get image name");
 
-                await supabase
+                await this.m_supabase
                     .storage
                     .from(this.m_storageBucket)
                     .remove([fileName]);
@@ -347,7 +352,7 @@ export class ServiceFileSupabase<
                 const uploadedFileName = fileName ?? randomUUID();
                 const fileExtension = file.type.split("/")[1];
     
-                const response = await supabase
+                const response = await this.m_supabase
                     .storage
                     .from(this.m_storageBucket)
                     .upload(`${this.m_storagePath}/${uploadedFileName}.${fileExtension}`, file);
@@ -361,7 +366,7 @@ export class ServiceFileSupabase<
             }
         }
 
-        const newData = await supabase
+        const newData = await this.m_supabase
             .from(this.m_tableName)
             .update(filePath !== undefined && this.m_fileKeyName ? {...data, [this.m_fileKeyName]: filePath} : data)
             .eq(this.m_keyName, id)
@@ -390,7 +395,7 @@ export class ServiceFileSupabase<
     async _call(functionName: string, args: any): Promise<DataType[]>{
         debug(`calling function: ${functionName}`);
 
-        const response = await supabase.rpc(functionName, args);
+        const response = await this.m_supabase.rpc(functionName, args);
 
         debug(`response: ${JSON.stringify(response)}`);
 
@@ -415,7 +420,7 @@ export class ServiceFileSupabase<
     async _queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestQueryBuilder) => _R): Promise<DataType | DataType[]>{
         debug(`querying data using query builder`);
 
-        const res = await fcn(supabase.from(this.m_tableName));
+        const res = await fcn(this.m_supabase.from(this.m_tableName));
 
         if(res.error)
             throw new Error(res.error.message);

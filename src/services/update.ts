@@ -1,11 +1,14 @@
 import { ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { Update, isUpdate } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class UpdateService{
     protected static dbName = "updates";
 
-    public static serviceSupabase = new ServiceFileSupabase<Update, "version">( "version", 
+    public static serviceSupabase = new ServiceFileSupabase<Update, "version">( 
+        supabase,
+        "version", 
         {
             tableName: UpdateService.dbName,
             typeGuard: isUpdate,

@@ -1,6 +1,6 @@
 import { CommandBuilder} from "@library";
 import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
-import { getDiscordYtPlayer } from "@shared";
+import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 interface RepeatParameter {
     voiceChannel: VoiceBasedChannel;

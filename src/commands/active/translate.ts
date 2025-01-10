@@ -3,7 +3,7 @@ const debug = require("debug")("ChrezBot:update");
 import {MyEmbedBuilder, CommandBuilder, ErrorValidation, rngInt} from "@library";
 
 import { MessageType } from "discord.js";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import translates from "@assets/messages/active/translate.json";
 
 function getConotationMessage(positive: number, negative: number, neutral: number): string{
@@ -110,8 +110,8 @@ const update = new CommandBuilder<I_Translate>()
     .setAlias(["explain", "define", "meaning", "slang"])
     .setDescription("Gives you translation of slangs")
     .setExamples([
-        {command: `${prefixes[0]} update`, description: "give latest update"},
-        {command: `${prefixes[0]} update 1.1.0`, description: "give update 1.1.0"}
+        {command: `${BOT_PREFIXES[0]} update`, description: "give latest update"},
+        {command: `${BOT_PREFIXES[0]} update 1.1.0`, description: "give update 1.1.0"}
     ])
     .setChat({
         execute: async (message) => {

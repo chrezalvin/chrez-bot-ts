@@ -5,7 +5,7 @@ import {EventArguments} from "../"
 
 import * as sharedCommands from "shared/commands";
 import { CacheType, ChatInputCommandInteraction, Events } from "discord.js";
-import { message_delete_time } from "@config";
+import { MESSAGE_DELETE_TIME } from "@config";
 import { UserService } from "@services";
 
 function slashCommandValidation(interaction: ChatInputCommandInteraction<CacheType>): CommandBuilder<any>{
@@ -53,7 +53,7 @@ const event: EventArguments<Events.InteractionCreate> = [
 
             const embed = MyEmbedBuilder.createError({
                     description: errorMsg,
-                    footer: `this message will be deleted in ${message_delete_time} seconds`
+                    footer: `this message will be deleted in ${MESSAGE_DELETE_TIME} seconds`
                 });
 
             if(interaction.deferred)
@@ -63,7 +63,7 @@ const event: EventArguments<Events.InteractionCreate> = [
 
             setTimeout(async () => {
                 interaction.deleteReply();
-            }, message_delete_time * 1000);
+            }, MESSAGE_DELETE_TIME * 1000);
         }
     }
 ]
