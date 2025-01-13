@@ -1,7 +1,7 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:sharedcommands");
 
-import {MODE} from "@config";
+import { MODE } from "@config";
 import { CommandBuilder, inlineCommandReturnTypes } from "@library";
 import commands from "@commands";
 import { Collection } from "discord.js";

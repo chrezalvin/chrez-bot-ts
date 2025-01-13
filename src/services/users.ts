@@ -23,7 +23,6 @@ export class UserService {
         const find = await UserService
             .service
             .queryBuilder(query => query
-                .select("*")
                 .or(`username.ilike.%${usernameOrAlias}%,aliases.cs.{${usernameOrAlias}}`)
                 .limit(1)
                 .single()

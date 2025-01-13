@@ -3,7 +3,6 @@ const debug = require('debug')('Server:registlet');
 import { isRegistletWithoutId, Registlet } from '@models';
 import { RegistletService } from '@services';
 import { Request, Response } from 'express';
-import fs from "fs";
 
 export const registlet_get_all = async (_: Request, res: Response) => {
     debug("getting all registlet");
@@ -38,12 +37,9 @@ export const registlet_post_add = async (req: Request, res: Response) => {
     let newRegistlet: Registlet;
 
     if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
+        const blob = new Blob([image.buffer], {type: image.mimetype});
 
         newRegistlet = await RegistletService.setNewRegistlet(registlet, blob);
-
-        fs.unlinkSync(image.path);
     }
     else
         newRegistlet = await RegistletService.setNewRegistlet(registlet);
@@ -66,12 +62,9 @@ export const registlet_post_edit = async (req: Request, res: Response) => {
 
     let updatedRegistlet: Registlet;
     if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
+        const blob = new Blob([image.buffer], {type: image.mimetype});
 
         updatedRegistlet = await RegistletService.updateRegistlet(id, registlet, blob);
-
-        fs.unlinkSync(image.path);
     }
     else
         updatedRegistlet = await RegistletService.updateRegistlet(id, registlet);

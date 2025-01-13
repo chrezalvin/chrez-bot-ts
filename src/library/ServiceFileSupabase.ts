@@ -5,7 +5,6 @@ import { inferType } from "./InferType";
 import { StrictOmit } from "./CustomTypes";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-type PostgrestQueryBuilder = ReturnType<SupabaseClient["from"]>;
 type PostgrestFilterBuilder = ReturnType<ReturnType<SupabaseClient["from"]>["select"]>;
 type PostgrestBuilder = ReturnType<ReturnType<ReturnType<SupabaseClient["from"]>["select"]>["single"]>;
 
@@ -417,10 +416,10 @@ export class ServiceFileSupabase<
             return data as DataType[];
     }
 
-    async _queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestQueryBuilder) => _R): Promise<DataType | DataType[]>{
+    async _queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestFilterBuilder) => _R): Promise<DataType | DataType[]>{
         debug(`querying data using query builder`);
 
-        const res = await fcn(this.m_supabase.from(this.m_tableName));
+        const res = await fcn(this.m_supabase.from(this.m_tableName).select("*"));
 
         if(res.error)
             throw new Error(res.error.message);
@@ -556,7 +555,7 @@ export class ServiceFileSupabase<
      * @param fcn the function to build the query
      * @returns the data that matches the query
      */
-    async queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestQueryBuilder) => _R): Promise<DataType | DataType[]>{
+    async queryBuilder<_R extends PostgrestFilterBuilder | PostgrestBuilder>(fcn: (query: PostgrestFilterBuilder) => _R): Promise<DataType | DataType[]>{
         const data = await this._queryBuilder(fcn);
 
         if(Array.isArray(data)){

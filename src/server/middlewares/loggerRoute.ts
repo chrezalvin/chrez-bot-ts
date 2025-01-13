@@ -1,4 +1,4 @@
-const debug = require("debug")("Server:loggerRoute");
+const debug = require("debug")("middleware:loggerRoute");
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
 export function loggerRoute(): RequestHandler{

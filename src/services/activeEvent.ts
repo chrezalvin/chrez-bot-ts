@@ -32,7 +32,6 @@ export class ActiveEventService {
         const events = await ActiveEventService
             .activeEventManager
             .queryBuilder((query) => query
-                .select("*")
                 .ilike("title", `%${name}%`)
             );
 
@@ -63,7 +62,6 @@ export class ActiveEventService {
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder((query => query
-                    .select("*")
                     .lte("start_date", date)
                     .gte("end_date", date)
                 )
@@ -79,7 +77,6 @@ export class ActiveEventService {
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder(query => query
-                .select("*")
                 .ilike("title", `%${name}%`)
             );
 
@@ -98,7 +95,6 @@ export class ActiveEventService {
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder(query => query
-                .select("*")
                 .is("end_date", null)
                 .gte("start_date", date)
             );

@@ -38,7 +38,6 @@ export class EventService {
         const res = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .select("*")
                 .or(`start_month.eq.${month || currentMonth},end_month.eq.${month || currentMonth}`)
             );
 
@@ -52,7 +51,6 @@ export class EventService {
         const found = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .select("*")
                 .ilike("title", `%${name}%`)
                 .limit(1)
                 .single()
@@ -74,7 +72,6 @@ export class EventService {
         const res = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .select("*")
                 .lte("start_date", date)
                 .gte("end_date", date)
             );

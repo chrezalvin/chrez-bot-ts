@@ -1,12 +1,12 @@
 {
   "name": "cbts",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "SET DEBUG=* && node test.js",
     "test:ts": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/test",
-    "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*,models:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
+    "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*,models:*,middleware:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
     "start": "tsc && tsc-alias &&node ./output/registerSlashCommand &&node ./output/index",
     "build": "tsc && tsc-alias",
@@ -27,7 +27,6 @@
     "dotenv": "^16.4.7",
     "evaluatex": "^2.2.0",
     "express": "^4.18.2",
-    "firebase": "^10.7.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "pureimage": "^0.3.17",

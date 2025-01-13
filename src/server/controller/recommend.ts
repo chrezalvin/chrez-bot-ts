@@ -3,7 +3,6 @@ const debug = require("debug")("Server:events");
 import { Request, Response } from 'express';
 import { isRecommendWithoutId, Recommend } from '@models';
 import { RecommendService } from 'services/recommend';
-import fs from "fs";
 
 export const recommend_get_default = async (_: Request, res: Response) => {
     debug("getting all recommend");
@@ -37,12 +36,9 @@ export const recommend_post_add = async (req: Request, res: Response) => {
 
     let newRecommend: Recommend;
     if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
+        const blob = new Blob([image.buffer], {type: image.mimetype});
 
         newRecommend = await RecommendService.createNewRecommend(recommend, blob);
-
-        fs.unlinkSync(image.path);
     }
     else
         newRecommend = await RecommendService.createNewRecommend(recommend);
@@ -80,12 +76,9 @@ export const recommend_post_update = async (req: Request, res: Response) => {
 
     let updatedRecommend: Recommend;
     if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
+        const blob = new Blob([image.buffer], {type: image.mimetype});
 
         updatedRecommend = await RecommendService.updateRecommend(id, recommend, blob);
-
-        fs.unlinkSync(image.path);
     }
     else
         updatedRecommend = await RecommendService.updateRecommend(id, recommend);

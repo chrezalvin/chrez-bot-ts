@@ -33,10 +33,7 @@ export class RegistletService {
 
         const res = await RegistletService
             .serviceSupabase
-            .queryBuilder((query) => query
-                .select("*")
-                .ilike("name", `%${name}%`)
-            );
+            .queryBuilder(query => query.ilike("name", `%${name}%`));
 
         if(!Array.isArray(res))
             throw new Error("Failed to get registlet");

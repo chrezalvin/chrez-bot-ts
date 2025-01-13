@@ -1,4 +1,4 @@
-const debug = require("debug")("Server:sessionCheck");
+const debug = require("debug")("middleware:sessionCheck");
 
 import { UserService } from "@services";
 import SessionService from "@services/session";

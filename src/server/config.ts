@@ -23,7 +23,6 @@ express.use(cookieParser());
 
 express.use(loggerRoute());
 express.use(sessionCheck());
-
 express.use(routes);
 
 // catch 404 and forward to error handler

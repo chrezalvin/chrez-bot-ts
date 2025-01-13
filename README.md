@@ -22,9 +22,9 @@ Here's what you need to install a fully fledged chrezbot
 - Supabase database & storage (you need the same database ERD as shown in the `models` file)
 - Chrezbot video player that requires both [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [ffmpeg](https://www.ffmpeg.org/), you need to install these program to play audio.
 
-## Environtment Configuration
+## Environment Configuration
 
-the environtment example and descriptions can be found at `~/env.example`
+the environment example and descriptions can be found at `~/config.example.json`
 
 ## Chrez Bot Command Lists
 

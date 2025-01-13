@@ -4,42 +4,6 @@ import { BOT_PREFIXES } from "@config";
 import { MyEmbedBuilder, CommandBuilder, calculateExpressionString, ErrorValidation } from "@library";
 import { InteractionReplyOptions, MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 
-// const units: Map<string, number> = new Map([ 
-//     ["k", 3], 
-//     ['m', 6],
-//     ['b', 9],
-//     ['t', 12],
-// ]);
-
-// function replaceZeroWithUnit(num: number){
-//     // count the number of zeros
-//     let count = 0;
-//     for(; num % 10 === 0 && num > 0; ++count)
-//         num /= 10;
-
-//     if((count + 1) % 3 === 0 && num > 10){
-//         num /= 10;
-//         ++count;
-//     }
-
-//     let res = "";
-//     for(const [k, v] of units){
-//         if(count === v){
-//             res = `${num}${k}`;
-//             break;
-//         }
-//         else if(count % 3 > 0 && count - (count % 3) === v){
-//             res = `${num}${"0".repeat(count % 3)}${k}`;
-//             break;
-//         }
-//     }
-
-//     if(res === "")
-//         res = `${num}`;
-
-//     return res;
-// }
-
 const run = async (args?: I_Calculate): Promise<MessageCreateOptions & InteractionReplyOptions> => {
     if(!args)
         throw new ErrorValidation("chat_command_option_unavailable");
@@ -48,15 +12,6 @@ const run = async (args?: I_Calculate): Promise<MessageCreateOptions & Interacti
     const expressionToSend = args.expression.replaceAll('*', '\\*');
 
     const embed = new MyEmbedBuilder();
-
-    // let result: string = `${res}`;
-    // const isExpressionHaveUnit = args.expression.match(/(k|m|t|b)/) !== null;
-    // // remove trailing 000... when the expression have measurement unit (like k, m, t, ...)
-    // // 4k + 4k = 8k not 8000 and 4k * 4k = 16m
-    // if(isExpressionHaveUnit && res >= 1000){
-    //     // count the number of zeros
-    //     result = replaceZeroWithUnit(Number.parseInt(`${result}`) ?? 0);
-    // }
 
     embed.setTitle("calculates the expression")
         .setDescription(`${expressionToSend} = ${res}`);
