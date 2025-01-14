@@ -4,7 +4,7 @@ import { spawn } from "child_process";
 import internal from "stream";
 import { VoiceBasedChannel } from "discord.js";
 import { searchYoutube } from "./YoutubeSearch";
-import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription, VoiceConnectionStatus } from "@discordjs/voice";
+import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription } from "@discordjs/voice";
 
 function createYtdlStream(videoUrl: string): internal.Readable {
     return spawn("yt-dlp", ["-f", "bestaudio", "--rm-cache-dir", "-o", "-", videoUrl]).stdout;
@@ -25,8 +25,11 @@ export interface DiscordYtPlayerItem{
 export default class DiscordYtPlayer{
     // queue of the stream, queue[0] is the current stream
     private m_queue: DiscordYtPlayerItem[] = [];
+
     private m_subscription: PlayerSubscription | null = null;
     private m_currentAudioResource: AudioResource | null = null;
+    private m_currentStream: internal.Readable | null = null;
+
     private m_repeat: boolean = false;
     private m_timeoutDurationMs = 5 * 60 * 1000;
     private m_timeout: NodeJS.Timeout | null = null;
@@ -70,8 +73,7 @@ export default class DiscordYtPlayer{
 
     // setter
     public set volume(volume: number){
-        if(this.m_currentAudioResource)
-            this.m_currentAudioResource.volume?.setVolume(volume);
+        this.m_currentAudioResource?.volume?.setVolume(volume);
     }
 
     public set repeat(repeat: boolean){
@@ -125,45 +127,16 @@ export default class DiscordYtPlayer{
 
         const player = createAudioPlayer();
         const stream = createYtdlStream(url);
-        const resource = createAudioResource(stream, {
+        this.m_currentAudioResource = createAudioResource(stream, {
             // inlineVolume: true,
         });
+        this.m_subscription = connection.subscribe(player) ?? null;
 
         // resource.volume?.setVolume(this.m_volume);
 
-        player.play(resource);
-
-        this.m_subscription = connection.subscribe(player) ?? null;
-        this.m_currentAudioResource = resource;
+        player.play(this.m_currentAudioResource);
 
         if(this.m_subscription){
-            stream.on("error", (error) => {
-                debug(`stream error: ${error.message}`);
-                options?.onError?.(error); 
-            });
-
-            stream.on("data", (chunk) => {
-                debug(`stream data: ${chunk.length}`);
-            });
-
-            stream.on("end", () => {
-                debug("stream end");
-            });
-
-
-
-            this.m_subscription.connection.on(VoiceConnectionStatus.Ready, (oldState, newState) => {
-                // starts playing the stream when the connection is ready
-                debug(`Connection ready: ${oldState.status} -> ${newState.status}`);
-            });
-    
-            this.m_subscription.connection.on(VoiceConnectionStatus.Disconnected, () => {
-                // stops the stream when the connection is disconnected
-    
-                debug("Connection disconnected");
-            });
-            
-
             this.m_subscription.player.on(AudioPlayerStatus.Idle, (oldState, newState) => {
                 // stops the stream when the player is idle
                 debug(`Player idle: ${oldState.status} -> ${newState.status}`);
@@ -180,8 +153,8 @@ export default class DiscordYtPlayer{
                     // play next in queue
                     if(this.m_queue.length > 0){
                         const newUrl = this.m_queue[0].videoUrl;
-                        const stream = createYtdlStream(newUrl);
-                        const resource = createAudioResource(stream, {
+                        this.m_currentStream = createYtdlStream(newUrl);
+                        const resource = createAudioResource(this.m_currentStream, {
                             // inlineVolume: true,
                         });
                         // resource.volume?.setVolume(this.m_volume);
@@ -193,11 +166,14 @@ export default class DiscordYtPlayer{
                     }
                     // or stops the vc, if there is no more queue
                     else{
+                        debug("Queue end");
+
                         if(this.m_subscription)
                             this.m_subscription.connection.destroy();
 
                         this.m_subscription = null;
                         this.m_currentAudioResource = null;
+                        this.m_currentStream = null;
 
                         options?.onQueueEnd?.();
                     }
@@ -227,6 +203,8 @@ export default class DiscordYtPlayer{
         this.m_subscription?.connection.destroy();
         this.m_subscription = null;
         this.m_queue = [];
+        this.m_currentAudioResource = null;
+        this.m_currentStream = null;
 
         return true;
     }
