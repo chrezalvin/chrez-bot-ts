@@ -1,7 +1,7 @@
 import { CommandBuilder, MyEmbedBuilder } from "@library";
 import { CacheType, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Message, MessageCreateOptions, MessagePayload, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
-import { createDiscordYtPlayerIfNotExist, deleteDiscordYtPlayer, discordYtPlayerMap } from "@shared";
-import { prefixes } from "@config";
+import { createDiscordYtPlayerIfNotExist, deleteDiscordYtPlayer} from "@shared/DiscordYtPlayer";
+import { BOT_PREFIXES } from "@config";
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("play")
@@ -127,7 +127,7 @@ const play = new CommandBuilder<PlayParameter>()
     .setStatus("public")
     .setMode("available")
     .setExamples([
-        {command: `${prefixes[0]} play bohemian raphsody`, description: "plays bohemian raphsody"},
+        {command: `${BOT_PREFIXES[0]} play bohemian raphsody`, description: "plays bohemian raphsody"},
     ])
     .setSlash({
         slashCommand: slashCommandBuilder,

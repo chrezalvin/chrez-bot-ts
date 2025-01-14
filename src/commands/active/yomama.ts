@@ -2,7 +2,7 @@ import {MyEmbedBuilder, rngInt, CommandBuilder} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
 import yomamas from "@assets/messages/active/yomama.json";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 
 const run = (args?: I_Yomama) => {
     let index: number = args?.index ?? rngInt(0, yomamas.length - 1);
@@ -34,8 +34,8 @@ const yomama = new CommandBuilder<I_Yomama>()
         .setAlias(["yo", "mama"])
         .setDescription("Creates a random yo mama joke")
         .setExamples([
-            {command: `${prefixes[0]} yomama`, description: "give random yo mama joke"},
-            {command: `${prefixes[0]} yomama 19`, description: "give yo mama jokes #19"}
+            {command: `${BOT_PREFIXES[0]} yomama`, description: "give random yo mama joke"},
+            {command: `${BOT_PREFIXES[0]} yomama 19`, description: "give yo mama jokes #19"}
         ])
         .setSlash({
             slashCommand,

@@ -1,7 +1,6 @@
 import { ActiveEvent, isActiveEventWithoutId, isPartialActiveEvent } from '@models';
 import { ActiveEventService } from '@services';
 import { Request, Response } from 'express';
-import fs from "fs";
 
 export const activeEvents_get_all = async (req: Request, res: Response) => {
     const name = req.query.name as unknown;
@@ -58,23 +57,15 @@ export const activeEvents_post_add = async (req: Request, res: Response) => {
     if(!isActiveEventWithoutId(activeEvent))
         throw new Error("Invalid activeEvent object");
 
-    let newActiveEvent: ActiveEvent;
-    if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
-
-        newActiveEvent = await ActiveEventService.createNewEvent(activeEvent, blob); 
-        fs.unlinkSync(image.path);
-    }
-    else
-        newActiveEvent = await ActiveEventService.createNewEvent(activeEvent);
+    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    let newActiveEvent = await ActiveEventService.createNewEvent(activeEvent, blob);
 
     res.status(200).json(newActiveEvent);
 }
 
 export const activeEvents_post_edit = async (req: Request, res: Response) => {
     const id = parseInt(req.body.id);
-    const activeEvent = JSON.parse(req.body.activeEvent);
+    const activeEvent = JSON.parse(req.body.activeEvent ?? "{}");
     const image = req.file;
 
     if(isNaN(id))
@@ -83,17 +74,8 @@ export const activeEvents_post_edit = async (req: Request, res: Response) => {
     if(!isPartialActiveEvent(activeEvent))
         throw new Error("Invalid activeEvent object");
 
-    let updatedActiveEvent: ActiveEvent;
-    if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
-
-        updatedActiveEvent = await ActiveEventService.updateEvent(id, activeEvent, blob);
-
-        fs.unlinkSync(image.path);
-    }
-    else
-        updatedActiveEvent = await ActiveEventService.updateEvent(id, activeEvent);
+    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    let updatedActiveEvent = await ActiveEventService.updateEvent(id, activeEvent, blob);
 
     res.status(200).json(updatedActiveEvent);
 }

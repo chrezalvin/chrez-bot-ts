@@ -1,17 +1,22 @@
 import client from "@bot";
 import { ServiceFileSupabase } from "@library";
 import { isSession, isSessionView, Session, SessionView } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class SessionService{
     protected static readonly sessionViewPath = "sessions_view";
     protected static readonly sessionPath = "sessions";
-    static sessionViewSupabase = new ServiceFileSupabase<SessionView, "session_id">("session_id", {
+    static sessionViewSupabase = new ServiceFileSupabase<SessionView, "session_id">(
+        supabase,
+        "session_id", {
         tableName: SessionService.sessionViewPath,
         typeGuard: isSessionView,
         useCache: false,
     });
 
-    static sessionSupabase = new ServiceFileSupabase<Session, "session_id", "created_at" | "updated_at">("session_id", {
+    static sessionSupabase = new ServiceFileSupabase<Session, "session_id", "created_at" | "updated_at">(
+        supabase,
+        "session_id", {
         tableName: SessionService.sessionPath,
         typeGuard: isSession,
         useCache: false,

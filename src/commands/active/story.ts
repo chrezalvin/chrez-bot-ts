@@ -1,7 +1,7 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import { StoryService } from "@services";
 
 const run = async (args?: I_Story) => {
@@ -54,8 +54,8 @@ const story = new CommandBuilder<I_Story>()
         .setAlias(["s"])
         .setDescription("Creates a random story")
         .setExamples([
-            {command: `${prefixes[0]} story`, description: "give random story"},
-            {command: `${prefixes[0]} story 3`, description: "give story #3"}
+            {command: `${BOT_PREFIXES[0]} story`, description: "give random story"},
+            {command: `${BOT_PREFIXES[0]} story 3`, description: "give story #3"}
         ])
         .setSlash({
             slashCommand: new SlashCommandBuilder().setName("story")

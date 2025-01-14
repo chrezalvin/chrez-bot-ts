@@ -1,7 +1,7 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import { CursedService } from "services/cursed";
 
 const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Cursed) => {
@@ -34,8 +34,8 @@ const cursed = new CommandBuilder<I_Cursed>({
     alias: ["curse", "cringe"],
     description: "Sends you a really cursed image",
     examples: [
-        {command: `${prefixes[0]} curse`, description: "give random cursed image"},
-        {command: `${prefixes[0]} curse 19`, description: "give cursed image #19"}
+        {command: `${BOT_PREFIXES[0]} curse`, description: "give random cursed image"},
+        {command: `${BOT_PREFIXES[0]} curse 19`, description: "give cursed image #19"}
     ],
     slash: {
         slashCommand: new SlashCommandBuilder().setName("cursed")

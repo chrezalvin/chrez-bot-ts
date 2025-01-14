@@ -1,6 +1,6 @@
-import { inline_command_coldown_time } from "@config";
+import { INLINE_COMMAND_COLDOWN_TIME } from "@config";
 
-const debugs = require("debug")("ChrezBot:TemporaryArray");
+const debugs = require("debug")("library:TemporaryArray");
 
 /**
  * TemporaryArray is an array that the data will be deleted after a certain time
@@ -18,7 +18,7 @@ export class TemporaryArray<_T> {
     constructor(
         data: _T[] = [],
         isEqual: (a: _T, b: _T) => boolean,
-        time: number = inline_command_coldown_time * 1000
+        time: number = INLINE_COMMAND_COLDOWN_TIME * 1000
     ) {
         for(const d of data)
             this.addData(d);

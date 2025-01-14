@@ -1,13 +1,16 @@
 import { ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { Event, isEvent } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class EventService {
     protected static readonly eventPath: string = "events";
     protected static readonly eventImgPath: string = "images/events";
     protected static readonly eventBucket: string = "images";
 
-    static eventManager = new ServiceFileSupabase<Event, "event_id", never, "img_path">("event_id", 
+    static eventManager = new ServiceFileSupabase<Event, "event_id", never, "img_path">(
+        supabase,
+        "event_id", 
         {
             tableName: EventService.eventPath,
             typeGuard: isEvent,
@@ -35,7 +38,6 @@ export class EventService {
         const res = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .select("*")
                 .or(`start_month.eq.${month || currentMonth},end_month.eq.${month || currentMonth}`)
             );
 
@@ -49,7 +51,6 @@ export class EventService {
         const found = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .select("*")
                 .ilike("title", `%${name}%`)
                 .limit(1)
                 .single()
@@ -71,7 +72,6 @@ export class EventService {
         const res = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .select("*")
                 .lte("start_date", date)
                 .gte("end_date", date)
             );

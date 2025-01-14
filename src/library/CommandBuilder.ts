@@ -1,7 +1,7 @@
 import { ButtonBuilder, CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import { isChatInputCommandInteraction, ErrorValidation } from "@library";
 import { SenddableMessage } from "./CustomTypes";
-const debug = require("debug")("ChrezBot:command");
+const debug = require("debug")("library:command");
 
 export interface ExampleField{
     command: string;
@@ -67,8 +67,6 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     protected m_chat: CommandData<_T>["chat"] = undefined;
     protected m_commandStatus: CommandData<_T>["status"] = "public";
     protected m_buttons: CommandData<_T>["buttons"] = undefined;
-
-    // protected m_button: 
 
     public examples: ExampleField[] = [];
 
@@ -258,7 +256,10 @@ export class CommandBuilder<_T> implements CommandData<_T>{
             this.m_slash = slash as I_SlashCommand<_T>;
         }
         else{
-            const slashCommand = new SlashCommandBuilder().setName(this.name).setDescription(this.description);
+            const slashCommand = new SlashCommandBuilder()
+                .setName(this.name)
+                .setDescription(this.description);
+
             this.m_slash = {...slash, slashCommand};
         }
 

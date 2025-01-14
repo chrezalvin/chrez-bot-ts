@@ -1,12 +1,15 @@
 import { ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { isQuote, Quote } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class QuoteService{
     protected static readonly quotePath = "quotes";
     protected static readonly randomQuoteView = "quotes_random";
 
-    static quoteSupabase = new ServiceFileSupabase<Quote, "quote_id">("quote_id", {
+    static quoteSupabase = new ServiceFileSupabase<Quote, "quote_id">(
+        supabase,
+        "quote_id", {
         tableName: QuoteService.quotePath,
         typeGuard: isQuote,
         useCache: true,

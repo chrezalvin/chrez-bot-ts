@@ -1,7 +1,7 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation} from "@library";
 
 import { SlashCommandBuilder, ChannelType, Message, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 import { MemeService } from "@services";
 
 const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Memes) => {
@@ -65,8 +65,8 @@ const memes = new CommandBuilder<I_Memes>()
     .setStatus("public")
     .setMode("available")
     .setExamples([
-        {command: `${prefixes[0]} meme`, description: "give random meme"},
-        {command: `${prefixes[0]} meme 19`, description: "give meme #19"}
+        {command: `${BOT_PREFIXES[0]} meme`, description: "give random meme"},
+        {command: `${BOT_PREFIXES[0]} meme 19`, description: "give meme #19"}
     ])
     .setSlash({
         slashCommand,

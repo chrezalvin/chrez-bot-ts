@@ -1,13 +1,16 @@
 import { getCurrentTime, ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { ActiveEvent, isActiveEvent } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class ActiveEventService {
     protected static readonly activeEventPath: string = "active_events";
     protected static readonly activeEventImgPath: string = "images/active_events";
     protected static readonly activeEventBucket: string = "images";
 
-    static activeEventManager = new ServiceFileSupabase<ActiveEvent, "active_event_id", never, "img_path">("active_event_id", {
+    static activeEventManager = new ServiceFileSupabase<ActiveEvent, "active_event_id", never, "img_path">(
+        supabase,
+        "active_event_id", {
         tableName: ActiveEventService.activeEventPath,
         typeGuard: isActiveEvent,
         useCache: true,
@@ -29,7 +32,6 @@ export class ActiveEventService {
         const events = await ActiveEventService
             .activeEventManager
             .queryBuilder((query) => query
-                .select("*")
                 .ilike("title", `%${name}%`)
             );
 
@@ -60,7 +62,6 @@ export class ActiveEventService {
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder((query => query
-                    .select("*")
                     .lte("start_date", date)
                     .gte("end_date", date)
                 )
@@ -76,7 +77,6 @@ export class ActiveEventService {
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder(query => query
-                .select("*")
                 .ilike("title", `%${name}%`)
             );
 
@@ -95,7 +95,6 @@ export class ActiveEventService {
         const res = await ActiveEventService
             .activeEventManager
             .queryBuilder(query => query
-                .select("*")
                 .is("end_date", null)
                 .gte("start_date", date)
             );

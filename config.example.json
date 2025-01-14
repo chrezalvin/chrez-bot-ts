@@ -1,0 +1,30 @@
+{
+    "MODE": "development | production",
+
+    "DISCORD_TOKEN": "<discord-token-here>",
+    "DISCORD_APPLICATION_ID": "<application-id-here>",
+    "DISCORD_PUBLIC_KEY": "<public-key-here>",
+    "DISCORD_CLIENT_ID": "<client-id-here>",
+    "DISCORD_CLIENT_SECRET": "<client-secret-here>",
+    "DISCORD_OAUTH2_REDIRECT_URL": "http://localhost:3001/Authenticate",
+    "DISCORD_OAUTH2_REDIRECT_URL_SERVER": "http://localhost:3000/Authenticate_server",
+
+    "SUPABASE_URL": "https://iyiagjaadfnwvixxthwl.supabase.co",
+    "SUPABASE_KEY": "<your-supabase-key-here>",
+    
+    "CORS_ORIGIN": "http://localhost:3001",
+    "SESSION_SECRET": "secret",
+    "PORT": 3000,
+
+    "BOT_MAX_MESSAGE_ALLOWED": 100,
+    "BOT_MESSAGE_DELETE_TIME": 10,
+    "BOT_OWNER_ID": "696693247350931488",
+    "BOT_CLIENT_ID": "823688014786068500",
+    "BOT_GUILD_IDS": ["822912738875146261", "739696962097512449"],
+    "BOT_PREFIXES": ["Chrez", "Cb"],
+    "BOT_TRUSTED_IDS": [
+        "467054650181550113", 
+        "558614543929180171", 
+        "305179432300052482"
+    ]
+}

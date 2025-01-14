@@ -1,10 +1,9 @@
 import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder, User } from "discord.js";
 import { CommandBuilder, MyEmbedBuilder, isChatInputCommandInteraction } from "@library";
 
-import { MODE, prefixes } from "@config";
+import { MODE, BOT_PREFIXES } from "@config";
 import { UserService } from "@services";
 
-// , privateCommands: CommandReturnTypes[]
 function help(
     index: CommandBuilder<any>[], 
     privateCommands: CommandBuilder<any>[]
@@ -28,7 +27,7 @@ function help(
                 ) continue;
 
                 embed.addFields({
-                    name: `\`${prefixes[0]} ${command.name}\``, 
+                    name: `\`${BOT_PREFIXES[0]} ${command.name}\``, 
                     value: command.description,
                     inline: true
                 });
@@ -52,7 +51,7 @@ function help(
                 new MyEmbedBuilder()
                     .setTitle("Chrez-Bot private command help menu")
                     .setDescription("here are the list of private commands that chrezbot can use")
-                    .setFields(privateCommands.map(idx => {return {name: `\`${prefixes[0]} ${idx.name}\``, value: idx.description, inline: true}}))
+                    .setFields(privateCommands.map(idx => {return {name: `\`${BOT_PREFIXES[0]} ${idx.name}\``, value: idx.description, inline: true}}))
             ]});
         }
         else{
@@ -68,15 +67,15 @@ function help(
             if(find === undefined)
                 throw new Error("Cannot find the active command or its aliases!");
             
-            embed.setTitle(`${prefixes[0]} ${find.name} ${find.slash ? `or \`/${find.slash?.slashCommand.name}\``: ""}`)
+            embed.setTitle(`${BOT_PREFIXES[0]} ${find.name} ${find.slash ? `or \`/${find.slash?.slashCommand.name}\``: ""}`)
                 .setDescription(find.description);
             if(find.examples && find.examples.length > 0){
                 embed.addFields({name: "Examples", value: "\u200B"});
                 embed.addFields(find.examples.map(example => { return {name: example.command, value: example.description ?? "\u200B", inline: true}}));
             }
 
-            if(find.alias)
-                embed.setFooter({text: `possible alias for this command: ${find.alias.map(al => `\`${prefixes[0]} ${al}\``).join(", ")}`})
+            if(find.alias && find.alias.length > 0)
+                embed.setFooter({text: `possible alias for this command: ${find.alias.map(al => `\`${BOT_PREFIXES[0]} ${al}\``).join(", ")}`})
         }
         
         return [embed];
@@ -99,7 +98,7 @@ function help(
                         (MODE === "production" && idx.mode === "experimental")
                     ) continue;
 
-                    opt.addChoices({name: `${prefixes[0]} ${idx.name}`, value: idx.name})
+                    opt.addChoices({name: `${BOT_PREFIXES[0]} ${idx.name}`, value: idx.name})
                 }
 
                 return opt;

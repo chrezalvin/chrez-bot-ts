@@ -1,6 +1,6 @@
 import { CommandBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
-import { getDiscordYtPlayer } from "@shared";
+import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 const slashCommandBuilder = new SlashCommandBuilder()
     .setName("volume")

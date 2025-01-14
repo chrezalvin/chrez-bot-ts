@@ -1,7 +1,7 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 
 const run = (args: I_Roll) => {
     const rng = rngInt(args.first, args.second);
@@ -36,9 +36,9 @@ const roll = new CommandBuilder<I_Roll>()
     .setStatus("public")
     .setMode("available")
     .setExamples([
-        {command: `${prefixes[0]} roll`, description: "rolls a dice"},
-        {command: `${prefixes[0]} roll 1 20`, description: "rolls a number between 1 and 20"},
-        {command: `${prefixes[0]} roll 30 20`, description: "rolls a number between 30 and 20"},
+        {command: `${BOT_PREFIXES[0]} roll`, description: "rolls a dice"},
+        {command: `${BOT_PREFIXES[0]} roll 1 20`, description: "rolls a number between 1 and 20"},
+        {command: `${BOT_PREFIXES[0]} roll 30 20`, description: "rolls a number between 30 and 20"},
     ])
     .setSlash({
         slashCommand,

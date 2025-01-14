@@ -1,6 +1,7 @@
 const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
-import {max_message_allowed, muted, prefixes} from "@config";
+import {MAX_MESSAGE_ALLOWED, BOT_PREFIXES} from "@config";
+import {muted} from "@shared/isMute";
 import * as sharedCommands from "shared/commands";
 
 import {EventArguments} from "../"
@@ -37,7 +38,7 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     if(!message.guild.members.me?.permissions.has("ManageMessages")) return;
     
     // ignore message from bot or long message
-    if(message.author.bot || message.content.length > max_message_allowed) return;
+    if(message.author.bot || message.content.length > MAX_MESSAGE_ALLOWED) return;
     
     // inline command handling
     // ignore inline command if chrezbot is muted
@@ -59,7 +60,7 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
         }
     
     // check if command is directed to chrezbot (e.g "Chrez" math) and its aliases
-    if(prefixes.find(prefix => message.content.startsWith(prefix)) === undefined) 
+    if(BOT_PREFIXES.find(prefix => message.content.startsWith(prefix)) === undefined) 
         return;
     
     /**

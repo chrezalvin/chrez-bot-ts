@@ -3,13 +3,13 @@ const debug = require("debug")("Server:Update");
 import { Request, Response } from "express";
 import { UpdateService } from "services/update";
 
-import {botVersion} from "@config";
+import {BOT_VERSION} from "@config";
 import { isUpdate } from "@models";
 
 export async function update_get_latest(_1: Request, res: Response){
-    debug(`getting update v${botVersion}`);
+    debug(`getting update v${BOT_VERSION}`);
 
-    const latest = UpdateService.getUpdate(botVersion);
+    const latest = UpdateService.getUpdate(BOT_VERSION);
 
     res.json(latest);
 }

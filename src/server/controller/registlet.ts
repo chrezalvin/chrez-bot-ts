@@ -1,9 +1,8 @@
 const debug = require('debug')('Server:registlet');
 
-import { isRegistletWithoutId, Registlet } from '@models';
+import { isRegistletWithoutId } from '@models';
 import { RegistletService } from '@services';
 import { Request, Response } from 'express';
-import fs from "fs";
 
 export const registlet_get_all = async (_: Request, res: Response) => {
     debug("getting all registlet");
@@ -35,18 +34,8 @@ export const registlet_post_add = async (req: Request, res: Response) => {
     if(!isRegistletWithoutId(registlet))
         throw new Error("Invalid registlet object!");
 
-    let newRegistlet: Registlet;
-
-    if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
-
-        newRegistlet = await RegistletService.setNewRegistlet(registlet, blob);
-
-        fs.unlinkSync(image.path);
-    }
-    else
-        newRegistlet = await RegistletService.setNewRegistlet(registlet);
+    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    let newRegistlet = await RegistletService.setNewRegistlet(registlet, blob);
 
     res.status(200).json(newRegistlet);
 }
@@ -64,17 +53,8 @@ export const registlet_post_edit = async (req: Request, res: Response) => {
     if(!isRegistletWithoutId(registlet))
         throw new Error("Invalid registlet object!");
 
-    let updatedRegistlet: Registlet;
-    if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
-
-        updatedRegistlet = await RegistletService.updateRegistlet(id, registlet, blob);
-
-        fs.unlinkSync(image.path);
-    }
-    else
-        updatedRegistlet = await RegistletService.updateRegistlet(id, registlet);
+    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    let updatedRegistlet = await RegistletService.updateRegistlet(id, registlet, blob);
 
     res.status(200).json(updatedRegistlet);
 }

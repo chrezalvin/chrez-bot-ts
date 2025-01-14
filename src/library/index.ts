@@ -79,14 +79,6 @@ export {
 } from './TemporaryMap';
 
 export {
-    FileManagerFirebase,
-} from "./FileManagerFirebase";
-
-export {
-    ServiceFirebase,
-} from "./ServiceFirebase";
-
-export {
     calculateExpressionString,
 } from "./CalculateExpressionString";
 

@@ -1,13 +1,16 @@
 import { ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { isRegistlet, Registlet } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class RegistletService {
     static readonly tableName = "registlets";
     static readonly imgDir = "images/registlets";
     static readonly bucketName = "images";
 
-    static serviceSupabase = new ServiceFileSupabase<Registlet, "registlet_id", never, "img_path">("registlet_id", 
+    static serviceSupabase = new ServiceFileSupabase<Registlet, "registlet_id", never, "img_path">(
+        supabase,
+        "registlet_id", 
         {
             tableName: RegistletService.tableName,
             typeGuard: isRegistlet,
@@ -30,10 +33,7 @@ export class RegistletService {
 
         const res = await RegistletService
             .serviceSupabase
-            .queryBuilder((query) => query
-                .select("*")
-                .ilike("name", `%${name}%`)
-            );
+            .queryBuilder(query => query.ilike("name", `%${name}%`));
 
         if(!Array.isArray(res))
             throw new Error("Failed to get registlet");
@@ -41,7 +41,7 @@ export class RegistletService {
         return res;
     }
 
-    static async setNewRegistlet(registlet: StrictOmit<Registlet, "registlet_id">, imgBlob?: Blob): Promise<Registlet>{
+    static async setNewRegistlet(registlet: StrictOmit<Registlet, "registlet_id" | "img_path">, imgBlob?: Blob): Promise<Registlet>{
         const fileName = registlet.name.replace(/\s/g, "_").toLowerCase();
         const newRegistlet = await RegistletService.serviceSupabase.add(registlet, {
             file: imgBlob ?? null,

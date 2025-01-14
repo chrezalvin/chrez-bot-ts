@@ -1,18 +1,20 @@
 import {rngInt, ServiceFileSupabase} from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { Story, isStory } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class StoryService{
     protected static readonly dbName = "story";
 
     public static serviceSupabase = new ServiceFileSupabase<Story, "story_id">(
-                "story_id",  
-                {
-                    tableName: StoryService.dbName,
-                    typeGuard: isStory,
-                    useCache: true
-                }
-            );
+            supabase,
+            "story_id",  
+            {
+                tableName: StoryService.dbName,
+                typeGuard: isStory,
+                useCache: true
+            }
+        );
 
     public static async getStory(id: Story["story_id"]): Promise<Story>{
         return await StoryService.serviceSupabase.get(id);

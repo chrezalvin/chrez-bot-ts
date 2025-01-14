@@ -1,11 +1,14 @@
 import { rngInt, ServiceFileSupabase } from "@library";
 import { StrictOmit } from "@library/CustomTypes";
 import { isYomama, Yomama } from "@models";
+import { supabase } from "@shared/supabase";
 
 export class YomamaService{
     protected static readonly tableName = "yomama";
 
-    public static service = new ServiceFileSupabase<Yomama, "yomama_id">("yomama_id", 
+    public static service = new ServiceFileSupabase<Yomama, "yomama_id">(
+        supabase,
+        "yomama_id", 
         {
             typeGuard: isYomama,
             tableName: YomamaService.tableName,

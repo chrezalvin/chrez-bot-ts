@@ -1,6 +1,6 @@
 import { CommandBuilder, MyEmbedBuilder} from "@library";
 import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
-import { getDiscordYtPlayer } from "@shared";
+import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 async function run(params: QueueParameter){
     const discordYtPlayer = getDiscordYtPlayer(params.voiceChannel.guild.id);

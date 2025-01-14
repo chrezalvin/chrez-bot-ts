@@ -1,7 +1,7 @@
 import {MyEmbedBuilder, rngInt, CommandBuilder, ErrorValidation, Score} from "@library";
 
 import { SlashCommandBuilder } from "discord.js";
-import { prefixes } from "@config";
+import { BOT_PREFIXES } from "@config";
 
 const roshambo = [
     {name: "rock", weakness: "paper", advantage:"scissor"},
@@ -84,7 +84,7 @@ const chrezRoshambo = new CommandBuilder<I_Roshambo>()
     .setDescription("plays rock paper scissor")
     .setStatus("hidden")
     .setExamples([
-        {command: `${prefixes[0]} roshambo rock`, description: ""}
+        {command: `${BOT_PREFIXES[0]} roshambo rock`, description: ""}
     ])
     .setSlash({
         slashCommand,

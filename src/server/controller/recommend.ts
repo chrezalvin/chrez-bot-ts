@@ -1,9 +1,8 @@
 const debug = require("debug")("Server:events");
 
 import { Request, Response } from 'express';
-import { isRecommendWithoutId, Recommend } from '@models';
+import { isRecommendWithoutId } from '@models';
 import { RecommendService } from 'services/recommend';
-import fs from "fs";
 
 export const recommend_get_default = async (_: Request, res: Response) => {
     debug("getting all recommend");
@@ -35,17 +34,8 @@ export const recommend_post_add = async (req: Request, res: Response) => {
     if(!isRecommendWithoutId(recommend))
         throw new Error("Invalid recommend object!");
 
-    let newRecommend: Recommend;
-    if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
-
-        newRecommend = await RecommendService.createNewRecommend(recommend, blob);
-
-        fs.unlinkSync(image.path);
-    }
-    else
-        newRecommend = await RecommendService.createNewRecommend(recommend);
+    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    let newRecommend = await RecommendService.createNewRecommend(recommend, blob);
 
     res.status(200).json(newRecommend);
 }
@@ -78,17 +68,8 @@ export const recommend_post_update = async (req: Request, res: Response) => {
     if(!isRecommendWithoutId(recommend))
         throw new Error("Invalid recommend object!");
 
-    let updatedRecommend: Recommend;
-    if(image){
-        const buffer = fs.readFileSync(image.path);
-        const blob = new Blob([buffer], {type: image.mimetype});
-
-        updatedRecommend = await RecommendService.updateRecommend(id, recommend, blob);
-
-        fs.unlinkSync(image.path);
-    }
-    else
-        updatedRecommend = await RecommendService.updateRecommend(id, recommend);
+    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    let updatedRecommend = await RecommendService.updateRecommend(id, recommend, blob);
 
     res.status(200).json(updatedRecommend);
 }

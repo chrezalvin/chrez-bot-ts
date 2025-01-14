@@ -1,8 +1,8 @@
 const debug = require("debug")("Bot:registerSlashCommand");
 
-import { allCommands } from "@shared";
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
-import { CLIENT_ID, guildIDs, DISCORD_TOKEN } from './config';
+import { CLIENT_ID, BOT_GUILD_IDS, DISCORD_TOKEN } from '@config';
+import { allCommands } from "@shared/commands";
 
 if(DISCORD_TOKEN === undefined){
     console.error("Error: Discord token is not defined!");
@@ -10,10 +10,10 @@ if(DISCORD_TOKEN === undefined){
 }
 
 const slashCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = []
-for(const [_, command] of allCommands){
-    if(command.slash && command.status !== "hidden")
+
+for(const command of [...allCommands.values()])
+    if(command.slash)
         slashCommands.push(command.slash.slashCommand.toJSON());
-}
 
 // Construct and prepare an instance of the REST module
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
@@ -22,7 +22,7 @@ const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 (async () => {
 	try {
 		// The put method is used to fully refresh all commands in the guild with the current set
-        for(const guildID of guildIDs ){
+        for(const guildID of BOT_GUILD_IDS ){
             debug(`Started refreshing ${slashCommands.length} application (/) commands.`);
 
             const data = await rest.put(

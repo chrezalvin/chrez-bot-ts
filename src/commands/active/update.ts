@@ -4,7 +4,7 @@ import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 
 import { APIEmbedField, SlashCommandBuilder } from "discord.js";
 import updates from "@assets/messages/active/update.json";
-import { prefixes, botVersion } from "@config";
+import { BOT_PREFIXES, BOT_VERSION } from "@config";
 import { UpdateService } from "services/update";
 
 function customFieldMaker(title: string, list: string[]): APIEmbedField{
@@ -40,8 +40,8 @@ const update = new CommandBuilder<I_Update>()
     .setAlias(["u", "news"])
     .setDescription("Gives you update about chrezbot (news and bugfixes)")
     .setExamples([
-        {command: `${prefixes[0]} update`, description: "give latest update"},
-        {command: `${prefixes[0]} update 1.1.0`, description: "give update 1.1.0"}
+        {command: `${BOT_PREFIXES[0]} update`, description: "give latest update"},
+        {command: `${BOT_PREFIXES[0]} update 1.1.0`, description: "give update 1.1.0"}
     ])
     .setSlash({
         slashCommand: new SlashCommandBuilder().setName("update")
@@ -56,7 +56,7 @@ const update = new CommandBuilder<I_Update>()
                 return opt;
             }),
         getParameter: (interaction) => {
-            const version = interaction.options.getString("version", false) ?? botVersion;
+            const version = interaction.options.getString("version", false) ?? BOT_VERSION;
 
             return {version};
         },
@@ -71,7 +71,7 @@ const update = new CommandBuilder<I_Update>()
     })
     .setChat({
         getParameter: (_, args) => {
-            let version: string = botVersion;
+            let version: string = BOT_VERSION;
 
             if(args && args[0] !== undefined)
                 version = args[0];
