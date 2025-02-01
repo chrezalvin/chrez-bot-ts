@@ -41,7 +41,7 @@ export class ServiceFileSupabase<
     get storagePath(): string { return this.m_storagePath; }
 
     get cache(): DataType[]{
-        return [...this.m_cache.values()].map(value => this.translateFileToUrl(value));
+        return [...this.m_cache.values()];
     }
 
     get useCache(): boolean{ return this.m_useCache; }
