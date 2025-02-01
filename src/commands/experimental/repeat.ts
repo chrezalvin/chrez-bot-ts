@@ -44,7 +44,7 @@ const Repeat = new CommandBuilder<RepeatParameter>()
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {
             const voiceChannel = (interaction.member as GuildMember).voice.channel;
-            const repeat = interaction.options.getBoolean("repeat") ?? false;
+            const repeat = interaction.options.getBoolean("repeat") ?? true;
 
             if(!voiceChannel)
                 throw new Error("You must be in a voice channel to use this command");

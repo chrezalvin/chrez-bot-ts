@@ -2,7 +2,7 @@ const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
 import {MAX_MESSAGE_ALLOWED, BOT_PREFIXES} from "@config";
 import {muted} from "@shared/isMute";
-import * as sharedCommands from "shared/commands";
+import * as sharedCommands from "@shared/commands";
 
 import {EventArguments} from "../"
 import { CommandBuilder, ErrorValidation, TemporaryArray } from "@library";

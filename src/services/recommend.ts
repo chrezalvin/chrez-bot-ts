@@ -44,6 +44,22 @@ export class RecommendService{
         return newRecommend;
     }
 
+    public static async getRandomRecommendByTag(tag: string): Promise<Recommend>{
+        const recommends = await RecommendService
+            .recommendSupabase
+            .queryBuilder((query) => query
+                .overlaps("category", [tag])
+            );
+
+        if(!Array.isArray(recommends))
+            throw new Error("No recommend found");
+
+        if(recommends.length === 0)
+            throw new Error(`No recommend found with tag ${tag}`);
+
+        return recommends[rngInt(0, recommends.length - 1)];
+    }
+
     static async updateRecommend(id: Recommend["recommend_id"], editedRecommend: Partial<StrictOmit<Recommend, "recommend_id" | "imgUrl">>, imgBlob?: Blob): Promise<Recommend>{
         const recommend = await RecommendService.recommendSupabase.get(id);
         const fileName = (editedRecommend.title ?? recommend.title).toLowerCase().replace(/ /g, "_");

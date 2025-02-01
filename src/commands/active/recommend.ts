@@ -1,12 +1,17 @@
 import {MyEmbedBuilder, ErrorValidation, CommandBuilder} from "@library";
+import { Recommend } from "@models";
 import {RecommendService} from "@services/recommend";
 
 import { MessageCreateOptions, SlashCommandBuilder } from "discord.js";
 
-const run = async (_?: I_Recommend): Promise<MessageCreateOptions> => {
+const run = async (params?: I_Recommend): Promise<MessageCreateOptions> => {
     const embed = new MyEmbedBuilder();
 
-    const recommend = await RecommendService.getRandomRecommend();
+    let recommend: Recommend;
+    if(params?.tag)
+        recommend = await RecommendService.getRandomRecommendByTag(params.tag);
+    else
+        recommend = await RecommendService.getRandomRecommend();
 
     embed
         .setTitle(recommend.title)
