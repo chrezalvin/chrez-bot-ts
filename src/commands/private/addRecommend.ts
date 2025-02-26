@@ -89,6 +89,7 @@ const addrecommend = new CommandBuilder<StrictOmit<Recommend, "recommend_id">>()
                     description,
                     link: link,
                     imgUrl: null,
+                    category: null
                 };
 
                 if(thumbnail?.url)
