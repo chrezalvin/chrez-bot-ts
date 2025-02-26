@@ -1,13 +1,14 @@
 const debug = require("debug")("models:Recommend");
 import { StrictOmit } from "@library/CustomTypes";
 
+// TODO: Category to nullable
 export interface Recommend{
     recommend_id: number;
     title: string;
     description: string;
     imgUrl: string | null;
     link: string | null;
-    category?: string[];
+    category: string[] | null;
 }
 
 export function isRecommend(obj: unknown): obj is Recommend{
@@ -41,7 +42,10 @@ export function isRecommend(obj: unknown): obj is Recommend{
         return false;
     }
 
-    if("category" in obj && !Array.isArray(obj.category)) return false;
+    if(!("category" in obj)){
+        debug("property category is not defined");
+        return false;
+    }
 
     if(typeof obj.recommend_id !== "number"){
         debug("property recommend_id is not a number");
@@ -65,6 +69,11 @@ export function isRecommend(obj: unknown): obj is Recommend{
 
     if(typeof obj.link !== "string" && obj.link !== null){
         debug("property link is not a string or null");
+        return false;
+    }
+
+    if(!Array.isArray(obj.category) && obj.category !== null){
+        debug("property category is not an array or null");
         return false;
     }
 

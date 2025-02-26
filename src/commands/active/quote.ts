@@ -13,9 +13,8 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
     const embed = new MyEmbedBuilder();
 
     let quote: Quote | undefined;
-    if(args?.index){
+    if(args?.index)
         quote = await QuoteService.getQuoteById(args.index);
-    }
     else 
         quote = await QuoteService.getRandomQuote(true);
 
