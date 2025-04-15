@@ -10,3 +10,4 @@ export * from "./ActiveEvent";
 export * from "./Quote";
 export * from "./SessionView";
 export * from "./Session";
+export * from "./Translate";
