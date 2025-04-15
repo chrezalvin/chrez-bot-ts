@@ -15,6 +15,27 @@
     ],
     "translations": [
         {
+            "name": "zaza",
+            "explanations": [
+                "A slang for drugs such as cannabis or marijuana"
+            ],
+            "conotation": "neutral"
+        },
+        {
+            "name": "ohio",
+            "explanations": [
+                "A slang for a state in the United States of America, usually means a bad place"
+            ],
+            "conotation": "negative"
+        },
+        {
+            "name": "banban",
+            "explanations": [
+                "A slang for banned stuff"
+            ],
+            "conotation": "negative"
+        },
+        {
             "name": "bozo",
             "explanations": [
                 "A stupid person, fool or a dunce.",

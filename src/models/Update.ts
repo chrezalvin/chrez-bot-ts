@@ -56,7 +56,7 @@ export function isUpdateWithoutVersion(value: unknown): value is StrictOmit<Upda
         debug("property bugfix is not defined");
         return false;
     }
-
+    
     if(!("news" in value)){
         debug("property news is not defined");
         return false;
