@@ -91,3 +91,5 @@ export * from "./Chronos";
 
 export * from "./DiscordYtPlayer";
 export * from "./YoutubeSearch";
+
+export * from "./YoloService";
