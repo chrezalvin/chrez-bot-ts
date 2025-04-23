@@ -6,7 +6,12 @@ export class YOLOService{
     m_ready: boolean = false;
     private m_timeout = 5000; // 5 seconds timeout
 
-    constructor(){
+    constructor(options?: {
+        timeout?: number,
+    }){
+        if(options?.timeout)
+            this.m_timeout = options.timeout;
+
         this.m_pythonProcess = spawn("python", ["./detection.py"], {
             stdio: ["pipe", "pipe", "pipe"],
         });
