@@ -4,7 +4,7 @@ const debug = require("debug")("ChrezBot:sharedcommands");
 import { MODE } from "@config";
 import { CommandBuilder, inlineCommandReturnTypes } from "@library";
 import commands from "@commands";
-import { Collection } from "discord.js";
+import { Collection, Message } from "discord.js";
 
 const allCommandList = new Collection<string, CommandBuilder<any>>();
 
@@ -17,7 +17,7 @@ for(const command of [...commands.active, ...commands.c_private]){
     debug(`successfully created command ${command.name}`);
 }
 
-const _aliasCriteriaMap = new Collection<string|RegExp, string>();
+const _aliasCriteriaMap = new Collection<string|RegExp | ((messsage: Message<boolean>) => boolean), string>();
 const _inlineCommands= new Collection<string, inlineCommandReturnTypes>();
 
 debug("Loading Inline Commands");
