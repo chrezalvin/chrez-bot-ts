@@ -1,23 +1,37 @@
-from ultralytics import YOLO
 import sys
-import numpy as np
 import cv2
+import numpy as np
 
-model = YOLO("yolo11m.pt")
-buffer_input = sys.stdin.buffer.read()
+from base64 import b64decode
+from ultralytics import YOLO
 
-# convert buffer to numpy array
-nparr = np.frombuffer(buffer_input, np.uint8)
-image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+def main():
+    model = YOLO("yolo11m.pt")
 
-predict = model.predict(source=image, conf=0.25, save=False, show=False, verbose=False)
+    # list of classes labels to detect
+    # 14 = bird, 15 = cat, 16 = dog, 17 = horse, 18 = sheep, 19 = cow, 20 = elephant, 21 = bear, 22 = zebra
+    classes = [15, 16, 17, 18, 19, 20, 21, 22]
+    min_conf = 0.25
+    
+    while True:
+        try:
+            image_data = b64decode(sys.stdin.readline())
 
-# check if the picture contains cat or dog (15 or 16)
-for result in predict:
-    for boxes_ in result.boxes:
-        if boxes_.cls == 15:
-            print("Cat ({:.0f}%)".format(boxes_.conf[0].item() * 100))
+            result = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+
+            predict = model.predict(source=result, conf=min_conf, save=False, show=False, verbose=False)
+
+            for result in predict:
+                for boxes_ in result.boxes:
+                    if boxes_.cls in classes:
+                        print(f"{predict[0].names[int(boxes_.cls)].capitalize()} ({boxes_.conf[0].item() * 100:.0f}%)")
+                        break
+
+            sys.stdout.flush()
+
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
             break
-        elif boxes_.cls == 16:
-            print("Dog ({:.0f}%)".format(boxes_.conf[0].item() * 100))
-            break
+
+if __name__ == "__main__":
+    main()

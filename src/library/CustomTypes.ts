@@ -35,7 +35,7 @@ export interface CommandReturnTypes extends Command {
 }
 
 export interface inlineCommandReturnTypes extends Command {
-    searchCriteria: (string | RegExp)[];
+    searchCriteria: (string | RegExp | ((message: Message<boolean>) => boolean))[];
     acceptedLength?: number;
     execute: (message: SenddableMessage) => void;
 }
