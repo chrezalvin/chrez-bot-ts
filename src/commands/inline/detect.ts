@@ -64,11 +64,6 @@ class YOLOService{
 
 const yolo = new YOLOService();
 
-process.on("SIGINT", () => {
-    yolo.shutdown();
-    process.exit(0);
-});
-
 const acceptedContentTypes = [
     "image/jpeg",
     "image/png",
