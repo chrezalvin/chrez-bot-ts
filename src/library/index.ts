@@ -93,3 +93,5 @@ export * from "./DiscordYtPlayer";
 export * from "./YoutubeSearch";
 
 export * from "./YoloService";
+
+export * from "./LocalMusicSearch";

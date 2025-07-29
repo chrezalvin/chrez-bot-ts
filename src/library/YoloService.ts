@@ -56,7 +56,7 @@ export class YOLOService{
                     resolve(null);
 
                     clearTimeout(timeout); // Clear the timeout if we get an error
-                });      
+                });
             });
         })
     }
