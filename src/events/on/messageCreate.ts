@@ -1,6 +1,6 @@
 const debug = require("debug"); debug("ChrezBot:MessageCreate");
 
-import {MAX_MESSAGE_ALLOWED, BOT_PREFIXES} from "@config";
+import {MAX_MESSAGE_ALLOWED, BOT_PREFIXES, BOT_OWNER_ID} from "@config";
 import {muted} from "@shared/isMute";
 import * as sharedCommands from "@shared/commands";
 
@@ -9,6 +9,7 @@ import { CommandBuilder, ErrorValidation, TemporaryArray } from "@library";
 import { sendError } from "@bot";
 import { Message } from "discord.js";
 import { UserService } from "@services";
+import { absoluteMuted } from "@shared/isAbsoluteMuted"
 
 const holdUser = new TemporaryArray<string>([], (stra, strb) => stra === strb);
 
@@ -19,6 +20,9 @@ function commandValidation(message: Message<boolean>, command: string): CommandB
 
     if(chatCommand === undefined)
         return new ErrorValidation("chat_command_unavailable", command);
+
+    if(chatCommand.status === "owner" && message.author.id !== BOT_OWNER_ID)
+        return new ErrorValidation("command_is_owner_only");
 
     if(chatCommand.status === "private"){
         const userId = message.author.id;
@@ -39,6 +43,12 @@ const event: EventArguments<"messageCreate"> = ["messageCreate", async (message)
     
     // ignore message from bot or long message
     if(message.author.bot || message.content.length > MAX_MESSAGE_ALLOWED) return;
+
+    // for absolute mute case
+    if(absoluteMuted && message.author.id !== BOT_OWNER_ID){
+        // if the user is not the owner, ignore the message
+        return;
+    }
     
     // inline command handling
     // ignore inline command if chrezbot is muted

@@ -12,6 +12,7 @@ enum CommandStatuses{
     public,
     private,
     hidden,
+    owner,
 }
 
 enum Modes{

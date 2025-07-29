@@ -73,5 +73,10 @@
         "code": 14,
         "name": "Forbidden",
         "description": "You are not allowed to do this action because {}"
+    },
+    "command_is_owner_only": {
+        "code": 15,
+        "name": "This Command is Owner Only",
+        "description": "This command is only available for the owner of the bot!"
     }
 }

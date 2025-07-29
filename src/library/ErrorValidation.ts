@@ -224,6 +224,13 @@ export class ErrorValidation implements ErrorValidationData{
      */
     constructor(error: "forbidden", reason: string);
 
+    /**
+     * 15
+     * show error when a command is owner only
+     * @example new ErrorValidation("command_is_owner_only") -> "This command is only available for the owner of the bot!"
+     */
+    constructor(error: "command_is_owner_only");
+
     constructor(error: ErrorMessages, ...args: (string | number)[]){
         this.code = error2[error].code;
         this.name = error2[error].name;
