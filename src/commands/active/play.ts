@@ -1,5 +1,5 @@
 import { CommandBuilder, MyEmbedBuilder } from "@library";
-import { CacheType, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Message, MessageCreateOptions, MessagePayload, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { CacheType, ChannelType, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Message, MessageCreateOptions, MessagePayload, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { createDiscordYtPlayerIfNotExist, deleteDiscordYtPlayer} from "@shared/DiscordYtPlayer";
 import { BOT_PREFIXES } from "@config";
 
@@ -126,6 +126,7 @@ const play = new CommandBuilder<PlayParameter>()
     .setDescription("Searches for a song then plays it on voice channel")
     .setStatus("public")
     .setMode("available")
+    .setChannelTypes([ChannelType.GuildText])
     .setExamples([
         {command: `${BOT_PREFIXES[0]} play bohemian raphsody`, description: "plays bohemian raphsody"},
     ])

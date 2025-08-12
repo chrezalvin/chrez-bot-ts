@@ -1,5 +1,5 @@
 import { CommandBuilder} from "@library";
-import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { ChannelType, GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 interface StopParameter {
@@ -29,6 +29,7 @@ const stop = new CommandBuilder<StopParameter>()
     .setDescription("Stops all the songs in the queue")
     .setStatus("public")
     .setMode("available")
+    .setChannelTypes([ChannelType.GuildText])
     .setSlash({
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {

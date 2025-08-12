@@ -1,5 +1,5 @@
 import { CommandBuilder, ErrorValidation} from "@library";
-import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { ChannelType, GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 interface PauseParameter {
@@ -29,6 +29,7 @@ const pause = new CommandBuilder<PauseParameter>()
     .setDescription("Pauses the current song")
     .setStatus("public")
     .setMode("available")
+    .setChannelTypes([ChannelType.GuildText])
     .setExamples([
         {command: "Chrez pause", description: "pauses the current song"},
     ])

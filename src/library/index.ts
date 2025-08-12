@@ -95,3 +95,5 @@ export * from "./YoutubeSearch";
 export * from "./YoloService";
 
 export * from "./LocalMusicSearch";
+
+export * from "./ChrezBot";

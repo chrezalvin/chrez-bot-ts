@@ -1,5 +1,5 @@
 import { CommandBuilder} from "@library";
-import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { ChannelType, GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 function run(args: RemoveArgs){
@@ -34,6 +34,7 @@ const remove = new CommandBuilder<RemoveArgs>()
     .setDescription("removes the specified song from the queue")
     .setStatus("public")
     .setMode("available")
+    .setChannelTypes([ChannelType.GuildText])
     .setSlash({
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {

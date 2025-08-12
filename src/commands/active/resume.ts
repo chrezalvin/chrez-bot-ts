@@ -1,55 +1,48 @@
 import { CommandBuilder} from "@library";
-import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { ChannelType, GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
-interface RepeatParameter {
+interface ResumeParameter {
     voiceChannel: VoiceBasedChannel;
-    repeat: boolean;
 }
 
-function run(args: RepeatParameter){
+function run(args: ResumeParameter){
     const discordYtPlayer = getDiscordYtPlayer(args.voiceChannel.guild.id);
 
     if(!discordYtPlayer)
         throw new Error("No player found");
 
-    discordYtPlayer.repeat = args.repeat;
+    const result = discordYtPlayer.resume();
 
-    if(args.repeat)
-        return "Repeating the playlist";
+    if(result)
+        return "resumed the song";
     else
-        return "Stopped repeating the playlist";
+        return "There are no songs to resume!";
 }
 
 const slashCommandBuilder = new SlashCommandBuilder()
-    .setName("repeat")
-    .setDescription("Allows you to repeat the playlist")
-    .addBooleanOption(option => option
-        .setName("repeat")
-        .setDescription("Repeats the playlist")
-        .setRequired(false)
-    );
+    .setName("resume")
+    .setDescription("resumes the current song");
 
-const Repeat = new CommandBuilder<RepeatParameter>()
-    .setName("repeat")
-    .setDescription("Allows you to repeat the playlist")
+const resume = new CommandBuilder<ResumeParameter>()
+    .setName("resume")
+    .setAlias(["res"])
+    .setDescription("resumes the current song")
     .setStatus("public")
     .setMode("available")
-    .setExamples([
-        {command: "Chrez Repeat", description: "Repeats the current playlist"},
-        {command: "Chrez Repeat false", description: "Stops repeating the current playlist"},
-        {command: "Chrez Repeat true", description: "Repeats the current playlist"},
-    ])
+    .setChannelTypes([ChannelType.GuildText])
     .setSlash({
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {
+            if(!interaction.guildId)
+                throw new Error("Invalid guild id");
+
             const voiceChannel = (interaction.member as GuildMember).voice.channel;
-            const repeat = interaction.options.getBoolean("repeat") ?? true;
 
             if(!voiceChannel)
                 throw new Error("You must be in a voice channel to use this command");
 
-            return { voiceChannel, repeat };
+            return { voiceChannel };
         },
         interact: async (interaction, args) => {
             if(!args)
@@ -61,15 +54,13 @@ const Repeat = new CommandBuilder<RepeatParameter>()
         },
     })
     .setChat({
-        getParameter: (message, args) => {
+        getParameter: (message) => {
             const voiceChannel = message.member?.voice.channel;
-
-            const isRepeat = args[0] === "false" ? false : true;
 
             if(!voiceChannel)
                 throw new Error("You must be in a voice channel to use this command");
 
-            return { voiceChannel, repeat: isRepeat };
+            return { voiceChannel };
         },
         execute: async (message, args) => {
             if(!args)
@@ -81,4 +72,4 @@ const Repeat = new CommandBuilder<RepeatParameter>()
         },
     });
 
-export default Repeat;
+export default resume;
