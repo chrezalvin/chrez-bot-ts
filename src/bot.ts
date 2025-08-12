@@ -1,55 +1,42 @@
 // idk why it wouldnt work on es6 import smh
 const debug = require("debug")("ChrezBot:bot");
 
-import { DISCORD_TOKEN, MESSAGE_DELETE_TIME} from "@config";
-import { CacheType, ChatInputCommandInteraction, Client, GatewayIntentBits, Message } from "discord.js";
+import { DISCORD_TOKEN } from "@config";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
+import {
+    handlePermission, 
+    inlineHandler, 
+    isCommand,
+    isPrefix, 
+    handleLongText,
+    handleChatCommands, 
+    handleAbsoluteMute,
+    
+    handleInteractionCommands, 
+    excludeBotInteraction,
+    interactionErrorHandler,
+    handleSlashPermission,
+    excludeBotChat,
+    handleAbsoluteMuteInteraction,
+} from "./commandMiddlewares";
 
-import { isChatInputCommandInteraction } from "@library";
-import { MyEmbedBuilder } from "@library";
-
-import events from "./events";
+import { ChrezBot } from "@library";
+import { CustomArgs } from "./types/customArgs";
 
 import autoWorkersList from "autoWorkers";
+import { chatErrorHandler } from "commandMiddlewares/chat/chatErrorHandler";
 
-export const client = new Client({intents: [
-    GatewayIntentBits.Guilds, 
-    GatewayIntentBits.GuildMessages, 
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates,
-]});
+export const client = new Client({
+    partials: [Partials.Channel],
+    intents: [
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.DirectMessages,
+    ]}
+);
 
-for(const botEvent of events){
-    for(const execute of botEvent.execute){
-        debug(`created event ${botEvent.name} ${execute[0]}`);
-        client[botEvent.name](...execute);
-    }
-}
-
-export async function sendError(
-        message: Message<boolean> | ChatInputCommandInteraction<CacheType>,
-        errorMessage: string,
-        deleteTime: number | null = MESSAGE_DELETE_TIME,
-    ){
-    const embed = MyEmbedBuilder.createError({
-        description: `**${errorMessage}**`, 
-        footer: `this message will be deleted in ${deleteTime} seconds`
-    });
-    if(isChatInputCommandInteraction(message)){
-        message.deferred ? await message.editReply({embeds: [embed]}) : await message.reply({embeds: [embed]});
-        if(deleteTime)
-            setTimeout(async () => {
-                message.deleteReply();
-            }, deleteTime * 1000);
-    }
-    else if(message.channel.isSendable()){
-        const msg = await message.channel.send({embeds: [embed]});
-        if(deleteTime) 
-            setTimeout(async () => {
-                if(msg.deletable)
-                    await msg.delete();
-            }, deleteTime * 1000);
-    }
-}
 
 debug("adding autoWorkers...");
 for(const autoWorker of autoWorkersList)
@@ -78,5 +65,22 @@ process.on("unhandledRejection", async (error, _) => {
 })
 
 client.login(DISCORD_TOKEN);
+
+const chrezBot = new ChrezBot<CustomArgs>(client);
+chrezBot.useChat(excludeBotChat);
+chrezBot.useChat(handleAbsoluteMute);
+chrezBot.useChat(handleLongText);
+chrezBot.useChat(inlineHandler);
+chrezBot.useChat(isPrefix);
+chrezBot.useChat(isCommand);
+chrezBot.useChat(handlePermission);
+chrezBot.useChat(handleChatCommands);
+chrezBot.useChat(chatErrorHandler);
+
+chrezBot.useSlash(excludeBotInteraction);
+chrezBot.useSlash(handleAbsoluteMuteInteraction);
+chrezBot.useSlash(handleSlashPermission);
+chrezBot.useSlash(handleInteractionCommands);
+chrezBot.useSlash(interactionErrorHandler);
 
 export default client;

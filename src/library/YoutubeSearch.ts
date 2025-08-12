@@ -1,3 +1,6 @@
+import internal from "stream";
+import { spawn } from "child_process";
+
 const youtubeSearch = require("youtube-search-api");
 
 export interface YoutubeSearchResultItem{
@@ -39,4 +42,8 @@ export async function searchYoutube(searchTerm: string, limit: number = 1): Prom
     const response = await youtubeSearch.GetListByKeyword(searchTerm, false, limit);
 
     return response;
+}
+
+export function createYtdlStream(videoUrl: string): internal.Readable {
+    return spawn("yt-dlp", ["-f", "bestaudio", "--rm-cache-dir", "-o", "-", videoUrl]).stdout;
 }

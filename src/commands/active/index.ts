@@ -13,6 +13,14 @@ import { CommandBuilder } from "@library";
 import event from "./event";
 import registlet from "./registlet";
 import translate from "./translate";
+import play from "./play";
+import pause from "./pause";
+import resume from "./resume";
+import queue from "./queue";
+import stop from "./stop";
+import remove from "./remove";
+import repeat from "./repeat";
+import skip from "./skip";
 
 export const commands: (CommandBuilder<any>)[] = [
     roll,
@@ -29,6 +37,14 @@ export const commands: (CommandBuilder<any>)[] = [
     event,
     registlet,
     translate,
+    play,
+    pause,
+    resume,
+    queue,
+    stop,
+    remove,
+    repeat,
+    skip,
 ].filter(command => command.mode !== "unavailable");
 
 export default commands;

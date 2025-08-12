@@ -1,5 +1,5 @@
 import { CommandBuilder, MyEmbedBuilder} from "@library";
-import { GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { ChannelType, GuildMember, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { getDiscordYtPlayer } from "@shared/DiscordYtPlayer";
 
 async function run(params: QueueParameter){
@@ -69,6 +69,7 @@ const queue = new CommandBuilder<QueueParameter>()
     .setDescription("shows the playlist")
     .setStatus("public")
     .setMode("available")
+    .setChannelTypes([ChannelType.GuildText])
     .setSlash({
         slashCommand: slashCommandBuilder,
         getParameter: (interaction) => {

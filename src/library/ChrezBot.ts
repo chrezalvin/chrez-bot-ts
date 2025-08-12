@@ -1,180 +1,137 @@
-// import { Client, Interaction, Message, TextBasedChannel } from "discord.js";
+import { CacheType, ChannelType, Client, Interaction, Message, OmitPartialGroupDMChannel } from "discord.js";
 
-// export interface ChrezBotCommandRequest{
-//     client: Client;
-//     args: any[];
-// }
+export interface BasicParameters{
+    command: string, 
+    error?: unknown
+}
 
-// export interface ChrezBotCommandResponse{
-//     client: Client<true>;
-//     channel: TextBasedChannel;
-// }
+export type ChrezBotNextFunction = (err?: unknown) => void;
+export type ChrezBotChatMiddleware<_T extends BasicParameters> = (client: Client, message: OmitPartialGroupDMChannel<Message<boolean>> & _T, next: ChrezBotNextFunction) => Promise<void> | void;
+export type ChrezBotSlashMiddleware<_T extends BasicParameters> = (client: Client, interaction: Interaction<CacheType> & _T, next: ChrezBotNextFunction) => Promise<void> | void;
 
-// export interface ChrezBotInteractionRequest{
-//     client: Client;
-// }
+export interface ChrezBotCommand<_T extends BasicParameters>{
+    name: string;
+    description: string;
+    aliases?: string[];
+    execute: ChrezBotChatMiddleware<_T>;
+}
 
-// export interface ChrezBotInteractionResponse{
-//     interaction: Interaction;
-// }
+export interface ChrezBotSlashCommand<_T extends BasicParameters>{
+    slash: string;
+    description: string;
+    execute: ChrezBotSlashMiddleware<_T>;
+}
 
-// export type ChrezBotCommandHandler = (req: ChrezBotCommandRequest, res: ChrezBotCommandResponse, next: any) => void;
-// export type ChrezBotInteractionHandler = (req: ChrezBotInteractionRequest, res: ChrezBotInteractionResponse, next: any) => void;
+export class ChrezBot<_T extends BasicParameters>{
+    protected m_client: Client;
+    protected m_chat_middlewares: ChrezBotChatMiddleware<_T>[] = [];
+    protected m_slash_middlewares: ChrezBotSlashMiddleware<_T>[] = [];
 
-// /**
-//  * Custom discord bot class inspired by express.js
-//  */
-// export class ChrezBot{
-//     private m_client: Client;
-//     private m_prefix: string = "Chrez";
-//     private m_aliases: string[] = [];
-
-//     private m_handlers: ChrezBotCommandHandler[] = [];
-//     private m_commands: Map<string, ChrezBotCommandHandler> = new Map();
-//     private m_commands_interaction: Map<string, ChrezBotCommandHandler> = new Map();
-
-//     // getters
-//     /**
-//      * discord bot client
-//      */
-//     public get client(): Client{
-//         return this.m_client;
-//     }
-
-//     /**
-//      * bot prefix, normal message needs to start with this prefix to be considered as a command
-//      */
-//     public get prefix(): string{
-//         return this.m_prefix;
-//     }
-
-//     // setter
-//     public set prefix(prefix: string){
-//         this.m_prefix = prefix;
-//     }
-
-//     public addAlias(alias: string){
-//         // make sure no duplicate alias
-//         if(this.m_aliases.includes(alias)) return;
-
-//         this.m_aliases.push(alias);
-//     }
-
-//     constructor(
-//         client: Client, 
-//         options?: {prefix?: string, aliases?: string[]}
-//     ){
-//         this.m_client = client;
-//         if(options?.prefix)
-//             this.m_prefix = options.prefix;
-//         if(options?.aliases)
-//             this.m_aliases = options.aliases;
-
-//         client.on("messageCreate", (message) => {
-//             // check if message starts with prefix or its aliases
-//             if(!message.content.startsWith(this.m_prefix) && !this.m_aliases.some(alias => message.content.startsWith(alias))) return;
-
-//             const args = message.content.trim().split(/ +/);
-
-//             // remove prefix from command
-//             args.shift();
-
-//             // first argument is the command
-//             const command = args.shift();
-
-//             this.handleCommandRequest(command || "", message, ...args);
-//         });
-
-//         client.on("interactionCreate", (interaction) => {
-//             if(!interaction.isCommand()) return;
-
-//             const command = interaction.commandName;
-
-//             this.handleInteractionRequest(command, interaction);
-//         });
-//     }
-
-//     private handleInteractionRequest(command: string, interaction: Interaction){
-//         const stack: ChrezBotCommandHandler[] = [...this.m_handlers];
-//         const handler = this.m_commands_interaction.get(command);
-
-//         if(handler){
-//             stack.push((req: ChrezBotCommandRequest, res: ChrezBotCommandResponse, next: any) => {
-//                 handler(req, res, next);
-
-//                 next();
-//             });
-//         }
-
-//         this.executeInteractionRequest([], stack, interaction);
-//     }
-
-//     private executeInteractionRequest(args: any[], stack: ChrezBotCommandHandler[], interaction: Interaction){
-//         const next = () => {
-//             if(stack.length === 0) return;
-
-//             const middleware = stack.shift();
-//             if(middleware === undefined) return;
-
-//             middleware({
-//                 client: this.m_client,
-//                 args: args,
-//             }, {
-//                 client: interaction.client,
-//             }, next);
-//         }
-
-//         next();
-//     }
-
-//     private handleCommandRequest(command: string, message: Message<boolean>, ...args: any[]){
-//         const stack: ChrezBotCommandHandler[] = [...this.m_handlers];
-//         const handler = this.m_commands.get(command);
-
-//         if(handler){
-//             stack.push((req: ChrezBotCommandRequest, res: ChrezBotCommandResponse, next: any) => {
-//                 handler(req, res, next);
-
-//                 next();
-//             });
-//         }
-
-//         this.executeCommandRequest(args, stack, message);
-//     }
-
-//     private executeCommandRequest(args: any[], stack: ChrezBotCommandHandler[], message: Message<boolean>){
-//         const next = () => {
-//             if(stack.length === 0) return;
-
-//             const middleware = stack.shift();
-//             if(middleware === undefined) return;
-
-//             middleware({
-//                 client: this.m_client,
-//                 args: args,
-//             }, {
-//                 client: message.client,
-//                 channel: message.channel,
-//             }, next);
-//         }
-
-//         next();
-//     }
+    constructor(
+        discordClient: Client,
+    ) {
+        this.m_client = discordClient;
+        this.registerCommands();
+    }
     
-//     public use(handler: ChrezBotCommandHandler){
-//         this.m_handlers.push(handler);
-//     }
+    private async registerCommands(): Promise<void> {
+        this.m_client.on("messageCreate", async (message) => {
+            let iii: number = 0; // current index for middlewares
+            const modifiedMessage = message as OmitPartialGroupDMChannel<Message<boolean>> & _T;
+            
+            const next: ChrezBotNextFunction = async (err) => {
+                if (iii >= this.m_chat_middlewares.length)
+                    return;
 
-//     public command(command: string, handler: ChrezBotCommandHandler){
-//         this.m_commands.set(command, handler);
-//     }
+                if(err){
+                    modifiedMessage.error = err;
+                    iii = this.m_chat_middlewares.length - 1; // skip all middlewares
+                }
 
-//     // public interact(command: string, handler: ChrezBotHandler){
-//     //     this.use((req, res, next) => {
-//     //         if(req.client === this.m_client)
-//     //             handler(req, res, next);
-//     //         else
-//     //             next();
-//     //     });
-//     // }
-// }
+                const middleware = this.m_chat_middlewares[iii++];
+                await middleware(this.m_client, modifiedMessage, next);
+
+                return this;
+            }
+
+            // Start the middleware chain
+            next();
+        });
+
+        this.m_client.on("interactionCreate", async (interaction) => {
+            let iii: number = 0; // current index for middlewares
+            const modifiedInteraction = interaction as Interaction<CacheType> & _T;
+            
+            const next: ChrezBotNextFunction = async (err?) => {
+                if (iii >= this.m_slash_middlewares.length)
+                    return;
+                if(err){
+                    modifiedInteraction.error = err;
+                    iii = this.m_slash_middlewares.length - 1; // skip all middlewares
+                }
+
+                const middleware = this.m_slash_middlewares[iii++];
+                await middleware(this.m_client, modifiedInteraction, next);
+
+                return this;
+            }
+
+            // Start the middleware chain
+            next();
+        });
+    }
+
+    public useChat(middleware: ChrezBotChatMiddleware<_T>): void {
+        if (typeof middleware !== "function") {
+            throw new Error("Middleware must be a function");
+        }
+
+        this.m_chat_middlewares.push(middleware);
+    }
+
+    public useSlash(middleware: ChrezBotSlashMiddleware<_T>): void {
+        if (typeof middleware !== "function") {
+            throw new Error("Middleware must be a function");
+        }
+
+        this.m_slash_middlewares.push(middleware);
+    }
+
+    public chat(allowedChannelTypes: ChannelType[], command: ChrezBotCommand<_T>){
+        const middleware: ChrezBotChatMiddleware<_T> = async (client, message, next) => {
+            if(message.error)
+                // skips when error
+                next();
+
+            if(
+                allowedChannelTypes.includes(message.channel.type)
+                &&
+                (
+                    message.command === command.name
+                    ||
+                    (command.aliases?.includes(message.command) ?? false)
+                )
+            )
+                command.execute(client, message, next);
+            else
+                next();
+        }
+
+        this.m_chat_middlewares.push(middleware);
+    }
+
+    public slash(command: ChrezBotSlashCommand<_T>){
+        const middleware: ChrezBotSlashMiddleware<_T> = async (client, interaction, next) => {
+            if(interaction.error)
+                // immediately go to error handling when error
+                next();
+
+            if(interaction.isCommand() && interaction.commandName === command.slash)
+                await command.execute(client, interaction, next);
+            else
+                next();
+        }
+
+        this.m_slash_middlewares.push(middleware);
+    }
+}

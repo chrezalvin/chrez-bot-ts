@@ -1,4 +1,4 @@
-import { ButtonBuilder, CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
+import { ButtonBuilder, CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, ChannelType, MessageFlags } from "discord.js";
 import { isChatInputCommandInteraction, ErrorValidation } from "@library";
 import { SenddableMessage } from "./CustomTypes";
 const debug = require("debug")("library:command");
@@ -50,6 +50,7 @@ export interface CommandData<_T>{
     slash?: I_SlashCommand<_T>;
     chat?: I_ChatCommand<_T>;
     buttons?: I_ButtonCommand<_T>[];
+    channelTypes?: ChannelType[];
 }
 
 export class CommandBuilder<_T> implements CommandData<_T>{
@@ -68,6 +69,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     protected m_chat: CommandData<_T>["chat"] = undefined;
     protected m_commandStatus: CommandData<_T>["status"] = "public";
     protected m_buttons: CommandData<_T>["buttons"] = undefined;
+    protected m_channelTypes: CommandData<_T>["channelTypes"] = undefined;
 
     public examples: ExampleField[] = [];
 
@@ -80,6 +82,7 @@ export class CommandBuilder<_T> implements CommandData<_T>{
             this.setDescription(data.description ?? "");
             this.setStatus(data.status ?? "public");
             this.setMode(data.mode ?? "available");
+            this.setChannelTypes(data.channelTypes);
 
             if(data.slash)
                 this.setSlash(data.slash);
@@ -133,6 +136,11 @@ export class CommandBuilder<_T> implements CommandData<_T>{
      * get the command mode
      */
     get mode(){ return this.m_mode; }
+
+    /**
+     * get the channel types that this command can be used
+     */
+    get channelTypes(){ return this.m_channelTypes; }
 
     /**
      * get the buttons
@@ -278,6 +286,16 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     }
 
     /**
+     * sets a new channel types that this command can be used
+     * @param channelTypes channel types
+     */
+    setChannelTypes(channelTypes?: ChannelType[]){
+        this.m_channelTypes = channelTypes;
+
+        return this;
+    }
+
+    /**
      * sets a new button command
      * @param button button command
      */
@@ -291,6 +309,11 @@ export class CommandBuilder<_T> implements CommandData<_T>{
     async execute(message: ChatInputCommandInteraction<CacheType>): Promise<void | ErrorValidation | undefined>;
     async execute(message: SenddableMessage, args: string[]): Promise<void | ErrorValidation | undefined>
     async execute(message: SenddableMessage | ChatInputCommandInteraction<CacheType>, args?: string[]){
+        if(this.m_channelTypes){
+            if(message.channel && !this.m_channelTypes.includes(message.channel.type))
+                return new ErrorValidation("something_not_found", "command");
+        }
+
         let params: _T | undefined | ErrorValidation = undefined;
 
         if(isChatInputCommandInteraction(message)){

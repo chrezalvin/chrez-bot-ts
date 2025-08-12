@@ -1,24 +1,8 @@
 import { inlineCommandReturnTypes, CommandBuilder } from "@library";
-import play from "./play";
-import stop from "./stop";
-import pause from "./pause";
-import skip from "./skip";
-import resume from "./resume";
-import remove from "./remove";
-import queue from "./queue";
 import volume from "./volume";
-import repeat from "./repeat";
 
 const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
-    play,
-    stop,
-    pause,
-    skip,
-    queue,
-    resume,
-    remove,
     volume,
-    repeat,
 ];
 
 let commands: (CommandBuilder<any>)[] = [];

@@ -6,7 +6,7 @@ export const routes: RouterInterface[] = [
         path: "/authenticate",
         handler: authenticate_get,
         method: "get",
-        accessType: "public",
+        accessType: "public",  
     },
     {
         path: "/authenticate_server",

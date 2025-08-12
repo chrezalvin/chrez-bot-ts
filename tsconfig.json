@@ -36,8 +36,8 @@
       "@modules": ["modules"],
       "@modules/*": ["modules/*"],
 
-      "@typings": ["typings"],
-      "@typings/*": ["typings/*"],
+      "@typings": ["types"],
+      "@typings/*": ["types/*"],
       
       "@commands": ["commands"],
       "@commands/*": ["commands/*"],
