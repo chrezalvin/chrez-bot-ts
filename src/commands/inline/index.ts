@@ -13,6 +13,7 @@ import ee from "./ee";
 import yousuck from "./yousuck";
 import pika from "./pika";
 import detect from "./detect";
+import thanks from "./thanks";
 
 export const commands: inlineCommandReturnTypes[] = [
     pewpew,
@@ -29,6 +30,7 @@ export const commands: inlineCommandReturnTypes[] = [
     yousuck,
     pika,
     detect,
+    thanks,
 ].filter(command => !command.unavailable);
 
 export default commands;

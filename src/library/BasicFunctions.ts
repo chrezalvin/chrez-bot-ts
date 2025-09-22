@@ -25,6 +25,17 @@ export function rngInt(min: number, max: number){
 }
 
 /**
+ * returns a random element from an array, or undefined if the array is empty
+ * @param arr array to get random element from
+ * @returns random element from the array, or undefined if the array is empty
+ */
+export function rngArray<T>(arr: T[]): T | undefined{
+    if(arr.length === 0) return undefined;
+    
+    return arr[rngInt(0, arr.length - 1)];
+}
+
+/**
  * returns a random number between min and max
  * @param min minimum value
  * @param max maximum value

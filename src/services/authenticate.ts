@@ -33,7 +33,7 @@ export async function requestOauth2(
             debug(`Statuscode 400 error given, reason: ${errorJson.error ?? "no reason found"}`);
 
             if(errorJson.error === "invalid_grant")
-                throw new Error("Oath2 failed because of invalid code");
+                throw new Error("Oauth2 failed because of invalid code");
         }
         else
           debug(`Statuscode 400 error given, reason: ${errorJson ?? "no reason found"}`)

@@ -101,11 +101,6 @@ export const SUPABASE_URL = config.SUPABASE_URL ?? "";
  */
 export const SUPABASE_KEY = config.SUPABASE_KEY ?? "";
 
-/**
- * Whitelisted URL for CORS
- */
-export const CORS_ORIGIN= config.CORS_ORIGIN ?? "";
-
 // FROM HERE IS THE CHECKING FOR .env
 if(config.MODE === "production" || config.MODE === "development")
     MODE = config.MODE;
@@ -134,11 +129,6 @@ if(SUPABASE_URL === "" || SUPABASE_KEY === "") {
     console.warn("Warning: Couldn't find SUPABASE DATABASE credentials in .env");
     console.warn("Warning: database feature will be disabled");
 }
-
-// checking for CORS in .env
-if(MODE === "production")
-    if(CORS_ORIGIN === "")
-        throw new Error("Couldn't find CORS_ORIGIN in .env");
 
 if(!config.BOT_MAX_MESSAGE_ALLOWED)
     console.warn("BOT_MAX_MESSAGE_ALLOWED is not defined, using default value instead");
