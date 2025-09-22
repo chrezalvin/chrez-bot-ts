@@ -15,16 +15,22 @@ import { isDiscordUser } from "@models/DiscordUser";
 export async function authenticate_get(req: Request, res: Response){
   debug("authenticate_get");
   const accessCode = req.query.code;
+  const requestUrl = req.query.redirect_uri ?? OAUTH2_REDIRECT_URL;
   
   if(typeof accessCode !== "string"){
     debug("no accesscode error thrown");
     throw new Error("No accesscode given");
   }
+
+  if(typeof requestUrl !== "string"){
+    debug("no request url found");
+    throw new Error("Request url not found");
+  }
   
   debug(`got accessCode ${accessCode}`);
   const oauth2Response = await requestOauth2({
     code: accessCode,
-    redirect_uri: OAUTH2_REDIRECT_URL,
+    redirect_uri: requestUrl,
     scope: "Identify"
   });
 
