@@ -52,7 +52,10 @@ export class ActiveEventService {
     static async getAllActiveEvents(): Promise<ActiveEvent[]>{
         const res = await ActiveEventService
             .activeEventManager
-            .getAll();
+            .queryBuilder(query => query.order("start_date", { ascending: false }));
+
+        if(!Array.isArray(res))
+            throw new Error("Failed to get active events");
 
         return res;
     }
