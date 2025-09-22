@@ -9,7 +9,6 @@ import cursed from "./cursed";
 import update from "./update";
 import recommend from "./recommend";
 import convert from "./convert";
-import { CommandBuilder } from "@library";
 import event from "./event";
 import registlet from "./registlet";
 import translate from "./translate";
@@ -21,6 +20,7 @@ import stop from "./stop";
 import remove from "./remove";
 import repeat from "./repeat";
 import skip from "./skip";
+import { CommandBuilder } from "@library";
 
 export const commands: (CommandBuilder<any>)[] = [
     roll,

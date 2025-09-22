@@ -7,15 +7,10 @@ import cors from "cors";
 
 import routes from "./routes";
 import { sessionCheck, page404, loggerRoute } from "./middlewares";
-import { CORS_ORIGIN } from "@config";
 
 const express = Express();
 
-express.use(cors({
-    origin: CORS_ORIGIN,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
-}));
+express.use(cors());
 express.use(logger("dev"));
 express.use(Express.json());
 express.use(Express.urlencoded());
