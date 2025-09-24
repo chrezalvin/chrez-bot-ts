@@ -1,8 +1,10 @@
 import { inlineCommandReturnTypes, CommandBuilder } from "@library";
 import volume from "./volume";
+import playlist from "./playlist";
 
 const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
     volume,
+    playlist,
 ];
 
 let commands: (CommandBuilder<any>)[] = [];

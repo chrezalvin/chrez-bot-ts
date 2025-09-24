@@ -231,6 +231,14 @@ export class ErrorValidation implements ErrorValidationData{
      */
     constructor(error: "command_is_owner_only");
 
+    /**
+     * 16
+     * show error when a duplicate entry is found
+     * @param entry the duplicate entry
+     * @example new ErrorValidation("duplicate_entry", "Username") -> "Username already exists!"
+     */
+    constructor(error: "duplicate_entry", entry: string);
+
     constructor(error: ErrorMessages, ...args: (string | number)[]){
         this.code = error2[error].code;
         this.name = error2[error].name;
