@@ -43,3 +43,7 @@ export {
 export {
     ActiveEventService,
 } from "./activeEvent";
+
+export {
+    PlaylistService,
+} from "./playlist";

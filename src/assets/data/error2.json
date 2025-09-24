@@ -78,5 +78,10 @@
         "code": 15,
         "name": "This Command is Owner Only",
         "description": "This command is only available for the owner of the bot!"
+    },
+    "duplicate_entry": {
+        "code": 16,
+        "name": "Duplicate Entry",
+        "description": "{0} already exists!"
     }
 }
