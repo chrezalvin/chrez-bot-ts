@@ -24,12 +24,14 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
 
     const res = await yoloService.detect(json_data_buffer);
 
-    if(!res)
+    if(!res){
+        
         return new ErrorValidation("interaction_error");
+    }
 
     const resJson = res ? JSON.parse(res) : null;
     if("error" in resJson)
-        return new ErrorValidation("interaction_error");
+        return new ErrorValidation("interaction_error_with_reason", resJson.error);
 
     if(!("image" in resJson) || !("image_format" in resJson) || !("content" in resJson))
         return new ErrorValidation("something_not_found", "detection result");

@@ -14,6 +14,11 @@
         "name": "interaction_error",
         "description": "interaction error"
     },
+    "interaction_error_with_reason": {
+        "code": 3,
+        "name": "interaction_error",
+        "description": "interaction error: {0}"
+    },
     "index_out_of_bounds":{
         "code": 3,
         "name": "Out Of Bounds",

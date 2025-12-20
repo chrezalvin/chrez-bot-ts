@@ -134,6 +134,13 @@ export class ErrorValidation implements ErrorValidationData{
 
     /**
      * 3
+     * show interaction error message
+     * @example new ErrorValidation("interaction_error", "argument not selected") -> "interaction error: no argument selected"
+     */
+    constructor(error: "interaction_error_with_reason", reason: string);
+
+    /**
+     * 3
      * show out of bounds error message
      * @param min minimum value
      * @param max maximum value
