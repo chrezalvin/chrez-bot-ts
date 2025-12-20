@@ -28,11 +28,30 @@ const command: inlineCommandReturnTypes = {
             // convert the image to a buffer
             const buffer = Buffer.from(image);
 
-            try{
-                const output = await yoloService.detect(buffer);
+            const json_data = {
+                image: buffer.toString("base64")
+            }
 
-                if(output)
-                    message.reply(output);
+            const json_data_buffer = Buffer.from(JSON.stringify(json_data));
+
+            try{
+                const output = await yoloService.detect(json_data_buffer);
+                const resJson = output ? JSON.parse(output) : null;
+
+                if(!resJson)
+                    return;
+
+                if(!("image" in resJson) || !("image_format" in resJson) || !("content" in resJson))
+                    return;
+
+                const imageBuffer = Buffer.from(resJson.image, "base64");
+                const imageFormat = resJson.image_format;
+                
+                message.channel.send({
+                    content: resJson.content,
+                    files: [{attachment: imageBuffer, name: `detection${imageFormat}`}]
+                });
+
             }
             catch(e){
                 console.error("Error:", e);

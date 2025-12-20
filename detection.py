@@ -1,37 +1,103 @@
 import sys
 import cv2
 import numpy as np
-
-from base64 import b64decode
+import json
+import os
+import base64
 from ultralytics import YOLO
 
-def main():
-    model = YOLO("yolo11m.pt")
+from base64 import b64decode
 
-    # list of classes labels to detect
-    # 14 = bird, 15 = cat, 16 = dog, 17 = horse, 18 = sheep, 19 = cow, 20 = elephant, 21 = bear, 22 = zebra, 23 = giraffe
-    classes = [14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-    min_conf = 0.50
-    
+dicts = {}
+
+def predict_image(model_key: str, image: np.ndarray):
+    model : YOLO = dicts[model_key]["model"]
+    results = model.predict(
+        source=image, 
+        conf=dicts[model_key]["info"]["min_conf"],
+        classes=dicts[model_key]["included_classes"],
+        save=False, 
+        show=False, 
+        verbose=False,
+    )
+    return results
+
+def load_dicts():
+    model_dir = "./models/"
+    info_json_file = "info.json"
+    model_file = "model.pt"
+
+    keyList = os.listdir(model_dir)
+
+    for key in keyList:
+        dicts[key] = {}
+        dicts[key]["model"] = YOLO(os.path.join(model_dir, key, model_file))
+
+        with open(os.path.join(model_dir, key, info_json_file), "r") as f:
+            info = json.load(f)
+            included_classes = []
+            for i, class_name in enumerate(info["classes"]):
+                included_classes.append(class_name["id"])
+                    
+            dicts[key]["included_classes"] = included_classes
+            dicts[key]["info"] = info
+
+def main():
+    load_dicts()
     while True:
         try:
-            image_data = b64decode(sys.stdin.readline())
+            raw_data = b64decode(sys.stdin.readline())
 
-            result = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+            json_data = json.loads(raw_data)
 
-            predict = model.predict(source=result, conf=min_conf, save=False, show=False, verbose=False)
+            # make sure the raw data have 'image' key
+            if 'image' not in json_data:
+                raise ValueError("No 'image' key found in the input data")
+            
+            # check if model key exists
+            model = "yolo11m" # default model
+            if 'model' in json_data:
+                if json_data['model'] not in dicts:
+                    raise ValueError(f"Model '{json_data['model']}' not found")
+                
+                model = json_data['model']
 
-            for result in predict:
-                for boxes_ in result.boxes:
-                    if boxes_.cls in classes:
-                        print(f"{predict[0].names[int(boxes_.cls)].capitalize()} ({boxes_.conf[0].item() * 100:.0f}%)")
-                        break
+            image_decoded = b64decode(json_data['image'])
+            image_array = np.frombuffer(image_decoded, np.uint8)
+            image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
-            sys.stdout.flush()
+            results = predict_image(model, image)
+
+            if not results or len(results) == 0:
+                raise ValueError("No results returned from prediction")
+            
+            result_img = results[0].plot()
+            result_img_png = cv2.imencode('.PNG', result_img)[1]
+            result_img_encoded = base64.b64encode(result_img_png.tobytes()).decode('utf-8')
+
+            first_res = results[0].boxes[0]
+            cls_num = first_res.cls
+            conf = first_res.conf
+            class_name: str = results[0].names[int(cls_num)]
+
+            json_response = {
+                "content": f"{class_name.capitalize()} ({(float(conf) * 100):.0f}%)",
+                "model": model,
+                "image": result_img_encoded,
+                "image_format": ".png",
+            }
+
+            print(json.dumps(json_response))
 
         except Exception as e:
-            print(f"Error: {e}", file=sys.stderr)
-            break
+            json_response = {
+                "error": f"{str(e)}"
+            }
+
+            print(json.dumps(json_response))
+
+        finally:
+            sys.stdout.flush()
 
 if __name__ == "__main__":
     main()
