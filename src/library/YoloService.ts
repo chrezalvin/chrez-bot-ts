@@ -1,6 +1,6 @@
 import {ChildProcess, spawn} from "child_process";
 import fs from "fs";
-import debug from "debug"; debug("library:YOLOService");
+const debug = require("debug")("library:YOLOService");
 
 type YOLODetectResponse = {
     image: Buffer;
@@ -137,5 +137,8 @@ export class YOLOService{
 
     shutdown(){
         this.m_pythonProcess?.stdin?.end();
+        this.m_pythonProcess?.kill();
+        this.m_ready = false;
+        debug("Python process terminated");
     }
 }
