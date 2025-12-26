@@ -16,8 +16,8 @@ def predict_image(model_key: str, image: np.ndarray):
         source=image, 
         conf=dicts[model_key]["info"]["min_conf"],
         classes=dicts[model_key]["included_classes"],
-        save=False, 
-        show=False, 
+        save=False,
+        show=False,
         verbose=False,
     )
     return results
@@ -70,10 +70,9 @@ def main():
 
             if not results or len(results) == 0:
                 raise ValueError("No results returned from prediction")
-            
+
             result_img = results[0].plot()
-            result_img_png = cv2.imencode('.PNG', result_img)[1]
-            result_img_encoded = base64.b64encode(result_img_png.tobytes()).decode('utf-8')
+            cv2.imwrite("temp_result.png", result_img)
 
             first_res = results[0].boxes[0]
             cls_num = first_res.cls
@@ -83,8 +82,7 @@ def main():
             json_response = {
                 "content": f"{class_name.capitalize()} ({(float(conf) * 100):.0f}%)",
                 "model": model,
-                "image": result_img_encoded,
-                "image_format": ".png",
+                "image_path": "temp_result.png"
             }
 
             print(json.dumps(json_response))

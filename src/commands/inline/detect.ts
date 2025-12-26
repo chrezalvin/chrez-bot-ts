@@ -1,6 +1,7 @@
-import {inlineCommandReturnTypes} from "@library";
+import {inlineCommandReturnTypes, YOLOModels} from "@library";
 import { Message } from "discord.js";
 import { yoloService } from "@shared/YoloService";
+import fs from "fs";
 import debug from "debug"; debug("ChrezBot:detect");
 
 const acceptedContentTypes = [
@@ -35,21 +36,14 @@ const command: inlineCommandReturnTypes = {
             const json_data_buffer = Buffer.from(JSON.stringify(json_data));
 
             try{
-                const output = await yoloService.detect(json_data_buffer);
-                const resJson = output ? JSON.parse(output) : null;
+                const output = await yoloService.imageDetection(buffer, YOLOModels.YOLO11m);
 
-                if(!resJson)
+                if("error" in output)
                     return;
-
-                if(!("image" in resJson) || !("image_format" in resJson) || !("content" in resJson))
-                    return;
-
-                const imageBuffer = Buffer.from(resJson.image, "base64");
-                const imageFormat = resJson.image_format;
                 
                 message.channel.send({
-                    content: resJson.content,
-                    files: [{attachment: imageBuffer, name: `detection${imageFormat}`}]
+                    content: output.content,
+                    files: [{attachment: output.image, name: `detection.png`}]
                 });
 
             }
