@@ -1,4 +1,4 @@
-import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
+import {MyEmbedBuilder, CommandBuilder, ErrorValidation, YOLOModels} from "@library";
 
 import { Attachment, AttachmentBuilder, CacheType, ChannelType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import {yoloService} from "@shared/YoloService";
@@ -15,41 +15,22 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
     const arrayBuffer = await image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const json_data = {
-        image: buffer.toString("base64"),
-        model: args.model
-    }
-
-    const json_data_buffer = Buffer.from(JSON.stringify(json_data));
-
-    const res = await yoloService.detect(json_data_buffer);
-
-    if(!res){
-        
-        return new ErrorValidation("interaction_error");
-    }
-
-    const resJson = res ? JSON.parse(res) : null;
-    if("error" in resJson)
-        return new ErrorValidation("interaction_error_with_reason", resJson.error);
-
-    if(!("image" in resJson) || !("image_format" in resJson) || !("content" in resJson))
-        return new ErrorValidation("something_not_found", "detection result");
+    const res = await yoloService.imageDetection(buffer, args.model as YOLOModels);
 
     const embed = new MyEmbedBuilder();
 
-    const imageBuffer = Buffer.from(resJson.image, "base64");
-    const imageFormat = resJson.image_format;
-    const attachment = new AttachmentBuilder(imageBuffer, {name: `detection${imageFormat}`});
+    if("error" in res){
+        embed.setTitle("Detection Error");
+        embed.setDescription(res.error);
+        return {embeds: [embed]};
+    }
 
-    embed.setImage(`attachment://detection${imageFormat}`);
-    if("content" in resJson)
-        embed.setTitle(resJson.content);
-    else
-        embed.setTitle("AI Detection Result");
+    const attachment = new AttachmentBuilder(res.image, {name: `detection.png`});
 
-    if("model" in resJson)
-        embed.setFooter({text: `Model used: ${resJson.model}`});
+    embed
+        .setImage(`attachment://detection.png`)
+        .setTitle(res.content)
+        .setFooter({text: `Model used: ${res.model}`});
 
     return {embeds: [embed], files: [attachment]};
 }
