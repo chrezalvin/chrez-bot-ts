@@ -1,4 +1,4 @@
-import {inlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
+import {InlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
 import { AttachmentBuilder, MessageCreateOptions, MessagePayload } from "discord.js";
 
 import { LickService } from "services/lick";
@@ -18,7 +18,7 @@ const arrayOfFunctions: (string | (() => Promise<(MessagePayload | MessageCreate
     "yum"
 ]
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "lick",
     searchCriteria: ["lick", /^lick(s) \w{1,6}$/i, /^(licks? ?){1,3}/i],
     description: "lick stuffs",

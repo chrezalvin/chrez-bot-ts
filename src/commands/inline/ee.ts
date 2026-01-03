@@ -1,8 +1,8 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 import { MessageType } from "discord.js";
 import eeData from "@assets/messages/inline/ee.json";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "e.e",
     searchCriteria: ["e.e"],
     description: "sending message to replied e.e message",

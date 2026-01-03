@@ -1,6 +1,6 @@
-import {inlineCommandReturnTypes, MyEmbedBuilder} from "@library";
+import {InlineCommandReturnTypes, MyEmbedBuilder} from "@library";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "test",
     description: "Tests the time delay",
     searchCriteria: ["test", "testing", "ping"],

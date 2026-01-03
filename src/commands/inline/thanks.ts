@@ -1,10 +1,10 @@
 import { CLIENT_ID } from "@config";
-import {inlineCommandReturnTypes} from "@library";
+import {InlineCommandReturnTypes} from "@library";
 import { MessageType } from "discord.js";
 import thanks from "@assets/messages/inline/thanks.json";
 import { rngArray } from "@library/BasicFunctions";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "thanks",
     description: "reply to thanks messages",
     searchCriteria: [/(thanks?|ty)/],

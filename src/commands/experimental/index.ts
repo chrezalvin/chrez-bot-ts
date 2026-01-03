@@ -1,15 +1,15 @@
-import { inlineCommandReturnTypes, CommandBuilder } from "@library";
+import { InlineCommandReturnTypes, CommandBuilder } from "@library";
 import volume from "./volume";
 import playlist from "./playlist";
 
-const commandDump: (CommandBuilder<any> | inlineCommandReturnTypes)[] = [
+const commandDump: (CommandBuilder<any> | InlineCommandReturnTypes)[] = [
     volume,
     playlist,
 ];
 
 let commands: (CommandBuilder<any>)[] = [];
 
-let inlines: (inlineCommandReturnTypes)[] = [];
+let inlines: (InlineCommandReturnTypes)[] = [];
 
 for(const unknownCommand of commandDump){
     if(CommandBuilder.isCommandBuilder(unknownCommand)){

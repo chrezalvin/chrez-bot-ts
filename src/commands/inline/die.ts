@@ -1,10 +1,10 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 import { MessageType } from "discord.js";
 
 import dieMessages from "@assets/messages/inline/die.json";
 import { UserService } from "@services";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "die",
     searchCriteria: [/chrez die|die cheese/i, /^die$/i],
     description: "sending mean message to mean people >:(",

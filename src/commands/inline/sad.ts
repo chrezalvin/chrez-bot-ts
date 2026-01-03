@@ -1,6 +1,6 @@
-import {inlineCommandReturnTypes} from "@library";
+import {InlineCommandReturnTypes} from "@library";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "sad",
     description: "Unsad people",
     searchCriteria: [/^don'?t be sad/i],

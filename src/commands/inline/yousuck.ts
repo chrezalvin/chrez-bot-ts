@@ -1,8 +1,8 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 import { MessageType } from "discord.js";
 import yousuckData from "@assets/messages/inline/yousuck.json";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "yousuck",
     searchCriteria: [/^you suck$/i],
     description: "sending message when chrezbot is being replied by a message that contains 'you suck'",

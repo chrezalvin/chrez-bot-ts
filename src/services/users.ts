@@ -34,6 +34,33 @@ export class UserService {
         return find;
     }
 
+    /**
+     * find users having birthday on given month and day
+     * 
+     * this function is still using cache so make sure to refresh cache if needed
+     */
+    public static findBirthdayUsers(): User[]{
+        // today in japanese timezone
+        const now = new Date(Date.now() + 9 * 60 * 60 * 1000);
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+
+        const birthdayUsers = UserService
+            .service
+            .cache
+            .filter(user => {
+                if(!user.birthday) return false;
+
+                const bday = new Date(user.birthday);
+                const bdayMonth = bday.getMonth() + 1;
+                const bdayDay = bday.getDate();
+                
+                return bdayMonth === month && bdayDay === day;
+            })
+
+        return birthdayUsers;
+    }
+
     public static async getAllUsers(){
         return await UserService.service.getAll();
     }

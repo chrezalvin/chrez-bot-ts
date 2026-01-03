@@ -1,7 +1,7 @@
 import { YOLOService } from "@library";
-import { MODE } from "@config";
+import { BOT_DETECTION_WAITING_TIME } from "@config";
 
 export const yoloService = new YOLOService({
     // production is termux-based and takes much longer to do a detection
-    timeout: MODE === "development" ? 5000 : 30000,
+    timeout: BOT_DETECTION_WAITING_TIME * 1000,
 });

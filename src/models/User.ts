@@ -9,6 +9,7 @@ export interface User{
     timezone: string | null;
     aliases: string[] | null;
     role: RoleName;
+    birthday: string | null;
 }
 
 export function isUser(value: unknown): value is User{
@@ -42,6 +43,11 @@ export function isUser(value: unknown): value is User{
         return false;
     }
 
+    if(!("birthday" in value)){
+        debug("property birthday is not defined");
+        return false;
+    }
+
     if(typeof value.user_id !== "string"){
         debug("property user_id is not a string");
         return false;
@@ -64,6 +70,11 @@ export function isUser(value: unknown): value is User{
 
     if(typeof value.role !== "string" || !["owner", "vice", "admin", "user"].includes(value.role)){
         debug("property role is not a string or not one of the predefined values");
+        return false;
+    }
+
+    if(typeof value.birthday !== "string" && value.birthday !== null){
+        debug("property birthday is not a string or null");
         return false;
     }
 
@@ -96,6 +107,11 @@ export function isUserWithoutId(value: unknown): value is StrictOmit<User, "user
         return false;
     }
 
+    if(!("birthday" in value)){
+        debug("property birthday is not defined");
+        return false;
+    }
+
     if(typeof value.username !== "string"){
         debug("property username is not a string");
         return false;
@@ -113,6 +129,11 @@ export function isUserWithoutId(value: unknown): value is StrictOmit<User, "user
 
     if(typeof value.role !== "string" || !["owner", "vice", "admin", "user"].includes(value.role)){
         debug("property role is not a string or not one of the predefined values");
+        return false;
+    }
+
+    if(typeof value.birthday !== "string" && value.birthday !== null){
+        debug("property birthday is not a string or null");
         return false;
     }
 
@@ -147,6 +168,11 @@ export function isPartialUser(value: unknown): value is Partial<User>{
 
     if("role" in value && (typeof value.role !== "string" || !["owner", "vice", "admin", "user"].includes(value.role))){
         debug("property role is not a string or not one of the predefined values");
+        return false;
+    }
+
+    if("birthday" in value && (typeof value.birthday !== "string" && value.birthday !== null)){
+        debug("property birthday is not a string or null");
         return false;
     }
 

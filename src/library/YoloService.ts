@@ -104,9 +104,9 @@ export class YOLOService{
         })
     }
 
-    public async imageDetection(image: Buffer, model: YOLOModels): Promise<YOLODetectResponse>{
+    public async imageDetection(imageUrl: string, model: YOLOModels): Promise<YOLODetectResponse>{
         const json_data = {
-            image: image.toString("base64"),
+            imageUrl: imageUrl,
             model: model
         }
 
