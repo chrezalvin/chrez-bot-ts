@@ -56,6 +56,11 @@ export const BOT_PREFIXES = config.BOT_PREFIXES ?? [];
 export const BOT_TRUSTED_IDS = config.BOT_TRUSTED_IDS ?? [];
 
 /**
+ * Time for bot to wait for AI detection result (in seconds)
+ */
+export const BOT_DETECTION_WAITING_TIME = config.BOT_DETECTION_WAITING_TIME ?? 5;
+
+/**
  * current bot version
  */
 export const BOT_VERSION = packageJson.version;

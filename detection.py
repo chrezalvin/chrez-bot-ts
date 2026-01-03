@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import json
 import os
-import base64
+import urllib3
 from ultralytics import YOLO
 
 from base64 import b64decode
@@ -43,7 +43,9 @@ def load_dicts():
             dicts[key]["info"] = info
 
 def main():
+    width_constraint = 800
     load_dicts()
+    
     while True:
         try:
             raw_data = b64decode(sys.stdin.readline())
@@ -51,8 +53,8 @@ def main():
             json_data = json.loads(raw_data)
 
             # make sure the raw data have 'image' key
-            if 'image' not in json_data:
-                raise ValueError("No 'image' key found in the input data")
+            if 'imageUrl' not in json_data:
+                raise ValueError("No 'imageUrl' key found in the input data")
             
             # check if model key exists
             model = "yolo11m" # default model
@@ -62,9 +64,17 @@ def main():
                 
                 model = json_data['model']
 
-            image_decoded = b64decode(json_data['image'])
-            image_array = np.frombuffer(image_decoded, np.uint8)
-            image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+            image_url = json_data['imageUrl']
+            res = urllib3.request('GET', image_url)
+
+            if res.status != 200:
+                raise ValueError(f"Failed to download image from URL: {image_url}")
+            
+            if 'content-type' not in res.headers or not res.headers['content-type'].startswith('image/'):
+                raise ValueError(f"URL does not point to a valid image: {image_url}")
+            
+            image = cv2.imdecode(np.frombuffer(res.data, np.uint8), cv2.IMREAD_COLOR)
+            res.close()
 
             results = predict_image(model, image)
 
@@ -72,7 +82,13 @@ def main():
                 raise ValueError("No results returned from prediction")
 
             result_img = results[0].plot()
-            cv2.imwrite("temp_result.png", result_img)
+
+            # resize to 800xany
+            xSize = int(result_img.shape[1])
+            ySize = int(result_img.shape[0])
+
+            result_img = cv2.resize(result_img, (width_constraint, int((width_constraint / xSize) * ySize)))
+            cv2.imwrite("temp_result.webp", result_img)
 
             first_res = results[0].boxes[0]
             cls_num = first_res.cls
@@ -82,7 +98,7 @@ def main():
             json_response = {
                 "content": f"{class_name.capitalize()} ({(float(conf) * 100):.0f}%)",
                 "model": model,
-                "image_path": "temp_result.png"
+                "image_path": "temp_result.webp"
             }
 
             print(json.dumps(json_response))
@@ -96,6 +112,7 @@ def main():
 
         finally:
             sys.stdout.flush()
+            res.close()
 
 if __name__ == "__main__":
     main()

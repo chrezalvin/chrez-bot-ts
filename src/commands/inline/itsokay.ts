@@ -1,9 +1,9 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 import itsokays from "@assets/messages/inline/itsokay.json";
 import { MessageType } from "discord.js";
 import { CLIENT_ID } from "@config";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "itsok",
     description: "Says random message whenever user reply chrezbot with sorry",
     searchCriteria: [/sorry/gi],

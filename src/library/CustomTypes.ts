@@ -34,7 +34,7 @@ export interface CommandReturnTypes extends Command {
     }
 }
 
-export interface inlineCommandReturnTypes extends Command {
+export interface InlineCommandReturnTypes extends Command {
     searchCriteria: (string | RegExp | ((message: Message<boolean>) => boolean))[];
     acceptedLength?: number;
     execute: (message: SenddableMessage) => void;
@@ -55,7 +55,7 @@ export function isCommandReturnType(command: unknown): command is CommandReturnT
     return true;
 }
 
-export function isInline(command: unknown): command is inlineCommandReturnTypes{
+export function isInline(command: unknown): command is InlineCommandReturnTypes{
     if(!isCommand(command)) return false;
     if(!("searchCriteria" in command)) return false;
     
@@ -116,7 +116,7 @@ export function isChatInputCommandInteraction(val: unknown): val is ChatInputCom
 /**
  * run command type so it can deal with slash command and message command at the same time
  */
-export type runCommand<_T> = {
+export type RunCommand<_T> = {
     (args?: _T, message?: Message<boolean> | ChatInputCommandInteraction<CacheType>): MyEmbedBuilder[];
     (args?: _T): MyEmbedBuilder[];
 }

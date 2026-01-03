@@ -1,10 +1,10 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 
 import greet from "@assets/messages/inline/greet.json";
 import { BOT_PREFIXES } from "@config";
 import { UserService } from "@services";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "greet",
     description: "Greet the user",
     searchCriteria: ["cheese", /^he+re+$/i, ...BOT_PREFIXES],

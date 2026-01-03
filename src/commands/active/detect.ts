@@ -11,11 +11,9 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
         return new ErrorValidation("something_not_found", "argument");
 
 
-    const image = await fetch(args.image.url);
-    const arrayBuffer = await image.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const url = args.image.url + "&format=webp";
 
-    const res = await yoloService.imageDetection(buffer, args.model as YOLOModels);
+    const res = await yoloService.imageDetection(url, args.model as YOLOModels);
 
     const embed = new MyEmbedBuilder();
 

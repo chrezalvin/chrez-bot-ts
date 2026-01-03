@@ -8,5 +8,4 @@ output
 cloudflaredConfig.yaml
 *.exe
 *config.json*
-*.ipynb
-dog.webp
+/private

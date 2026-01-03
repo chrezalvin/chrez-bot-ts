@@ -1,4 +1,4 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 
 const dontYellMessages = [
     "Don't yell D:",
@@ -9,7 +9,7 @@ const dontYellMessages = [
     "Stop yelling DDDD::::"
 ]
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "dontyell",
     // checks if all the text is in caps
     searchCriteria: [/([A-Z]('| |!|\?)?){20,}/],

@@ -1,8 +1,8 @@
-import {inlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
+import {InlineCommandReturnTypes, MyEmbedBuilder, rngInt} from "@library";
 
 import pewpew from "@assets/messages/inline/pewpew.json";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "pewpew",
     description: "Give pewpew",
     searchCriteria: ["pewpew", "pew", "pew pew", "mamekwpqnseueurbdudlalzmaa"],

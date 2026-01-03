@@ -1,7 +1,7 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 import yayData from "@assets/data/yays.json";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "yay",
     description: "yays whenever users says yay",
     searchCriteria: [/^y(a|e)*y/i, /^yeeee+s/i],

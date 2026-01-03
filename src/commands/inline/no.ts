@@ -1,4 +1,4 @@
-import {inlineCommandReturnTypes, rngInt} from "@library";
+import {InlineCommandReturnTypes, rngInt} from "@library";
 import { MessageType } from "discord.js";
 
 const nos = [
@@ -12,7 +12,7 @@ const nos = [
     "I understand",
 ]
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "no",
     searchCriteria: [/^no$/i, /^i refuse$/i],
     description: "responds to user saying no to reply",

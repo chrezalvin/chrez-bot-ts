@@ -1,4 +1,4 @@
-import { inlineCommandReturnTypes } from "@library";
+import { InlineCommandReturnTypes } from "@library";
 import pewpew from "./pewpew";
 import greet from "./greet";
 import die from "./die";
@@ -15,7 +15,7 @@ import pika from "./pika";
 import detect from "./detect";
 import thanks from "./thanks";
 
-export const commands: inlineCommandReturnTypes[] = [
+export const commands: InlineCommandReturnTypes[] = [
     pewpew,
     greet,
     die,

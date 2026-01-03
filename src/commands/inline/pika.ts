@@ -1,6 +1,6 @@
-import {inlineCommandReturnTypes, MyEmbedBuilder} from "@library";
+import {InlineCommandReturnTypes, MyEmbedBuilder} from "@library";
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "pika",
     description: "sends a response to pika",
     searchCriteria: ["pika"],

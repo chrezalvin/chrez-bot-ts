@@ -1,7 +1,6 @@
-import {inlineCommandReturnTypes, YOLOModels} from "@library";
+import {InlineCommandReturnTypes, YOLOModels} from "@library";
 import { Message } from "discord.js";
 import { yoloService } from "@shared/YoloService";
-import fs from "fs";
 import debug from "debug"; debug("ChrezBot:detect");
 
 const acceptedContentTypes = [
@@ -14,7 +13,7 @@ const detectionCheck = (message: Message<boolean>) => {
     return message.attachments.size > 0;
 }
 
-const command: inlineCommandReturnTypes = {
+const command: InlineCommandReturnTypes = {
     name: "detect",
     searchCriteria: [detectionCheck],
     description: "detects animals",
@@ -22,28 +21,17 @@ const command: inlineCommandReturnTypes = {
         const attachment = message.attachments.first();
         debug("Attachment: ${attachment?.contentType}");
         if(attachment && attachment.contentType && acceptedContentTypes.includes(attachment.contentType)){
-            // get the image
-            const res = await fetch(attachment.url);
-            const image = await res.arrayBuffer();
-
-            // convert the image to a buffer
-            const buffer = Buffer.from(image);
-
-            const json_data = {
-                image: buffer.toString("base64")
-            }
-
-            const json_data_buffer = Buffer.from(JSON.stringify(json_data));
-
             try{
-                const output = await yoloService.imageDetection(buffer, YOLOModels.YOLO11m);
+                const url = attachment.url + "&format=webp";
+                const output = await yoloService.imageDetection(url, YOLOModels.YOLO11m);
 
                 if("error" in output)
                     return;
-                
+
+                console.log("Sending detection result...");
                 message.channel.send({
                     content: output.content,
-                    files: [{attachment: output.image, name: `detection.png`}]
+                    files: [{attachment: output.image, name: `detection.webp`}]
                 });
 
             }
