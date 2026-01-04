@@ -1,4 +1,4 @@
-import {MyEmbedBuilder, CommandBuilder, ErrorValidation, YOLOModels} from "@library";
+import {MyEmbedBuilder, CommandBuilder, ErrorValidation, YOLOModelOptions, YOLOModelOption} from "@library";
 
 import { Attachment, AttachmentBuilder, CacheType, ChannelType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import {yoloService} from "@shared/YoloService";
@@ -13,7 +13,7 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
 
     const url = args.image.url + "&format=webp";
 
-    const res = await yoloService.imageDetection(url, args.model as YOLOModels);
+    const res = await yoloService.imageDetection(url, args.model as YOLOModelOption);
 
     const embed = new MyEmbedBuilder();
 
@@ -48,10 +48,9 @@ const quote = new CommandBuilder<I_Detect>()
                 .setName("model")
                 .setRequired(true)
                 .setDescription("Model to use for detection")
-                .addChoices(
-                    {name: "yolo11m", value: "yolo11m"},
-                    {name: "neuronnet", value: "neuronnet"},
-                )
+                .addChoices(YOLOModelOptions.map(option => {
+                    return {name: option, value: option};
+                }))
             )
             .addAttachmentOption(option => option
                 .setName("image")
