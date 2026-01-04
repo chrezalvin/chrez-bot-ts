@@ -6,6 +6,7 @@ type YOLODetectResponse = {
     image: Buffer;
     content: string;
     model: string;
+    format: string;
 } | {
     error: string;
 };
@@ -18,11 +19,14 @@ type YOLODetectRawResponse = {
     error: string;
 } | null;
 
-export enum YOLOModels{
-    YOLO11m = "yolo11m",
-    YOLO11s = "yolo11s",
-    Neuronnet = "neuronnet",
-}
+export const YOLOModelOptions = [
+    "yolo11m",
+    "yolo11s",
+    "neuronnet",
+    "yolo11m-animals",
+] as const;
+
+export type YOLOModelOption = typeof YOLOModelOptions[number];
 
 function isYOLODetectRawResponse(obj: unknown): obj is YOLODetectRawResponse {
     if(typeof obj !== "object" || obj === null)
@@ -104,7 +108,7 @@ export class YOLOService{
         })
     }
 
-    public async imageDetection(imageUrl: string, model: YOLOModels): Promise<YOLODetectResponse>{
+    public async imageDetection(imageUrl: string, model: YOLOModelOption): Promise<YOLODetectResponse>{
         const json_data = {
             imageUrl: imageUrl,
             model: model
@@ -131,7 +135,8 @@ export class YOLOService{
         return {
             image: imageBuffer,
             content: resJson.content,
-            model: resJson.model
+            model: resJson.model,
+            format: resJson.image_path.split('.').pop() || "png",
         };
     }
 

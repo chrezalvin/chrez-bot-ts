@@ -1,0 +1,45 @@
+{
+    "min_conf": 0.50,
+    "classes": [
+        {
+            "id": 14,
+            "name": "bird"
+        },
+        {
+            "id": 15,
+            "name": "cat"
+        },
+        {
+            "id": 16,
+            "name": "dog"
+        },
+        {
+            "id": 17,
+            "name": "horse"
+        },
+        {
+            "id": 18,
+            "name": "sheep"
+        },
+        {
+            "id": 19,
+            "name": "cow"
+        },
+        {
+            "id": 20,
+            "name": "elephant"
+        },
+        {
+            "id": 21,
+            "name": "bear"
+        },
+        {
+            "id": 22,
+            "name": "zebra"
+        },
+        {
+            "id": 23,
+            "name": "giraffe"
+        }
+    ]
+}
