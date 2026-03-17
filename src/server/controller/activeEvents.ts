@@ -57,7 +57,7 @@ export const activeEvents_post_add = async (req: Request, res: Response) => {
     if(!isActiveEventWithoutId(activeEvent))
         throw new Error("Invalid activeEvent object");
 
-    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    const blob = image ? new Blob([image.buffer as BlobPart], {type: image.mimetype}) : undefined;
     let newActiveEvent = await ActiveEventService.createNewEvent(activeEvent, blob);
 
     res.status(200).json(newActiveEvent);
@@ -74,7 +74,7 @@ export const activeEvents_post_edit = async (req: Request, res: Response) => {
     if(!isPartialActiveEvent(activeEvent))
         throw new Error("Invalid activeEvent object");
 
-    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    const blob = image ? new Blob([image.buffer as BlobPart], {type: image.mimetype}) : undefined;
     let updatedActiveEvent = await ActiveEventService.updateEvent(id, activeEvent, blob);
 
     res.status(200).json(updatedActiveEvent);

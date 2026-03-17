@@ -21,6 +21,7 @@ import remove from "./remove";
 import repeat from "./repeat";
 import skip from "./skip";
 import detect from "./detect";
+import trait from "./trait";
 import { CommandBuilder } from "@library";
 
 export const commands: (CommandBuilder<any>)[] = [
@@ -47,6 +48,7 @@ export const commands: (CommandBuilder<any>)[] = [
     repeat,
     skip,
     detect,
+    trait,
 ].filter(command => command.mode !== "unavailable");
 
 export default commands;

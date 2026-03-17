@@ -1,3 +1,5 @@
+import e from "express";
+
 export {
     collectUserData,
     isAPIUser,
@@ -47,3 +49,7 @@ export {
 export {
     PlaylistService,
 } from "./playlist";
+
+export {
+    TraitService,
+} from "./trait";
