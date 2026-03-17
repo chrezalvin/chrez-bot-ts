@@ -5,6 +5,7 @@ import mute from "./setmute";
 import unmute from "./unmute";
 import addRecommend from "./addRecommend";
 import absoluteMute from "./absoluteMute";
+import guide from "./guide";
 // import notifyRaid from "./notifyRaid";
 
 export const commands: (CommandBuilder<any>)[] = [
@@ -14,6 +15,7 @@ export const commands: (CommandBuilder<any>)[] = [
     unmute,
     addRecommend,
     absoluteMute,    
+    guide,
     // notifyRaid
 ]
 .filter(command => command.mode !== "unavailable")

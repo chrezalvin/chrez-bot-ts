@@ -34,7 +34,7 @@ export const registlet_post_add = async (req: Request, res: Response) => {
     if(!isRegistletWithoutId(registlet))
         throw new Error("Invalid registlet object!");
 
-    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    const blob = image ? new Blob([image.buffer as BlobPart], {type: image.mimetype}) : undefined;
     let newRegistlet = await RegistletService.setNewRegistlet(registlet, blob);
 
     res.status(200).json(newRegistlet);
@@ -53,7 +53,7 @@ export const registlet_post_edit = async (req: Request, res: Response) => {
     if(!isRegistletWithoutId(registlet))
         throw new Error("Invalid registlet object!");
 
-    const blob = image ? new Blob([image.buffer], {type: image.mimetype}) : undefined;
+    const blob = image ? new Blob([image.buffer as BlobPart], {type: image.mimetype}) : undefined;
     let updatedRegistlet = await RegistletService.updateRegistlet(id, registlet, blob);
 
     res.status(200).json(updatedRegistlet);
