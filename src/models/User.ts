@@ -1,5 +1,6 @@
 const debug = require("debug")("models:User");
 import { StrictOmit } from "@library/CustomTypes";
+import { FoodBuffCode } from "./FoodBuffCode";
 
 export type RoleName = "owner" | "vice" | "admin" | "user";
 
@@ -10,6 +11,7 @@ export interface User{
     aliases: string[] | null;
     role: RoleName;
     birthday: string | null;
+    preferred_food_buffs: FoodBuffCode["food_buff"][] | null;
 }
 
 export function isUser(value: unknown): value is User{
@@ -48,6 +50,11 @@ export function isUser(value: unknown): value is User{
         return false;
     }
 
+    if(!("preferred_food_buffs" in value)){
+        debug("property preferred_food_buffs is not defined");
+        return false;
+    }
+
     if(typeof value.user_id !== "string"){
         debug("property user_id is not a string");
         return false;
@@ -75,6 +82,11 @@ export function isUser(value: unknown): value is User{
 
     if(typeof value.birthday !== "string" && value.birthday !== null){
         debug("property birthday is not a string or null");
+        return false;
+    }
+
+    if(!Array.isArray(value.preferred_food_buffs) && value.preferred_food_buffs !== null){
+        debug("property preferred_food_buffs is not an array or null");
         return false;
     }
 
@@ -112,6 +124,11 @@ export function isUserWithoutId(value: unknown): value is StrictOmit<User, "user
         return false;
     }
 
+    if(!("preferred_food_buffs" in value)){
+        debug("property preferred_food_buffs is not defined");
+        return false;
+    }
+
     if(typeof value.username !== "string"){
         debug("property username is not a string");
         return false;
@@ -134,6 +151,11 @@ export function isUserWithoutId(value: unknown): value is StrictOmit<User, "user
 
     if(typeof value.birthday !== "string" && value.birthday !== null){
         debug("property birthday is not a string or null");
+        return false;
+    }
+
+    if(!Array.isArray(value.preferred_food_buffs) && value.preferred_food_buffs !== null){
+        debug("property preferred_food_buffs is not an array or null");
         return false;
     }
 
@@ -173,6 +195,11 @@ export function isPartialUser(value: unknown): value is Partial<User>{
 
     if("birthday" in value && (typeof value.birthday !== "string" && value.birthday !== null)){
         debug("property birthday is not a string or null");
+        return false;
+    }
+
+    if("preferred_food_buffs" in value && (!Array.isArray(value.preferred_food_buffs) && value.preferred_food_buffs !== null)){
+        debug("property preferred_food_buffs is not an array or null");
         return false;
     }
 

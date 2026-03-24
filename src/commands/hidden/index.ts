@@ -8,6 +8,7 @@ import embedify from "./embedify";
 import laugh from "./laugh";
 import disagree from "./disagree";
 import hug from "./hug";
+import yomama from "./yomama";
 
 import { CommandBuilder } from "@library";
 
@@ -22,6 +23,7 @@ const commandList: (CommandBuilder<any>)[] = [
     laugh,
     disagree,
     hug,
+    yomama,
 ]
 .filter(command => command.mode !== "unavailable")
 .map(command => command.setStatus("hidden"));

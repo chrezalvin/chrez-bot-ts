@@ -69,6 +69,10 @@ export class UserService {
         await UserService.service.update(userid, {role: role});
     }
 
+    public static async setPreferredFoodBuffs(userid: User["user_id"], buffs: User["preferred_food_buffs"]){
+        await UserService.service.update(userid, {preferred_food_buffs: buffs});
+    }
+
     public static async deleteUser(userid: User["user_id"]){
         await UserService.service.delete(userid);
     }
