@@ -1,7 +1,6 @@
 import roll from "./roll";
 import calculate from "./calculate";
 import quote from "./quote";
-import yomama from "./yomama";
 import story from "./story";
 import time from "./time";
 import memes from "./memes";
@@ -22,13 +21,13 @@ import repeat from "./repeat";
 import skip from "./skip";
 import detect from "./detect";
 import trait from "./trait";
+import foodBuffCode from "./foodBuffCode";
 import { CommandBuilder } from "@library";
 
 export const commands: (CommandBuilder<any>)[] = [
     roll,
     calculate,
     quote,
-    yomama,
     story,
     time,
     memes,
@@ -49,6 +48,7 @@ export const commands: (CommandBuilder<any>)[] = [
     skip,
     detect,
     trait,
+    foodBuffCode,
 ].filter(command => command.mode !== "unavailable");
 
 export default commands;
