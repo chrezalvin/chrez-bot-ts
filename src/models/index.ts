@@ -12,3 +12,4 @@ export * from "./SessionView";
 export * from "./Session";
 export * from "./Translate";
 export * from "./Playlist";
+export * from "./LevellingRecommendation";

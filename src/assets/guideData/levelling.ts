@@ -357,6 +357,115 @@ export const levellingData: EmbedData[] = [
         }
     },
     {
+        title: "Level 265 - 278",
+        fields: [
+            {
+                name: "Walican [Nightmare] (lv 267)",
+                value: "Jabali Kubwa: Summit\n[coryn](https://coryn.club/monster.php?id=2943)",
+                inline: true
+            },
+            {
+                name: "Wicked Dragon Fazzino [Nightmare] (lv 264)",
+                value: "Propulsion System Room\n[coryn](https://coryn.club/monster.php?id=2916)",
+                inline: true
+            },
+            {
+                name: "Trus (lv 269)",
+                value: "Propulsion System Zone: Power Tank\n[coryn](https://coryn.club/monster.php?id=2912)",
+                inline: true
+            }
+        ],
+        footer: {
+            text: "If you have a party then boss leveling here would also be a nice spina farm because both give crafting mats, however Trus is relatively easy and much faster even if you are leveling solo.",
+            "iconURL": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/2048px-Information_icon.svg.png",
+        }
+    },
+    {
+        title: "Level 278 - 284",
+        fields: [
+            {
+                name: "Trickster Dragon Mimyugon [Ultimate] (lv 278)",
+                value: "Operation Zone: Cockpit Area\n[coryn](https://coryn.club/monster.php?id=2799)",
+                inline: true
+            },
+            {
+                name: "Burning Dragon Igneus [Ultimate] (lv 275)",
+                value: "Boma Moja: Village Center\n[coryn](https://coryn.club/monster.php?id=2759)",
+                inline: true
+            }
+        ],
+        footer: {
+            text: "I haven't given a mini boss option here because they're a bit annoying and not worth the exp.",
+            "iconURL": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/2048px-Information_icon.svg.png",
+        }
+    },
+    {
+        title: "Level 284 - 296",
+        fields: [
+            {
+                name: "Walican [Ultimate] (lv 287)",
+                value: "Jabali Kubwa: Summit\n[coryn](https://coryn.club/monster.php?id=2944)",
+                inline: true
+            },
+            {
+                name: "Wicked Dragon Fazzino [Ultimate] (lv 284)",
+                value: "Propulsion System Room\n[coryn](https://coryn.club/monster.php?id=2917)",
+                inline: true
+            },
+            {
+                name: "Capo Profundo (lv 287)",
+                value: "Abandoned District: Area 3\n[coryn](https://coryn.club/monster.php?id=3123)",
+                inline: true
+            }
+        ],
+        footer: {
+            text: "Capo Profundo is extremely easy to mass kill and therefore it is highly recommended.",
+            "iconURL": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/2048px-Information_icon.svg.png",
+        }
+    },
+    {
+        title: "Level 296 - 314",
+        fields: [
+            {
+                name: "Red Ash Dragon Rudis [Ultimate] (lv 299)",
+                value: "Espuma Dome: Entrance\n[coryn](https://coryn.club/monster.php?id=2944)",
+                inline: true
+            },
+            {
+                name: "Wiltileaf (lv 305)",
+                value: "Eumano Village Ruins: Area 3\n[coryn](https://coryn.club/monster.php?id=3228)",
+                inline: true
+            }
+        ],
+        footer: {
+            text: "While it is possible to level with Wiltileaf at 296, it is better to go there at 297 and mass kill if you have the option, as it is very easy.",
+            "iconURL": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/2048px-Information_icon.svg.png",
+        }
+    },
+    {
+        title: "Level 315 - ?",
+        fields: [
+            {
+                name: "Raging Dragon Bovinari [Ultimate] (lv 308)",
+                value: "Eumano Village Ruins: Area 3\n[coryn](https://coryn.club/monster.php?id=3142)",
+                inline: true
+            },
+            {
+                name: "Meduso (lv 311)",
+                value: "Aquastida Inner Ward\n[coryn](https://coryn.club/monster.php?id=3292)",
+                inline: true
+            },
+            {
+                name: "Dandolion (lv 308)",
+                value: "Umidus Valley: Cliff Path\n[coryn](https://coryn.club/monster.php?id=3271)",
+                inline: true
+            }
+        ],
+        footer: {
+            text: "I have not tested this level range yet and there may be other better spots that are yet to be released, so take this with a grain of salt."
+        }
+    },
+    {
         title: "How Does Levelling Work?",
         fields: [
             {
@@ -405,8 +514,13 @@ export const levellingData: EmbedData[] = [
                 inline: false
             },
             {
+                name: "Life Song",
+                value: "Life Song is a buff from minstrel skill that gives you +EXP% boost (currently unknown)",
+                inline: false
+            },
+            {
                 name: "Wayfarer Registlet",
-                value: "Wayfarer Registlet gives 10% exp (with the cost of -5% dmg) [click for more info](https://discord.com/channels/739696962097512449/1090282354838352012/1090298522563260660)",
+                value: "Wayfarer Registlet gives 10% exp (with the cost of -5% dmg) [click for more info](https://discord.com/channels/739696962097512449/1483584277089222784/1483584917479624917)",
                 inline: false
             },
             {
