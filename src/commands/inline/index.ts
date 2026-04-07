@@ -14,6 +14,7 @@ import yousuck from "./yousuck";
 import pika from "./pika";
 import detect from "./detect";
 import thanks from "./thanks";
+import reprint from "./reprint";
 
 export const commands: InlineCommandReturnTypes[] = [
     pewpew,
@@ -31,6 +32,7 @@ export const commands: InlineCommandReturnTypes[] = [
     pika,
     detect,
     thanks,
+    reprint,
 ].filter(command => !command.unavailable);
 
 export default commands;

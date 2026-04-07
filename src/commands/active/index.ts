@@ -10,7 +10,6 @@ import recommend from "./recommend";
 import convert from "./convert";
 import event from "./event";
 import registlet from "./registlet";
-import translate from "./translate";
 import play from "./play";
 import pause from "./pause";
 import resume from "./resume";
@@ -22,6 +21,8 @@ import skip from "./skip";
 import detect from "./detect";
 import trait from "./trait";
 import foodBuffCode from "./foodBuffCode";
+import crysta from "./crysta";
+import levelling from "./levelling";
 import { CommandBuilder } from "@library";
 
 export const commands: (CommandBuilder<any>)[] = [
@@ -37,7 +38,6 @@ export const commands: (CommandBuilder<any>)[] = [
     convert,
     event,
     registlet,
-    translate,
     play,
     pause,
     resume,
@@ -49,6 +49,8 @@ export const commands: (CommandBuilder<any>)[] = [
     detect,
     trait,
     foodBuffCode,
+    // crysta,
+    levelling,
 ].filter(command => command.mode !== "unavailable");
 
 export default commands;

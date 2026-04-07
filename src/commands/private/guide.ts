@@ -1,28 +1,37 @@
 import {MyEmbedBuilder, CommandBuilder} from "@library";
 import { SlashCommandBuilder } from "discord.js";
 
-import {guideDataLookup} from "@assets/guideData";
+import { isEmbedData } from "@models/EmbedData";
 
 interface I_Guide{
-    guide_type: string;
+    fileUrl: string;
     channelId: string;
+    guideName: string;
+    plibCredit: boolean;
 }
 
 const slashCommand = new SlashCommandBuilder()
     .setName("guide")
     .setDescription("Prints a guide for the game")
     .addStringOption(option => option
-        .setName("guide_type")
-        .setDescription("The type of guide to print")
-        .setChoices(
-            guideDataLookup.map(ele => ({name: ele.name, value: ele.name}))
-        )
+        .setName("guide_name")
+        .setDescription("The name of the guide to print")
+        .setRequired(true)
+    )
+    .addAttachmentOption(option => option
+        .setDescription(".json file containing the embed data")
+        .setName("file")
         .setRequired(true)
     )
     .addChannelOption(option => option
         .setName("channel")
         .setDescription("The channel to send the guide to")
         .setRequired(true)
+    )
+    .addBooleanOption(option => option
+        .setName("plib_credit")
+        .setDescription("Whether to credit Phantom's Library for the info used in the guide")
+        .setRequired(false)
     );
 
 const guide = new CommandBuilder<I_Guide>()
@@ -32,9 +41,19 @@ const guide = new CommandBuilder<I_Guide>()
     .setSlash({
         slashCommand,
         getParameter: (interaction) => {
+            const file = interaction.options.getAttachment("file");
+
+            if(!file)
+                throw new Error("File is required");
+
+            if(file.contentType?.match("application/json") === null)
+                throw new Error(`File must be a .json file`);
+
             return {
-                guide_type: interaction.options.getString("guide_type") || "",
-                channelId: interaction.options.getChannel("channel")?.id || ""
+                fileUrl: file.url,
+                channelId: interaction.options.getChannel("channel")?.id || "",
+                guideName: interaction.options.getString("guide_name") || "",
+                plibCredit: interaction.options.getBoolean("plib_credit") || false,
             };
         },
         interact: async (interaction, args) => {
@@ -53,24 +72,29 @@ const guide = new CommandBuilder<I_Guide>()
 
             if(!channel.isTextBased() || !channel.isSendable())
                 throw new Error("Channel is not text based");
-
-            const guideData = guideDataLookup.find(ele => ele.name === args.guide_type);
-
-            if(!guideData)
-                throw new Error("Guide data not found");
         
             await interaction.reply({
                 embeds: [
                     new MyEmbedBuilder()
-                        .setTitle(`Constructing ${args.guide_type} Guide!`)
-                        .setDescription(`${args.guide_type} Guide is being constructed at https://discord.com/channels/${guild.id}/${channel.id}`)
+                        .setTitle(`Constructing Guide!`)
+                        .setDescription(`Guide is being constructed at https://discord.com/channels/${guild.id}/${channel.id}`)
                 ]
             });
 
+            const dataRes = await fetch(args.fileUrl);
+            const data = await dataRes.text();
+            const guideData = JSON.parse(data) as unknown;
+
+            if(!Array.isArray(guideData))
+                throw new Error("Invalid file format");
+
+            for(const ele of guideData)
+                if(!isEmbedData(ele))
+                    throw new Error("Invalid file format");
 
             const dataList: {url: string, title: string}[] = [];
         
-            for(const ele of guideData.data){
+            for(const ele of guideData){
                 const myEmbed = new MyEmbedBuilder(ele);
                 const message = await channel.send({
                     embeds: [myEmbed],
@@ -88,7 +112,7 @@ const guide = new CommandBuilder<I_Guide>()
             
                 embedBuilderIndex.setColor("Green");
                 embedBuilderIndex.setThumbnail("https://toram-jp.akamaized.net/en/sidestory_pelulu/img/illustration-1.jpg")
-                embedBuilderIndex.setTitle(`${guideData.name} Guide Index List`);
+                embedBuilderIndex.setTitle(`${args.guideName} Guide Index List`);
                 embedBuilderIndex.setDescription(`Please select the blue text below to guide you to the selected Guide\n ${subTraits.map((trait, index) => `**${index + 1 + iii}.** [${trait.title}](${trait.url})`).join("\n")}`);
             
                 embedBuilderIndex.setFooter({text: "you can use pinned message to quickly go back here"})
@@ -96,17 +120,18 @@ const guide = new CommandBuilder<I_Guide>()
                 await channel.send({embeds: [embedBuilderIndex]});
             }
         
-            await channel.send({
-                embeds: [
-                    new MyEmbedBuilder({
-                        title: "Credits",
-                        description: `The info for ${guideData.name} explanation was gathered from Phantom's Library and personal findings`,
-                        thumbnail: {
-                            url: "https://media.discordapp.net/attachments/842252962961424414/858319407724625940/unknown.png?ex=69b9ee7d&is=69b89cfd&hm=31ff25a1e01018119ef6d1a65272a23b63cc5a34c3549baaea806d2e7c31d136&=&format=webp&quality=lossless&width=783&height=785"
-                        },
-                    }).setColor("Green")
-                ]
-            });
+            if(args.plibCredit)
+                await channel.send({
+                    embeds: [
+                        new MyEmbedBuilder({
+                            title: "Credits",
+                            description: `The info for ${args.guideName} explanation was gathered from Phantom's Library and personal findings`,
+                            thumbnail: {
+                                url: "https://media.discordapp.net/attachments/842252962961424414/858319407724625940/unknown.png?ex=69b9ee7d&is=69b89cfd&hm=31ff25a1e01018119ef6d1a65272a23b63cc5a34c3549baaea806d2e7c31d136&=&format=webp&quality=lossless&width=783&height=785"
+                            },
+                        }).setColor("Green")
+                    ]
+                });
         }
     });
 

@@ -97,3 +97,5 @@ export * from "./YoloService";
 export * from "./LocalMusicSearch";
 
 export * from "./ChrezBot";
+
+export * from "./emoji";
