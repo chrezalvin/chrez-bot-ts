@@ -41,17 +41,27 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
 
     const embed = new MyEmbedBuilder();
 
-    embed.setTitle(`Levelling for Lv. ${args.lvl}`)
-
     let note: null | string = null;
+    let thumbnail: null | string = null;
     for(const rec of recommendations){
         const emoji = getEmoji(rec.mob_type === "boss" ? "boss" : "fighting");
         const levelDifference = Math.abs(rec.mob_level - args.lvl);
         const multiplier = levelDifference < levellingMultiplierDifference.length ? levellingMultiplierDifference[levelDifference] : 0.5;
         let tags = "";
 
+        // recommended note takes priority over non-recommended note
+        // but if there are multiple recommended notes, the last one takes priority
         if(rec.note)
-            note = rec.note;
+            if(!note)
+                note = rec.note;
+            else if(rec.is_recommended)
+                note = rec.note;
+
+        if(rec.mob_image)
+            if(!thumbnail)
+                thumbnail = rec.mob_image;
+            else if(rec.is_recommended)
+                thumbnail = rec.mob_image;
 
         if(rec.is_best_with_party)
             tags += getEmoji("party");
@@ -60,12 +70,14 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
         if(rec.is_recommended)
             tags += `${getEmoji("fit")}`;
 
+        const mobExp = rec.mob_base_exp ? rec.mob_base_exp * multiplier : null;
+
         embed.addFields({
-            name: `${emoji} ${rec.mob_name} [Lv. ${rec.mob_level} \`${rec.mob_level - 8} - ${rec.mob_level + 8}\`] ${tags}`,
+            name: `${emoji} ${rec.mob_name} [Lv. ${rec.mob_level} \`${Math.max(rec.mob_level - 8, 1)} - ${rec.mob_level + 8}\`] ${tags}`,
             value: [
-                `${rec.mob_element} element`,
+                `**${rec.mob_element}** element`,
                 `${getEmoji("teleport_ticket")} ${rec.mob_location}`,
-                `${getEmoji("experience")} ${(rec.mob_base_exp * multiplier).toLocaleString("en-US")} (${levelPerc(args.lvl, rec.mob_base_exp * multiplier) * 100}%)`,
+                `${getEmoji("experience")} ${mobExp === null ? "???": (mobExp).toLocaleString("en-US")} ${mobExp === null ? "" : `(${(levelPerc(args.lvl, mobExp) * 100).toFixed(1)}%)`}`,
             ].join("\n")
         })
 
@@ -76,6 +88,16 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
             iconURL: "https://cdn.discordapp.com/emojis/1490939833655496734.webp?size=64&quality=lossless",
             text: note
         })
+
+    if(thumbnail){
+        embed.setThumbnail(thumbnail);
+        // default note if thumbnail is present
+        if(!note)
+            embed.setFooter({
+                iconURL: "https://cdn.discordapp.com/emojis/1490939833655496734.webp?size=64&quality=lossless",
+                text: `Note: The thumbnail represents the most recommended mob to farm`
+            })
+    }
 
 
     embed.addFields({
@@ -94,6 +116,11 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
                 description: "recommended"
             }
         ] as const).map(tag => `${getEmoji(tag.emoji)}: ${tag.description}`).join("\n")
+    })
+
+    embed.setAuthor({
+        iconURL: "https://cdn.discordapp.com/emojis/1491989760594542712.webp?size=64&quality=lossless",
+        name: `Levelling for Lv. ${args.lvl}`
     })
 
     return {embeds: [embed], content: `(${recommendations.length} mobs found)`};

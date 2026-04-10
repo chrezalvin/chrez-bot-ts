@@ -9,7 +9,7 @@ export interface LevellingRecommendation {
     mob_id: number;
     mob_name: string;
     mob_level: number;
-    mob_base_exp: number;
+    mob_base_exp: number | null;
     mob_location: string;
     mob_type: MobType;
     mob_element: MobElement;
@@ -80,8 +80,8 @@ export function isLevellingRecommendation(obj: unknown): obj is LevellingRecomme
         return false;
     }
 
-    if (typeof obj2.mob_base_exp !== "number") {
-        log("property mob_base_exp is not a number");
+    if (typeof obj2.mob_base_exp !== "number" && obj2.mob_base_exp !== null) {
+        log("property mob_base_exp is not a number or null");
         return false;
     }
 

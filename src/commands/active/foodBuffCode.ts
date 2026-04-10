@@ -1,44 +1,21 @@
 import { MyEmbedBuilder, CommandBuilder } from "@library";
-import { FoodBuffCode, foodBuffTypes } from "@models/FoodBuffCode";
+import { FoodBuffCode } from "@models/FoodBuffCode";
 import { UserService } from "@services";
 import { getFoodBuffCodes, getFoodBuffCodesFromTypes, getGuildFoodBuffCodes } from "@services/FoodBuffCode";
 import { SlashCommandBuilder } from "discord.js";
-
-const alternativeFoodBuffTypeNames: Record<FoodBuffCode["food_buff"], string[]> = {
-    "atk": ["a"],
-    "matk": ["m"],
-    "damage_to_dark": ["dark", "dtedark", "dted", "d"],
-    "damage_to_light": ["light", "dtelight", "dtel", "l"],
-    "damage_to_fire": ["fire", "dtefire", "dtef", "f"],
-    "damage_to_earth": ["earth", "dteearth", "dtee", "e"],
-    "damage_to_wind": ["wind", "dtewind", "dtew", "w"],
-    "damage_to_water": ["water", "dtewater", "dtewa", "wa"],
-    "damage_to_neutral": ["neutral", "dteneutral", "neut", "dten", "n"],
-    "physical_resistance": ["pres", "pr"],
-    "magical_resistance": ["mres", "mr"],
-    "max_mp": ["mp", "maxmp"],
-    "max_hp": ["hp", "maxhp"],
-    "ampr": ["ampr"],
-    "critical_rate": ["crit", "crt", "cr", "critical", "c"],
-    "weapon_atk": ["watk"],
-    "+aggro": ["aggro+", "+agg"],
-    "-aggro": ["aggro-", "-agg"],
-    "str": [],
-    "dex": [],
-    "int": [],
-    "agi": [],
-    "vit": [],
-    "accuracy": ["acc"]
-};
+import alternativeFoodBuffTypeNames from "@assets/data/alternativeFoodBuffTypeNames.json";
 
 function translateAlternativeName(name: string): FoodBuffCode["food_buff"] | null{
     let nameUndercased = name.toLowerCase();
 
-    if(foodBuffTypes.includes(nameUndercased as FoodBuffCode["food_buff"]))
+    const foodbuffTypes = Object.keys(alternativeFoodBuffTypeNames) as FoodBuffCode["food_buff"][];
+
+    if(foodbuffTypes.includes(nameUndercased as FoodBuffCode["food_buff"]))
         return nameUndercased as FoodBuffCode["food_buff"];
 
-    for(const type of foodBuffTypes){
-        const alternativeNames = alternativeFoodBuffTypeNames[type];
+    for(const type of foodbuffTypes){
+        const alternativeNames = alternativeFoodBuffTypeNames[type] as string[];
+        
         if(alternativeNames.includes(nameUndercased)){
             return type;
         }
