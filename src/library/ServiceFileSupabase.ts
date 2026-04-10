@@ -49,7 +49,7 @@ export class ServiceFileSupabase<
     public translateFileToUrl(data: DataType): DataType {
         debug(`translating file to url for data with ${this.m_keyName}: ${data[this.m_keyName]}`);
 
-        if(!this.m_fileKeyName){
+        if(!this.m_fileKeyName || !data[this.m_fileKeyName]){
             debug(`no file key name found, returning data as is`);
             return data;
         }

@@ -1,6 +1,6 @@
 import { BOT_OWNER_ID } from "@config";
 import {InlineCommandReturnTypes, MyEmbedBuilder} from "@library";
-import emojiList from "@assets/data/emojiList.json";
+import emojiLookup from "@assets/data/emojiLookup.json";
 
 const command: InlineCommandReturnTypes = {
     name: "reprint",

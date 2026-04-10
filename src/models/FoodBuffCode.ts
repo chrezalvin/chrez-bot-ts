@@ -1,32 +1,9 @@
 import {debug} from "debug";
+import alternativeFoodBuffTypes from "../assets/data/alternativeFoodBuffTypeNames.json";
 
-const log = debug("models:FoodBuffCode");
+const log = debug("models:FoodBuffCode")
 
-type FoodBuffType = 
-    "max_mp" | 
-    "max_hp" | 
-    "ampr" | 
-    "critical_rate" | 
-    "matk" |
-    "atk" | 
-    "weapon_atk" | 
-    "str" | 
-    "dex" | 
-    "int" | 
-    "agi" | 
-    "vit" | 
-    "accuracy" | 
-    "+aggro" | 
-    "-aggro" | 
-    "damage_to_neutral" | 
-    "damage_to_dark" | 
-    "damage_to_light" | 
-    "damage_to_fire" | 
-    "damage_to_earth" | 
-    "damage_to_wind" | 
-    "damage_to_water" | 
-    "physical_resistance" | 
-    "magical_resistance";
+type FoodBuffType = keyof typeof alternativeFoodBuffTypes;
     
 export interface FoodBuffCode {
     player_name: string;
@@ -37,35 +14,8 @@ export interface FoodBuffCode {
     is_guild: boolean;
 }
 
-export const foodBuffTypes: FoodBuffType[] = [
-    "max_mp", 
-    "max_hp",
-    "ampr",
-    "critical_rate",
-    "matk",
-    "atk",
-    "weapon_atk",
-    "str",
-    "dex",
-    "int",
-    "agi",
-    "vit",
-    "accuracy",
-    "+aggro",
-    "-aggro",
-    "damage_to_neutral",
-    "damage_to_dark",
-    "damage_to_light",
-    "damage_to_fire",
-    "damage_to_earth",
-    "damage_to_wind",
-    "damage_to_water",
-    "physical_resistance",
-    "magical_resistance"
-];
-
 function isFoodBuffType(value: string): value is FoodBuffType {
-    return foodBuffTypes.includes(value as FoodBuffType);
+    return alternativeFoodBuffTypes[value as FoodBuffType] !== undefined;
 }
 
 export function isFoodBuffCode(obj: unknown): obj is FoodBuffCode {
