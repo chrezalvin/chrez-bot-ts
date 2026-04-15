@@ -2,8 +2,9 @@ import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 
 import { CacheType, ChannelType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import { BOT_PREFIXES } from "@config";
-import levellingRecommendation from "@services/levellingRecommendation";
+import LevellingRecommendation from "@services/levellingRecommendation";
 import { getEmoji } from "@library";
+import { ActiveEventService, EventService } from "@services";
 
 const levellingMultiplierDifference = [
     11,
@@ -28,13 +29,14 @@ function levelPerc(currentLevel: number, exp: number){
 }
 
 const run = async (message: Message<boolean> | ChatInputCommandInteraction<CacheType>, args?: I_Levelling) => {
-    if(!message.channel || message.channel.type !== ChannelType.GuildText)
-        return new ErrorValidation("command_restricted", "quote", "guild text channel");
-
     if(!args)
         return new ErrorValidation("something_not_found", "level");
 
-    const recommendations = await levellingRecommendation.getLevellingRecommendations(args.lvl);
+    // get current ongoing events
+    const events = await EventService.getActiveEvent();
+    console.log(`current active events: ${events.map(event => event.title).join(", ")}`);
+
+    const recommendations = await LevellingRecommendation.getLevellingRecommendations(args.lvl, events.map(event => event.event_id));
 
     if(recommendations.length === 0)
         return new ErrorValidation("something_not_found", "mobs");
@@ -47,6 +49,7 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
         const emoji = getEmoji(rec.mob_type === "boss" ? "boss" : "fighting");
         const levelDifference = Math.abs(rec.mob_level - args.lvl);
         const multiplier = levelDifference < levellingMultiplierDifference.length ? levellingMultiplierDifference[levelDifference] : 0.5;
+        const event = rec.event ? events.find(event => event.event_id === rec.event) : null;
         let tags = "";
 
         // recommended note takes priority over non-recommended note
@@ -56,6 +59,10 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
                 note = rec.note;
             else if(rec.is_recommended)
                 note = rec.note;
+
+        // if boss is event but still null, skip
+        if(rec.event && !event)
+            continue;
 
         if(rec.mob_image)
             if(!thumbnail)
@@ -76,7 +83,7 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
             name: `${emoji} ${rec.mob_name} [Lv. ${rec.mob_level} \`${Math.max(rec.mob_level - 8, 1)} - ${rec.mob_level + 8}\`] ${tags}`,
             value: [
                 `**${rec.mob_element}** element`,
-                `${getEmoji("teleport_ticket")} ${rec.mob_location}`,
+                `${getEmoji("teleport_ticket")}${event ? ` **[${event.title} Event]**`:""} ${rec.mob_location}`,
                 `${getEmoji("experience")} ${mobExp === null ? "???": (mobExp).toLocaleString("en-US")} ${mobExp === null ? "" : `(${(levelPerc(args.lvl, mobExp) * 100).toFixed(1)}%)`}`,
             ].join("\n")
         })
@@ -132,7 +139,7 @@ interface I_Levelling{
 
 const quote = new CommandBuilder<I_Levelling>()
     .setName("levelling")
-    .setAlias(["lvl", "lvling", "leveling", "farm"])
+    .setAlias(["lvl", "lvling", "leveling", "farm", "lv", "level"])
     .setDescription("Recommends mobs to farm for levelling up, based on your current level")
     .setExamples([
         {command: `${BOT_PREFIXES[0]} levelling 100`, description: "recommend mobs to farm for level 100"},

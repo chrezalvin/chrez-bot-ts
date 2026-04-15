@@ -23,7 +23,7 @@ export default class LevellingRecommendationService{
         }
     );
 
-    static async getLevellingRecommendations(level: number): Promise<LevellingRecommendation[]>{
+    static async getLevellingRecommendations(level: number, events?: number[]): Promise<LevellingRecommendation[]>{
         const minlevel = level - LevellingRecommendationService.levellingRecommendationLevelRange;
         const maxlevel = level + LevellingRecommendationService.levellingRecommendationLevelRange;
         
@@ -38,6 +38,12 @@ export default class LevellingRecommendationService{
         if(!Array.isArray(recommendations))
             throw new Error("Failed to get levelling recommendations");
 
-        return recommendations;
+        return recommendations
+            .filter((recommendation) => {
+                if(recommendation.event)
+                    return events?.includes(recommendation.event) ?? false;
+                else
+                    return true;
+            });
     }
 }
