@@ -66,20 +66,42 @@ export class EventService {
         return await EventService.eventManager.get(id);
     }
 
+    /**
+     * gets the event currently active based on current date
+     * @returns 
+     */
     static async getActiveEvent(): Promise<Event[]>{
-        const date = new Date().toISOString();
-
+        const currentMonth = new Date().getMonth() + 1;
+        const currentDay = new Date().getDate();
+        
+        // get events this month
         const res = await EventService
             .eventManager
             .queryBuilder((query) => query
-                .lte("start_date", date)
-                .gte("end_date", date)
+                .lte("start_month", currentMonth)
+                .gte("end_month", currentMonth)
             );
 
         if(!Array.isArray(res))
-            throw new Error("Failed to get active events");
+            throw new Error("Failed to get events");
 
-        return res;
+        // filter events that are active based on day
+        const activeEvents = res.filter((event) => {
+            // remove event that doesn't have start_day or end_day
+            if(!event.start_day || !event.end_day)
+                return false;
+
+            return EventService.isEventFallInBetween(
+                event.start_day, 
+                event.start_month,
+                event.end_day,
+                event.end_month,
+                currentDay,
+                currentMonth
+            )
+        });
+
+        return activeEvents;
     }
 
     static async addEvent(event: StrictOmit<Event, "event_id" | "img_path">, imageBlob?: Blob): Promise<Event>{
@@ -108,6 +130,24 @@ export class EventService {
 
     static async deleteEvent(id: Event["event_id"]): Promise<void>{
         await EventService.eventManager.delete(id);
+    }
+
+    private static isEventFallInBetween(
+        start_day: number, 
+        start_month: number, 
+        end_day: number, 
+        end_month: number, 
+        current_day: number, 
+        current_month: number
+    ): boolean{
+        const startDate = new Date(2000, start_month - 1, start_day);
+        const endDate = new Date(2000, end_month - 1, end_day);
+        const currentDate = new Date(2000, current_month - 1, current_day);
+
+        if (startDate <= endDate)
+            return currentDate >= startDate && currentDate <= endDate;
+        else
+            return currentDate >= startDate || currentDate <= endDate;
     }
 }
 

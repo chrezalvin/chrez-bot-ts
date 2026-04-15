@@ -13,6 +13,7 @@ export interface LevellingRecommendation {
     mob_location: string;
     mob_type: MobType;
     mob_element: MobElement;
+    event: number | null;
     is_recommended: boolean;
     is_best_with_party: boolean;
     is_mq_locked: boolean;
@@ -51,6 +52,7 @@ export function isLevellingRecommendation(obj: unknown): obj is LevellingRecomme
         "mob_image",
         "mob_element",
         "note",
+        "event",
         "is_recommended",
         "is_best_with_party",
         "is_mq_locked",
@@ -122,6 +124,11 @@ export function isLevellingRecommendation(obj: unknown): obj is LevellingRecomme
 
     if (!isMobElement(obj2.mob_element)) {
         log("property element is not a valid MobElement");
+        return false;
+    }
+
+    if (typeof obj2.event !== "number" && obj2.event !== null) {
+        log("property event is not a number or null");
         return false;
     }
 
