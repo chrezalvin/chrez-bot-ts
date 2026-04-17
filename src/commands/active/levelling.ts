@@ -1,10 +1,10 @@
 import {MyEmbedBuilder, CommandBuilder, ErrorValidation} from "@library";
 
-import { CacheType, ChannelType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
 import { BOT_PREFIXES } from "@config";
 import LevellingRecommendation from "@services/levellingRecommendation";
 import { getEmoji } from "@library";
-import { ActiveEventService, EventService } from "@services";
+import { EventService } from "@services";
 
 const levellingMultiplierDifference = [
     11,
@@ -34,7 +34,6 @@ const run = async (message: Message<boolean> | ChatInputCommandInteraction<Cache
 
     // get current ongoing events
     const events = await EventService.getActiveEvent();
-    console.log(`current active events: ${events.map(event => event.title).join(", ")}`);
 
     const recommendations = await LevellingRecommendation.getLevellingRecommendations(args.lvl, events.map(event => event.event_id));
 

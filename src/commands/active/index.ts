@@ -7,7 +7,7 @@ import memes from "./memes";
 import cursed from "./cursed";
 import update from "./update";
 import recommend from "./recommend";
-import convert from "./convert";
+// import convert from "./convert";
 import event from "./event";
 import registlet from "./registlet";
 import play from "./play";
@@ -23,6 +23,7 @@ import trait from "./trait";
 import foodBuffCode from "./foodBuffCode";
 import crysta from "./crysta";
 import levelling from "./levelling";
+import crafting from "./crafting";
 import { CommandBuilder } from "@library";
 
 export const commands: (CommandBuilder<any>)[] = [
@@ -35,7 +36,7 @@ export const commands: (CommandBuilder<any>)[] = [
     cursed,
     update,
     recommend,
-    convert,
+    // convert,
     event,
     registlet,
     play,
@@ -51,6 +52,7 @@ export const commands: (CommandBuilder<any>)[] = [
     foodBuffCode,
     // crysta,
     levelling,
+    crafting,
 ].filter(command => command.mode !== "unavailable");
 
 export default commands;

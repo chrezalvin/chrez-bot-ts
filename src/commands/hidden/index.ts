@@ -10,6 +10,7 @@ import disagree from "./disagree";
 import hug from "./hug";
 import yomama from "./yomama";
 import translate from "./translate";
+import convert from "./convert";
 
 import { CommandBuilder } from "@library";
 
@@ -26,6 +27,7 @@ const commandList: (CommandBuilder<any>)[] = [
     hug,
     yomama,
     translate,
+    convert,
 ]
 .filter(command => command.mode !== "unavailable")
 .map(command => command.setStatus("hidden"));
