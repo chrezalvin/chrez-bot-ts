@@ -1,13 +1,9 @@
-import { RouterInterface } from "@library";
+import { Router } from "express";
 import { getUserById } from "server/controller/user";
+import { requireUser } from "server/middlewares/requireUser";
 
-const routes: RouterInterface[] = [
-    {
-        path: "/user/:userid",
-        handler: getUserById,
-        method: "post",
-        accessType: "private",
-    }
-];
+const router = Router();
 
-export default routes;
+router.post("/user/:userid", requireUser({roles: ["owner"]}), getUserById);
+
+export default router;

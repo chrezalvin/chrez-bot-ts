@@ -1,5 +1,4 @@
 import { Router } from "express";
-import {checkAccessType} from "../middlewares";
 
 import event from "./events";
 import authenticate from "./authenticate";
@@ -15,12 +14,7 @@ import yomama from "./yomama";
 import activeEvents from "./activeEvents";
 import events from "./events";
 
-import { RouterInterface } from "@library";
-import { asyncErrorHandler } from "@library";
-
-const router: Router = Router();
-
-const routes: RouterInterface[][] = [
+const routes: Router[] = [
     event,
     authenticate,
     recommend,
@@ -36,20 +30,4 @@ const routes: RouterInterface[][] = [
     events,
 ];
 
-for(const route of routes)
-    for(const routeElement of route)
-        if(routeElement.requestHandler)
-            router[routeElement.method](
-                routeElement.path, 
-                checkAccessType(routeElement.accessType),
-                routeElement.requestHandler,
-                asyncErrorHandler(routeElement.handler),
-            );
-        else
-            router[routeElement.method](
-                routeElement.path, 
-                checkAccessType(routeElement.accessType),
-                asyncErrorHandler(routeElement.handler),
-            );
-
-export default router;
+export default routes;

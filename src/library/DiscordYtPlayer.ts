@@ -3,7 +3,7 @@ const debug = require("debug")("library:discord-yt-player");
 import { spawn } from "child_process";
 import internal from "stream";
 import { VoiceBasedChannel } from "discord.js";
-import { searchYoutube } from "./YoutubeSearch";
+import { GetListByKeyword } from "youtube-search-api";
 import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, PlayerSubscription, StreamType, VoiceConnectionStatus } from "@discordjs/voice";
 
 function createYtdlStream(videoUrl: string): internal.Readable {
@@ -83,7 +83,7 @@ export default class DiscordYtPlayer{
                 onError?: (error: Error) => void;
             }
         ){
-        const result = await searchYoutube(term, 1);
+        const result = await GetListByKeyword(term, false, 1);
 
         if(result.items.length === 0)
             throw new Error("No result found");
@@ -98,7 +98,7 @@ export default class DiscordYtPlayer{
             title: item.title,
             videoUrl: url,
             thumbnailUrl: item.thumbnail.thumbnails[0].url,
-            author: item.channelTitle,
+            author: item.channelTitle ?? "",
             duration: item.length.simpleText,
             requester: options?.requester,
         });
@@ -180,6 +180,9 @@ export default class DiscordYtPlayer{
             this.m_subscription.player.on(AudioPlayerStatus.Paused, () => {
                 debug("Player paused");
             });
+        }
+        else{
+            debug("Failed to subscribe to the connection");
         }
     }
 

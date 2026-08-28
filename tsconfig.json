@@ -3,6 +3,7 @@
     "files": true
   },
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Projects */
@@ -38,15 +39,17 @@
 
       "@typings": ["types"],
       "@typings/*": ["types/*"],
+
+      "@bot": ["bot"],
+      "@bot/*": ["bot/*"],
       
-      "@commands": ["commands"],
-      "@commands/*": ["commands/*"],
+      "@commands": ["bot/commands"],
+      "@commands/*": ["bot/commands/*"],
       "@config": ["./config"],
 
       "@assets": ["assets"],
       "@assets/*": ["assets/*"],
       "@database": ["db"],
-      "@bot": ["./bot"],
 
       "@library": ["library"],
       "@library/*": ["library/*"],
