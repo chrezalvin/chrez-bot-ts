@@ -10,4 +10,4 @@ cloudflaredConfig.yaml
 *config.json*
 /private
 backups/*
-supabase
+/supabase
