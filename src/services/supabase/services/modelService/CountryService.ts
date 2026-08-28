@@ -3,7 +3,7 @@ import { Country, countryCreate, CountryCreate, countryUpdate, CountryUpdate } f
 import { FileUpload } from "@library";
 
 export const tableName = "countries";
-export const bucketName = "countries";
+export const bucketName = "flags";
 export const fileUpload = new FileUpload(bucketName, supabaseModels);
 
 async function getCountry(country: Country["country"]): Promise<Country>{
