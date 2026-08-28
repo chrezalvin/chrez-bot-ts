@@ -9,3 +9,5 @@ cloudflaredConfig.yaml
 *.exe
 *config.json*
 /private
+backups/*
+supabase

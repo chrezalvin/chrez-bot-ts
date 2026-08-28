@@ -1,31 +1,14 @@
-import { RouterInterface } from "@library";
+import { Router } from "express";
 import { yomama_get_all, yomama_post_add, yomama_post_delete, yomama_post_edit } from "server/controller/yomama";
+import { requireUser } from "server/middlewares/requireUser";
 
-const routes: RouterInterface[] = [
-    {
-        path: "/yomama",
-        handler: yomama_get_all,
-        method: "get",
-        accessType: "public",
-    },
-    {
-        path: "/yomama/add",
-        handler: yomama_post_add,
-        method: "post",
-        accessType: "private",
-    },
-    {
-        path: "/yomama/delete",
-        handler: yomama_post_delete,
-        method: "post",
-        accessType: "private",
-    },
-    {
-        path: "/yomama/edit",
-        handler: yomama_post_edit,
-        method: "post",
-        accessType: "private",
-    }
-];
+const router = Router();
 
-export default routes;
+const requirePermission = requireUser({ roles: ["owner"] });
+
+router.get("/yomama", yomama_get_all);
+router.post("/yomama", requirePermission, yomama_post_add);
+router.delete("/yomama", requirePermission, yomama_post_delete);
+router.patch("/yomama", requirePermission, yomama_post_edit);
+
+export default router;

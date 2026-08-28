@@ -1,43 +1,15 @@
-import { RouterInterface } from "@library";
-import { story_get_all, story_get_default, story_get_random, story_post_add, story_post_delete, story_post_edit } from "server/controller/story";
+import { Router } from "express";
+import {story_get_default, story_get_random, story_post_add, story_post_delete, story_post_edit } from "server/controller/story";
+import { requireUser } from "server/middlewares/requireUser";
 
-const routes: RouterInterface[] = [
-    {
-        path: "/story",
-        handler: story_get_random,
-        method: "get",
-        accessType: "public",
-    },
-    {
-        path: "/story/all",
-        handler: story_get_all,
-        method: "get",
-        accessType: "public",
-    },
-    {
-        path: "/story/add",
-        handler: story_post_add,
-        method: "post",
-        accessType: "vice",
-    },
-    {
-        path: "/story/edit",
-        handler: story_post_edit,
-        method: "post",
-        accessType: "vice",
-    },
-    {
-        path: "/story/delete",
-        handler: story_post_delete,
-        method: "post",
-        accessType: "vice",
-    },
-    {
-        path: "/story/:id",
-        handler: story_get_default,
-        method: "get",
-        accessType: "public",
-    }
-];
+const router = Router();
 
-export default routes;
+const requirePermission = requireUser({ roles: ["vice"] });
+
+router.get("/story", story_get_random);
+router.get("/story/:id", story_get_default);
+router.post("/story", requirePermission, story_post_add);
+router.patch("/story", requirePermission, story_post_edit);
+router.delete("/story", requirePermission, story_post_delete);
+
+export default router;

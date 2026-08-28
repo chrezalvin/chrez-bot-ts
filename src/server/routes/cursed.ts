@@ -1,19 +1,10 @@
 import { RouterInterface } from "@library";
+import { Router } from "express";
 import { cursed_get } from "server/controller/cursed";
 
-const routes: RouterInterface[] = [
-    {
-        path: "/cursed",
-        handler: cursed_get,
-        method: "get",
-        accessType: "public",
-    },
-    {
-        path: "/cursed/:index",
-        handler: cursed_get,
-        method: "get",
-        accessType: "public",
-    },
-];
+const router = Router();
 
-export default routes;
+router.get("/cursed", cursed_get);
+router.get("/cursed/:index", cursed_get);
+
+export default router;

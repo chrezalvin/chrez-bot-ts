@@ -1,11 +1,12 @@
 {
   "name": "cbts",
-  "version": "2.2.5",
+  "version": "3.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "SET DEBUG=* && node test.js",
-    "test:ts": "SET DEBUG=*&&ts-node -r tsconfig-paths/register ./src/test",
+    "backup:ts": "ts-node -r tsconfig-paths/register ./src/backup",
+    "test:ts": "ts-node -r tsconfig-paths/register ./src/test",
     "devstart": "SET DEBUG=Server:*,ChrezBot:*,library:*,models:*,middleware:*&&nodemon -r tsconfig-paths/register ./src/index.ts",
     "devstart:build": "tsc && tsc-alias && SET DEBUG=*&& node ./output/index",
     "start": "tsc && tsc-alias &&node ./output/registerSlashCommand &&node ./output/index",
@@ -16,7 +17,7 @@
   "author": "Chrez. A",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/voice": "^0.18.0",
+    "@discordjs/voice": "^0.19.2",
     "@supabase/supabase-js": "^2.45.1",
     "canvas": "^3.2.2",
     "convert-units": "^2.3.4",
@@ -24,7 +25,7 @@
     "cors": "^2.8.5",
     "cron": "^2.3.0",
     "debug": "^4.3.4",
-    "discord.js": "^14.16.3",
+    "discord.js": "^14.26.3",
     "dotenv": "^16.4.7",
     "evaluatex": "^2.2.0",
     "express": "^4.18.2",
@@ -32,10 +33,12 @@
     "multer": "^1.4.5-lts.1",
     "pureimage": "^0.3.17",
     "ts-node": "^10.9.1",
-    "tsc-alias": "^1.8.5",
+    "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.1.2",
     "undici": "^5.21.2",
-    "youtube-search-api": "^1.2.2"
+    "uuid": "^14.0.2",
+    "youtube-search-api": "^2.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/convert-units": "^2.3.9",
@@ -47,7 +50,8 @@
     "@types/http-errors": "^2.0.1",
     "@types/morgan": "^1.9.4",
     "@types/multer": "^1.4.11",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "typescript": "^6.0.3"
   },
   "nodemonConfig": {
     "ignore": [

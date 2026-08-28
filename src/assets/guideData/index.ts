@@ -3,6 +3,7 @@ import traitData from "./trait";
 import levellingData from "./levelling";
 import refiningData from "./refining";
 import mazeData from "./maze";
+import freeReset from "./freeResetGuide";
 
 export const guideDataLookup: {name: string, data: EmbedData[]}[] = [
     {
@@ -20,6 +21,10 @@ export const guideDataLookup: {name: string, data: EmbedData[]}[] = [
     {
         name: "maze",
         data: mazeData
+    },
+    {
+        name: "freeReset",
+        data: freeReset
     }
 ]
 

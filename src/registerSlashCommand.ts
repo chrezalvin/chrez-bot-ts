@@ -2,7 +2,7 @@ const debug = require("debug")("Bot:registerSlashCommand");
 
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { CLIENT_ID, BOT_GUILD_IDS, DISCORD_TOKEN } from '@config';
-import { allCommands } from "@shared/commands";
+import { slash_commands } from "./bot/commands";
 import { yoloService } from '@shared/YoloService';
 
 if(DISCORD_TOKEN === undefined){
@@ -12,9 +12,9 @@ if(DISCORD_TOKEN === undefined){
 
 const slashCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = []
 
-for(const command of [...allCommands.values()])
+for(const command of slash_commands)
     if(command.slash)
-        slashCommands.push(command.slash.slashCommand.toJSON());
+        slashCommands.push(command.slash.toJSON());
 
 // Construct and prepare an instance of the REST module
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
