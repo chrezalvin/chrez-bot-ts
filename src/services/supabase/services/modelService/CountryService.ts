@@ -22,7 +22,7 @@ export async function createCountry(schema: CountryCreate): Promise<Country>{
 
     let image: string | undefined = undefined;
     if(parsed.image)
-        image = await fileUpload.uploadFile(parsed.image, parsed.country.country);
+        image = await fileUpload.uploadFile(parsed.image, {filename: parsed.country.country});
     
     const {data} = await supabaseModels
         .from(tableName)
@@ -50,7 +50,7 @@ export async function updateCountry(
         if(get.flag)
             await fileUpload.removeFile(get.flag)
 
-        image = parsed.image ? await fileUpload.uploadFile(parsed.image, country) : null;
+        image = parsed.image ? await fileUpload.uploadFile(parsed.image, {filename: country}) : null;
     }
 
     const {data} = await supabaseModels

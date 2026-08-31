@@ -11,14 +11,23 @@ export async function getTimezone(
             country:vw_countries(
                 name,
                 flag
+            ),
+            user:vw_discord_users(
+                user_id
             )
         `)
         .ilike("keyword", `%${keyword}%`)
-        .limit(1)
-        .single()
-        .throwOnError();
+        .limit(10);
 
-    const parsed = timezoneView.parse(data);
+    // prioritize row that has user first
+    const found = data?.find((e, idx) => {
+        if(data.length === idx + 1)
+            return true;
+        else
+            return e.user.length > 0;
+    })
+
+    const parsed = timezoneView.parse(found);
 
     return parsed;
 }

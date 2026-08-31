@@ -33,9 +33,9 @@ export async function getToramUserFoodBuff(
     return parsed;
 }
 
-export async function getFoodBuff(names: string[]): Promise<FoodBuffView[]>;
-export async function getFoodBuff(names: string): Promise<FoodBuffView>;
-export async function getFoodBuff(name: string | string[]): Promise<FoodBuffView | FoodBuffView[]>{
+export async function getFoodBuff(names: string[], limit?: number): Promise<FoodBuffView[]>;
+export async function getFoodBuff(name: string): Promise<FoodBuffView>;
+export async function getFoodBuff(name: string | string[], limit?: number): Promise<FoodBuffView | FoodBuffView[]>{
     if(Array.isArray(name)){
         const orQuery = name
             .map(keyword => `keyword.ilike.%${keyword}%`)
@@ -48,6 +48,7 @@ export async function getFoodBuff(name: string | string[]): Promise<FoodBuffView
                 stat:vw_stats!inner(*)
             `)
             .or(orQuery)
+            .limit(limit ?? 4)
             .throwOnError();
     
         const parsed = foodBuffView.array().parse(data);

@@ -72,9 +72,6 @@ export * from "./YoutubeSearch";
 
 export * from "./YoloService";
 
-
-export * from "./emoji";
-
 export * from "./FileUpload";
 
 export * from "./CloudflaredTunnel";

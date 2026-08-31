@@ -16,7 +16,7 @@ const execute: ChrezBotMiddlewareFunction<ChatContext> = async (ctx) => {
     
     if(ctx.args[0] === "me")
         keyword = ctx.message.author.id;
-    if(ctx.args.length > 0)
+    else if(ctx.args.length > 0)
         keyword = ctx.args.join(" ");
     
     debug(`executing Chrez time ${keyword}`);

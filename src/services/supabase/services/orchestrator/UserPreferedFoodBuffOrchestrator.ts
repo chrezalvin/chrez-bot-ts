@@ -17,6 +17,9 @@ export async function getUserPreferedFoodBuff(user_id: DiscordUserView["user_id"
 }
 
 export async function setUserPreferedFoodBuff(user_id: DiscordUserView["user_id"], keywords: string[]): Promise<UserPreferedFoodBuffView[]>{
+    if(keywords.length > 4)
+        throw new Error("cannot set more than 4 preferences!");
+
     const foodBuffs = await FoodBuffViewService.getFoodBuff(keywords);
 
     await UserPreferredFoodBuffService.createUserPreferedFoodBuff({
