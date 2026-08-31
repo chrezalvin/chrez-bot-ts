@@ -1,4 +1,4 @@
-import { ErrorValidation, getEmoji, MyEmbedBuilder, YOLOModelOption } from "@library";
+import { ErrorValidation,  MyEmbedBuilder, YOLOModelOption } from "@library";
 import { Attachment, AttachmentBuilder, ChannelType, ChatInputCommandInteraction, InteractionReplyOptions, Message, MessageCreateOptions } from "discord.js";
 import z from "zod";
 

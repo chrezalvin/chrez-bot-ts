@@ -22,7 +22,7 @@ export async function createStoodie(schema: StoodieCreate): Promise<Stoodie>{
 
     let image: string | undefined = undefined;
     if(parsed.image)
-        image = await fileUpload.uploadFile(parsed.image, parsed.stoodie.stoodie);
+        image = await fileUpload.uploadFile(parsed.image, {filename: parsed.stoodie.stoodie});
     
     const {data} = await supabaseModels
         .from(tableName)
@@ -50,7 +50,7 @@ export async function updateStoodie(
         if(get.image)
             await fileUpload.removeFile(get.image)
 
-        image = parsed.image ? await fileUpload.uploadFile(parsed.image, stoodie) : null;
+        image = parsed.image ? await fileUpload.uploadFile(parsed.image, {filename: stoodie}) : null;
     }
 
     const {data} = await supabaseModels

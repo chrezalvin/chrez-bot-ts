@@ -1,10 +1,10 @@
 import z from "zod";
-import { emojiModel } from "./Emoji";
+import { iconModel } from "./Icon";
 
 export const materialTypeModel = z.object({
     material_type: z.string(),
     name: z.string(),
-    emoji: emojiModel.shape.emoji.nullable()
+    icon: iconModel.shape.icon.nullable()
 });
 
 const modelShape = materialTypeModel.shape;
@@ -12,7 +12,7 @@ export const materialTypeCreate = materialTypeModel
 .extend({
     material_type: modelShape.material_type.min(3),
     name: modelShape.name.min(3),
-    emoji: modelShape.emoji.optional(),
+    icon: modelShape.icon.optional(),
 });
 
 export const materialTypeUpdate = materialTypeCreate.partial();

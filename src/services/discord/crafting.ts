@@ -1,5 +1,5 @@
 import { BOT_PREFIXES } from "@config";
-import { ErrorValidation, getEmoji, MyEmbedBuilder } from "@library";
+import { ErrorValidation, MyEmbedBuilder } from "@library";
 import { InteractionReplyOptions, MessageCreateOptions } from "discord.js";
 import z from "zod";
 

@@ -22,7 +22,7 @@ export async function createFoodBuff(schema: FoodBuffCreate): Promise<FoodBuff>{
 
     let image: string | undefined = undefined;
     if(parsed.image)
-        image = await fileUpload.uploadFile(parsed.image, parsed.foodBuff.food_buff);
+        image = await fileUpload.uploadFile(parsed.image, {filename: parsed.foodBuff.food_buff});
     
     const {data} = await supabaseModels
         .from(tableName)
@@ -50,7 +50,7 @@ export async function updateFoodBuff(
         if(get.image)
             await fileUpload.removeFile(get.image)
 
-        image = parsed.image ? await fileUpload.uploadFile(parsed.image, get.food_buff) : null;
+        image = parsed.image ? await fileUpload.uploadFile(parsed.image, {filename: get.food_buff}) : null;
     }
 
     const {data} = await supabaseModels

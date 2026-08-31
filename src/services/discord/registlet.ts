@@ -1,6 +1,7 @@
-import { getEmoji, MyEmbedBuilder } from "@library";
+import { MyEmbedBuilder } from "@library";
 import { RegistletOrchestrator } from "@services/supabase/services/orchestrator";
 import { InteractionReplyOptions, MessageCreateOptions } from "discord.js";
+import emojis from "@assets/data/emojis.json";
 import z from "zod";
 
 export const registletSchema = z.object({
@@ -29,19 +30,28 @@ export async function registlet(args: I_Registlet): Promise<MessageCreateOptions
         embed.setFields([
             {
                 name: "Max Level",
-                value: registlet.max_level?.toString() ?? ""
+                value: registlet.max_level?.toString() ?? "",
+                inline: true,
             },
-            {
-                name: "Stoodies",
-                value: registlet
-                    .stoodies
-                    .map(stoodie => `${getEmoji("registlet")} Lv. ${stoodie.level} -> ${stoodie.name}`)
-                    .join("\n")
-            }
         ]);
 
-        if(registlet.image)
-            embed.setThumbnail(registlet.image);
+        if(registlet.upgrade_cost && registlet.max_level !== 1)
+            embed.addFields([{
+                name: "Upgrade Cost",
+                value: `${registlet.upgrade_cost} (${registlet.upgrade_cost / 10} if matching)`,
+                inline: true
+            }]);
+
+        embed.addFields([{
+            name: "Available at:",
+            value: registlet
+                .stoodies
+                .map(stoodie => `${emojis["ui_registlet"]} Lv. ${stoodie.level} -> ${stoodie.name}`)
+                .join("\n")
+        }]);
+
+        if(registlet.icon)
+            embed.setThumbnail(registlet.icon.image);
 
         embeds.push(embed);
     }

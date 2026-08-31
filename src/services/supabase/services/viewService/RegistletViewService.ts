@@ -5,8 +5,13 @@ export async function getRegistlets(keyword: string): Promise<RegistletView[]>{
     const {data} = await supabasePublic
         .from("vw_registlets")
         .select(`
-            *,
-            stoodies:vw_stoodies!vw_stoodie_registlets(*)
+            description,
+            max_level,
+            name,
+            registlet,
+            upgrade_cost,
+            stoodies:vw_stoodies!vw_stoodie_registlets(*),
+            icon:vw_icons(*)
         `)
         .ilike("name", `%${keyword}%`)
         .limit(3)

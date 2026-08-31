@@ -69,3 +69,21 @@ export function toOrdinal(n: number): string{
     v = n % 100;
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
+
+/**
+ * capitalize string
+ * @example
+ * capitalize("hello world") -> "Hello world"
+ * capitalize("hello world", true) -> "Hello World"
+ * @param sentence string to capitalize 
+ * @param allWords boolean if true capitalize each word, capitalize first word otherwise. Defaults to false
+ * @returns capitalized string
+ */
+export function capitalize(sentence: string, allWords: boolean = false): string{
+    if(allWords)
+        return sentence[0].toUpperCase() + sentence.substring(1);
+    else
+        return sentence.split(" ").map(word => {
+            return word[0].toUpperCase() + word.substring(1);
+        }).join(" ");
+}
