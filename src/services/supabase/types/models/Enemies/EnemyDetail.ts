@@ -1,6 +1,6 @@
 import z from "zod";
-import { enemyModel } from "../Enemy";
-import { locationAreaModel } from "../Location";
+import { enemyModel } from ".";
+import { locationAreaModel } from "../Locations";
 import { enemyTypeModel } from "./EnemyType";
 import { elementModel } from "../Element";
 import { enemyDifficultyModel } from "./EnemyDifficulty";

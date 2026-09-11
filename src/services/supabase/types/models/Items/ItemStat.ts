@@ -1,7 +1,7 @@
 import z from "zod";
 import { itemModel } from "./Item";
-import { statModel } from "../Stat";
-import { statRestrictionModel } from "../Stat/StatRestriction";
+import { statModel } from "../Stats";
+import { statRestrictionModel } from "../Stats/StatRestriction";
 
 export const itemStatModel = z.object({
     item: itemModel.shape.item,

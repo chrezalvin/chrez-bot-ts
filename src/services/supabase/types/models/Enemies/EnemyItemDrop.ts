@@ -1,9 +1,9 @@
 import z from "zod";
-import { enemyModel } from "../Enemy";
-import { locationAreaModel } from "../Location";
+import { enemyModel } from ".";
+import { locationAreaModel } from "../Locations";
 import { enemyTypeModel } from "./EnemyType";
 import { elementModel } from "../Element";
-import { itemModel } from "../Item";
+import { itemModel } from "../Items";
 
 export const enemyItemDropModel = z.object({
     enemy: enemyModel.shape.enemy,

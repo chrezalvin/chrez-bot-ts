@@ -1,5 +1,5 @@
 import z from "zod";
-import { statModel } from "./Stat/Stat";
+import { statModel } from "./Stats/Stat";
 import { FileUpload } from "@library";
 import { supabaseModels } from "@shared/supabase";
 
