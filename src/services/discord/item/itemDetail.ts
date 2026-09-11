@@ -136,7 +136,7 @@ export async function itemDetail(item: ItemView): Promise<MessageCreateOptions &
                     .join("\n")
             }
             else{
-                const arr = found.prev ? DSATreeNode.linePredecessor(found) : [];
+                const arr = found.prev ? DSATreeNode.linePredecessor(found.prev) : [];
 
                 crystaList = [...arr, ...arrLine]
                     .map(upgrade => {
