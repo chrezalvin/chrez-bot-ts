@@ -1,7 +1,7 @@
 import z from "zod";
 import { discordUserModel } from "../models/DiscordUser";
 import { foodBuffModel } from "../models/FoodBuff";
-import { statModel } from "../models/Stat/Stat";
+import { statModel } from "../models/Stats/Stat";
 import { toramUserFoodBuffModel } from "../models/ToramUserFoodBuff";
 import { toramUserModel } from "../models/ToramUser";
 

@@ -14,9 +14,9 @@ import {
     itemSellableModel,
     itemStatModel,
     itemToolModel
-} from "../../models/Item";
+} from "../../models/Items";
 import { enemyDifficultyModel, enemyModel, enemyTypeModel, iconModel, locationAreaModel, locationModel, locationTypeModel, statModel } from "../../models";
-import { statRestrictionModel } from "../../models/Stat/StatRestriction";
+import { statRestrictionModel } from "../../models/Stats/StatRestriction";
 
 const crystaUpgrades = itemCrystaUpgradeModel
     .pick({})

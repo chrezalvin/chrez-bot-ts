@@ -1,5 +1,5 @@
 import z from "zod";
-import { itemChestModel, itemCrystaModel, itemCrystaTypeModel, itemEquipableLabelTypeModel, itemEquipableModel, itemEquipableTypeModel, itemMaterialTypeModel, itemModel, itemProcessableModel } from "../../models/Item";
+import { itemChestModel, itemCrystaModel, itemCrystaTypeModel, itemEquipableLabelTypeModel, itemEquipableModel, itemEquipableTypeModel, itemMaterialTypeModel, itemModel, itemProcessableModel } from "../../models/Items";
 import { iconModel } from "../../models";
 
 export const itemSimpleView = itemModel.extend({
