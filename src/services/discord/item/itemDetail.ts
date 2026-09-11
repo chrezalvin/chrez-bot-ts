@@ -109,7 +109,7 @@ export async function itemDetail(item: ItemView): Promise<MessageCreateOptions &
 
             const arrLine: typeof baseCrysta[] = [];
             let isTree = false;
-            for(let current = found; current.nexts.length !== 0; current = current.nexts[0]){
+            for(let current = found; current !== undefined; current = current.nexts[0]){
                 if(current.nexts.length > 1){
                     isTree = true
                     break;
@@ -136,7 +136,7 @@ export async function itemDetail(item: ItemView): Promise<MessageCreateOptions &
                     .join("\n")
             }
             else{
-                const arr = found.prev ? DSATreeNode.linePredecessor(found) : [];
+                const arr = found.prev ? DSATreeNode.linePredecessor(found.prev) : [];
 
                 crystaList = [...arr, ...arrLine]
                     .map(upgrade => {
