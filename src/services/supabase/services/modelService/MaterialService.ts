@@ -1,42 +1,46 @@
-import { supabaseModels } from "@shared/supabase";
-import { Material, MaterialCreate, MaterialUpdate } from "../../types/models/Material";
+// import { supabaseModels } from "@shared/supabase";
+// import { Material, materialCreate, MaterialCreate, materialUpdate, MaterialUpdate } from "@services/supabase/types";
 
-export const tableName = "materials";
+// export const tableName = "materials";
 
-export async function createMaterial(schema: MaterialCreate): Promise<Material>{
-    const {data} = await supabaseModels
-        .from(tableName)
-        .insert(schema)
-        .select()
-        .single()
-        .throwOnError();
+// export async function createMaterial(schema: MaterialCreate): Promise<Material>{
+//     const parsed = materialCreate.parse(schema);
 
-    return data!;
-}
+//     const {data} = await supabaseModels
+//         .from(tableName)
+//         .insert(parsed)
+//         .select()
+//         .single()
+//         .throwOnError();
 
-export async function updateMaterial(
-    material: Material["material"], 
-    schema: MaterialUpdate, 
-): Promise<Material>{
-    const {data} = await supabaseModels
-        .from(tableName)
-        .update(schema)
-        .eq("material", material)
-        .select()
-        .single()
-        .throwOnError();
+//     return data!;
+// }
 
-    return data!;
-}
+// export async function updateMaterial(
+//     material: Material["material"], 
+//     schema: MaterialUpdate, 
+// ): Promise<Material>{
+//     const parsed = materialUpdate.parse(schema);
 
-export async function deleteMaterial(
-    material: Material["material"]
-): Promise<true>{
-    await supabaseModels
-        .from(tableName)
-        .delete()
-        .eq("material", material)
-        .throwOnError();
+//     const {data} = await supabaseModels
+//         .from(tableName)
+//         .update(parsed)
+//         .eq("material", material)
+//         .select()
+//         .single()
+//         .throwOnError();
 
-    return true;
-}
+//     return data!;
+// }
+
+// export async function deleteMaterial(
+//     material: Material["material"]
+// ): Promise<true>{
+//     await supabaseModels
+//         .from(tableName)
+//         .delete()
+//         .eq("material", material)
+//         .throwOnError();
+
+//     return true;
+// }

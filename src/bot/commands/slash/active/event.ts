@@ -41,16 +41,16 @@ const slash = new SlashCommandBuilder()
         );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const month = ctx.interaction.options.getString("month", false);
-    const title = ctx.interaction.options.getString("title", false);
-    let tag = (ctx.interaction.options.getString("tag", false) ?? "annual") as I_Event["tag"];
+    const month = ctx.chatInteraction.options.getString("month", false);
+    const title = ctx.chatInteraction.options.getString("title", false);
+    let tag = (ctx.chatInteraction.options.getString("tag", false) ?? "annual") as I_Event["tag"];
 
     const embeds = await event({
         tag,
         str: month || title || ""
     });
 
-    await ctx.interaction.editReply({embeds: embeds.embeds});
+    await ctx.chatInteraction.editReply({embeds: embeds.embeds});
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

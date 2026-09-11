@@ -23,15 +23,15 @@ const slash = new SlashCommandBuilder()
         );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const profiency = ctx.interaction.options.getInteger("profiency_level", true);
-    const difficulty = ctx.interaction.options.getInteger("difficulty", false) || undefined;
+    const profiency = ctx.chatInteraction.options.getInteger("profiency_level", true);
+    const difficulty = ctx.chatInteraction.options.getInteger("difficulty", false) || undefined;
 
     const res = await CraftingService.crafting({
         profiency,
         difficulty
     });
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

@@ -1,5 +1,5 @@
 import { supabaseModels } from "@shared/supabase";
-import { Country, countryCreate, CountryCreate, countryUpdate, CountryUpdate } from "../../types/models/Country";
+import { Country, countryCreate, CountryCreate, countryUpdate, CountryUpdate } from "@services/supabase/types";
 import { FileUpload } from "@library";
 
 export const tableName = "countries";

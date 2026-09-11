@@ -22,17 +22,17 @@ const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
     const sfw_memes_length = MemeView.getMemeLength(false);
     const nsfw_memes_length = MemeView.getMemeLength(true);
 
-    const nsfw = ctx.interaction.options.getBoolean("nsfw", false) ?? false;
-    const index = ctx.interaction.options.getInteger("index", false) ?? rngInt(0, (nsfw ? nsfw_memes_length : sfw_memes_length) - 1);
+    const nsfw = ctx.chatInteraction.options.getBoolean("nsfw", false) ?? false;
+    const index = ctx.chatInteraction.options.getInteger("index", false) ?? rngInt(0, (nsfw ? nsfw_memes_length : sfw_memes_length) - 1);
 
-    await ctx.interaction.deferReply();
+    await ctx.chatInteraction.deferReply();
     const embeds = await memes({
         index, 
         nsfw,
-        message: ctx.interaction
+        message: ctx.chatInteraction
     });
 
-    await ctx.interaction.editReply({embeds:  embeds.embeds});
+    await ctx.chatInteraction.editReply({embeds:  embeds.embeds});
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Timezone, TimezoneCreate, TimezoneUpdate } from "../../types/models/Timezone";
+import { Timezone, timezoneCreate, TimezoneCreate, timezoneUpdate, TimezoneUpdate } from "@services/supabase/types";
 
 export const tableName = "timezones";
 
 export async function createTimezone(schema: TimezoneCreate): Promise<Timezone>{
+    const parsed = timezoneCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateTimezone(
     timezone: Timezone["timezone"], 
     schema: TimezoneUpdate, 
 ): Promise<Timezone>{
+    const parsed = timezoneUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("timezone", timezone)
         .select()
         .single()

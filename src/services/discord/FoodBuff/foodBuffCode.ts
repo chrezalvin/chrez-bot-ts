@@ -27,7 +27,7 @@ export async function foodBuffCode(args: I_FoodBuffCode): Promise<MessageCreateO
         embed.setThumbnail(foodBuffCode.image);
 
     embed.setFooter({
-        text: `alternative name for this buff: ${foodBuffCode.stat.aliases.join(", ")}`
+        text: `alternative name for this buff: ${foodBuffCode.aliases.join(", ")}`
     })
 
     return {embeds: [embed]};

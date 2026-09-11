@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Quote, QuoteCreate, QuoteUpdate } from "../../types/models/Quote";
+import { Quote, quoteCreate, QuoteCreate, quoteUpdate, QuoteUpdate } from "@services/supabase/types";
 
 export const tableName = "quotes";
 
 export async function createQuote(schema: QuoteCreate): Promise<Quote>{
+    const parsed = quoteCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateQuote(
     quote: Quote["quote_id"], 
     schema: QuoteUpdate, 
 ): Promise<Quote>{
+    const parsed = quoteUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("quote_id", quote)
         .select()
         .single()

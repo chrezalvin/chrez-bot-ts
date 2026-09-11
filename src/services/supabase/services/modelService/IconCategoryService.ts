@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { IconCategory, IconCategoryCreate, IconCategoryUpdate } from "../../types/models/IconCategory";
+import { IconCategory, iconCategoryCreate, IconCategoryCreate, iconCategoryUpdate, IconCategoryUpdate } from "@services/supabase/types";
 
 export const tableName = "icon_categories";
 
 export async function createIconCategory(schema: IconCategoryCreate): Promise<IconCategory>{
+    const parsed = iconCategoryCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateIconCategory(
     iconCategory: IconCategory["icon_category"], 
     schema: IconCategoryUpdate, 
 ): Promise<IconCategory>{
+    const parsed = iconCategoryUpdate.parse(schema);
+    
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("icon_category", iconCategory)
         .select()
         .single()

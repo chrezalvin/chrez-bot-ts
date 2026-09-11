@@ -14,15 +14,15 @@ const slash = new SlashCommandBuilder()
     );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const voiceChannel = (ctx.interaction.member as GuildMember).voice.channel;
-    const isRepeat = ctx.interaction.options.getBoolean("repeat") ?? true;
+    const voiceChannel = (ctx.chatInteraction.member as GuildMember).voice.channel;
+    const isRepeat = ctx.chatInteraction.options.getBoolean("repeat") ?? true;
 
     if(!voiceChannel)
         throw new Error("You must be in a voice channel to use this command");
 
     const res = await repeat({voiceChannel, repeat: isRepeat});
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

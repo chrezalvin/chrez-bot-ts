@@ -1,5 +1,5 @@
 import { supabaseModels } from "@shared/supabase";
-import { StoodieRegistlet, StoodieRegistletCreate } from "../../types/models/StoodieRegistlet";
+import { StoodieRegistlet, stoodieRegistletCreate, StoodieRegistletCreate } from "@services/supabase/types";
 
 export const tableName = "stoodie_registlets";
 
@@ -8,10 +8,11 @@ export async function createStoodieRegistlet(schema: StoodieRegistletCreate): Pr
 export async function createStoodieRegistlet(schema: StoodieRegistletCreate[]): Promise<StoodieRegistlet[]>;
 export async function createStoodieRegistlet(schema: StoodieRegistletCreate | StoodieRegistletCreate[]): Promise<StoodieRegistlet[]>{
     const schemas: StoodieRegistletCreate[] = Array.isArray(schema) ? schema : [schema];
+    const parsed = stoodieRegistletCreate.array().parse(schemas);
 
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schemas)
+        .insert(parsed)
         .select();
 
     return data!;

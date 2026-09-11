@@ -9,6 +9,7 @@ export async function getToramUserFoodBuff(
         .select(`
             name,
             image,
+            aliases,
             stat:vw_stats!inner(*),
             toram_user_food_buffs:vw_toram_user_food_buffs(
                 level,
@@ -23,7 +24,7 @@ export async function getToramUserFoodBuff(
                 )
             )
         `)
-        .ilike("stat.keyword", `%${keyword}%`)
+        .ilike("keyword", `%${keyword}%`)
         .limit(1)
         .single()
         .throwOnError();

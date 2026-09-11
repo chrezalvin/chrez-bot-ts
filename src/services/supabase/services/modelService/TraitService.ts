@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Trait, TraitCreate, TraitUpdate } from "../../types/models/Trait";
+import { Trait, traitCreate, TraitCreate, traitUpdate, TraitUpdate } from "@services/supabase/types";
 
 export const tableName = "traits";
 
 export async function createTrait(schema: TraitCreate): Promise<Trait>{
+    const parsed = traitCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateTrait(
     trait: Trait["trait"], 
     schema: TraitUpdate, 
 ): Promise<Trait>{
+    const parsed = traitUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("trait", trait)
         .select()
         .single()

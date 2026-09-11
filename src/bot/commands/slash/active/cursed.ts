@@ -14,15 +14,15 @@ const slash = new SlashCommandBuilder()
             .setMinValue(0))
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const index = ctx.interaction.options.getInteger("index", false) ?? rngInt(0, CursedView.getCursedLength() - 1);
+    const index = ctx.chatInteraction.options.getInteger("index", false) ?? rngInt(0, CursedView.getCursedLength() - 1);
 
-    await ctx.interaction.deferReply();
+    await ctx.chatInteraction.deferReply();
     const embeds = await cursed({
-        message: ctx.interaction,
+        message: ctx.chatInteraction,
         index
     });
 
-    await ctx.interaction.editReply({
+    await ctx.chatInteraction.editReply({
         embeds: embeds.embeds
     });
 }

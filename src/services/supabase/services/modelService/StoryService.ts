@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Story, StoryCreate, StoryUpdate } from "../../types/models/Story";
+import { Story, storyCreate, StoryCreate, storyUpdate, StoryUpdate } from "@services/supabase/types";
 
 export const tableName = "stories";
 
 export async function createStory(schema: StoryCreate): Promise<Story>{
+    const parsed = storyCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateStory(
     story: Story["story_id"], 
     schema: StoryUpdate, 
 ): Promise<Story>{
+    const parsed = storyUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("story_id", story)
         .select()
         .single()

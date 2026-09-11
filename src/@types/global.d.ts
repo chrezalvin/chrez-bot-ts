@@ -1,5 +1,5 @@
 import { DiscordUserView } from "@services/supabase/types/views/DiscordUserView";
-import { VoiceBasedChannel } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, StringSelectMenuInteraction, VoiceBasedChannel } from "discord.js";
 
 declare global{
   namespace Express {
@@ -26,6 +26,9 @@ declare global{
     interface SlashContext{
       user?: DiscordUserView;
       voiceChannel?: VoiceBasedChannel;
+
+      chatInteraction: ChatInputCommandInteraction<CacheType>;
+      stringSelectMenuInteraction: StringSelectMenuInteraction<CacheType>;
     }
   }
 

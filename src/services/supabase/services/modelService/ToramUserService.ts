@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { ToramUser, ToramUserCreate, ToramUserUpdate } from "../../types/models/ToramUser";
+import { ToramUser, toramUserCreate, ToramUserCreate, toramUserUpdate, ToramUserUpdate } from "@services/supabase/types";
 
 export const tableName = "toram_users";
 
 export async function createToramUser(schema: ToramUserCreate): Promise<ToramUser>{
+    const parsed = toramUserCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateToramUser(
     toramUser: ToramUser["toram_user"], 
     schema: ToramUserUpdate, 
 ): Promise<ToramUser>{
+    const parsed = toramUserUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("toram_user", toramUser)
         .select()
         .single()

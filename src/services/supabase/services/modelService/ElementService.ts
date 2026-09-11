@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Element, ElementCreate, ElementUpdate } from "../../types/models/Element";
+import { Element, elementCreate, ElementCreate, elementUpdate, ElementUpdate } from "@services/supabase/types";
 
 export const tableName = "elements";
 
 export async function createElement(schema: ElementCreate): Promise<Element>{
+    const parsed = elementCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateElement(
     element: Element["element"], 
     schema: ElementUpdate, 
 ): Promise<Element>{
+    const parsed = elementUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("element", element)
         .select()
         .single()

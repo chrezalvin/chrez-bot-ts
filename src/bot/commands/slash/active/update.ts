@@ -18,10 +18,10 @@ const slash = new SlashCommandBuilder()
         });
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const version = ctx.interaction.options.getString("version", false);
+    const version = ctx.chatInteraction.options.getString("version", false);
     const embeds = await update({version: version ?? undefined });
 
-    await ctx.interaction.reply(embeds);
+    await ctx.chatInteraction.reply(embeds);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

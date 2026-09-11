@@ -9,8 +9,8 @@ const slash = new SlashCommandBuilder().setName("roll")
     .addIntegerOption(option => option.setName("second").setDescription("Second Number"));
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const first = ctx.interaction.options.getInteger("first", false);
-    const second = ctx.interaction.options.getInteger("second", false);
+    const first = ctx.chatInteraction.options.getInteger("first", false);
+    const second = ctx.chatInteraction.options.getInteger("second", false);
 
     let embed;
     if((first && second))
@@ -20,7 +20,7 @@ const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
     else
         throw new Error("the first or second number should be inputted too");
     
-    await ctx.interaction.reply(embed);
+    await ctx.chatInteraction.reply(embed);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

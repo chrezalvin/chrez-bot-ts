@@ -1,11 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Icon, iconCreate, IconCreate, iconUpdate, IconUpdate } from "../../types/models/Icon";
-import { FileUpload } from "@library";
-import { capitalize } from "@library/BasicFunctions";
+import { 
+    Icon, 
+    iconCreate, 
+    IconCreate, 
+    iconUpdate, 
+    IconUpdate, 
+    iconFileUploader 
+} from "@services/supabase/types";
 
 export const tableName = "icons";
-export const bucketName = "icons";
-export const fileUpload = new FileUpload(bucketName, supabaseModels);
 
 async function getIcon(icon: Icon["icon"]): Promise<Icon>{
     const {data} = await supabaseModels
@@ -27,7 +30,7 @@ export async function createIcon(schema: IconCreate): Promise<Icon>{
         .from(tableName)
         .insert({
             ...parsed.icon,
-            image: await fileUpload.uploadFile(parsed.image.file, {
+            image: await iconFileUploader.uploadFile(parsed.image.file, {
                 filename: newFileName,
                 contentType: parsed.image.mimetype
             })
@@ -47,14 +50,14 @@ export async function updateIcon(
 
     const get = await getIcon(icon);
 
-    const newFileName = (parsed.icon.category ?? get.category) + "_" + parsed.icon.icon;
+    const newFileName = (parsed.icon.category ?? get.category) + "_" + get.icon;
 
     let image: string | undefined = undefined;
     if(parsed.image !== undefined){
         if(get.image)
-            await fileUpload.removeFile(get.image)
+            await iconFileUploader.removeFile(get.image)
 
-        image = await fileUpload.uploadFile(parsed.image.file, {
+        image = await iconFileUploader.uploadFile(parsed.image.file, {
             filename: newFileName,
             contentType: parsed.image.mimetype
         });
@@ -78,7 +81,7 @@ export async function deleteIcon(icon: Icon["icon"]): Promise<true>{
     const get = await getIcon(icon);
 
     if(get.image)
-        fileUpload.removeFile(get.image);
+        iconFileUploader.removeFile(get.image);
 
     await supabaseModels
         .from(tableName)

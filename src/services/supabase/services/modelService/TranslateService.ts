@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Translate, TranslateCreate, TranslateUpdate } from "../../types/models/Translate";
+import { Translate, translateCreate, TranslateCreate, translateUpdate, TranslateUpdate } from "@services/supabase/types";
 
 export const tableName = "translates";
 
 export async function createTranslate(schema: TranslateCreate): Promise<Translate>{
+    const parsed = translateCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateTranslate(
     translate: Translate["translate_id"], 
     schema: TranslateUpdate, 
 ): Promise<Translate>{
+    const parsed = translateUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("translate_id", translate)
         .select()
         .single()

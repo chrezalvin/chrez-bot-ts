@@ -17,3 +17,8 @@ export interface InlineCommand {
     inline: InlineCommandBuilder;
     middlewares: ChrezBotMiddlewareFunction<ChatContext>[];
 }
+
+export interface StringSelectCommand{
+    customId: string;
+    middlewares: ChrezBotMiddlewareFunction<SlashContext>[];
+}

@@ -10,3 +10,4 @@ export * as DiscordUserViewService from "./DiscordUserViewService";
 export * as CursedView from "./CursedView";
 export * as MemeView from "./MemeView";
 export * as QuoteViewService from "./QuoteViewService";
+export * as AilmentViewService from "./AilmentViewService";

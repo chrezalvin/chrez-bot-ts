@@ -73,7 +73,7 @@ export function chrezHelp(
     }
 
     const slashCommandExecute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx, next) => {
-        const command = ctx.interaction.options.getString("command", false);
+        const command = ctx.chatInteraction.options.getString("command", false);
 
         let embed;
         if(command){
@@ -87,7 +87,7 @@ export function chrezHelp(
         else
             embed = await help({chatCommands: activeChatCommands})
 
-        ctx.interaction.reply(embed);
+        ctx.chatInteraction.reply(embed);
     }
 
     return {

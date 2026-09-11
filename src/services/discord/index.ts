@@ -27,3 +27,4 @@ export * as TranslateService from "./translate";
 export * as UpdateService from "./update";
 export * as WeirdThingService from "./weirdThing";
 export * as YomamaService from "./yomama";
+export * as ItemService from "./item";

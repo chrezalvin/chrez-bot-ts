@@ -3,12 +3,14 @@ import {
     private_slash_commands,
     experimental_slash_commands,
 } from "./slash";
+
 import {
     active_chat_commands,
     hidden_chat_commands,
     private_chat_commands,
     experimental_chat_commands,
 } from "./chat";
+
 import {chrezHelp} from "./help";
 
 const help_command = chrezHelp(
@@ -29,6 +31,11 @@ export const slash_commands = [
     ...experimental_slash_commands,
     help_command.slash,
 ];
+
 export {
     inline_commands
 } from "./inline";
+
+export {
+    stringSelectCommands
+} from "./stringSelect";

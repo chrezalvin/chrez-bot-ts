@@ -1,0 +1,1 @@
+export { getAilment } from "../viewService/AilmentViewService";

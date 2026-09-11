@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Update, UpdateCreate, UpdateUpdate } from "../../types/models/Update";
+import { Update, updateCreate, UpdateCreate, UpdateUpdate, updateUpdate as updateUpdateTable } from "@services/supabase/types";
 
 export const tableName = "updates";
 
 export async function createUpdate(schema: UpdateCreate): Promise<Update>{
+    const parsed = updateCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateUpdate(
     version: Update["version"], 
     schema: UpdateUpdate, 
 ): Promise<Update>{
+    const parsed = updateUpdateTable.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("version", version)
         .select()
         .single()

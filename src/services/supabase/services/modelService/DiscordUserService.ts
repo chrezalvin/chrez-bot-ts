@@ -1,5 +1,5 @@
 import { supabaseModels } from "@shared/supabase";
-import { DiscordUser, DiscordUserCreate, DiscordUserUpdate } from "../../types/models/DiscordUser";
+import { DiscordUser, discordUserCreate, DiscordUserCreate, discordUserUpdate, DiscordUserUpdate } from "@services/supabase/types";
 
 export const tableName = "discord_users";
 
@@ -15,9 +15,11 @@ export async function get(userId: DiscordUser["user_id"]): Promise<DiscordUser>{
 }
 
 export async function createDiscordUser(schema: DiscordUserCreate): Promise<DiscordUser>{
+    const parsed = discordUserCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -29,9 +31,11 @@ export async function updateDiscordUser(
     userId: DiscordUser["user_id"], 
     schema: DiscordUserUpdate, 
 ): Promise<DiscordUser>{
+    const parsed = discordUserUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("user_id", userId)
         .select()
         .single()
@@ -40,11 +44,11 @@ export async function updateDiscordUser(
     return data!;
 }
 
-export async function deleteDiscordUser(user_id: DiscordUser["user_id"]): Promise<true>{
+export async function deleteDiscordUser(userId: DiscordUser["user_id"]): Promise<true>{
     await supabaseModels
         .from(tableName)
         .delete()
-        .eq("user_id", user_id)
+        .eq("user_id", userId)
         .throwOnError();
 
     return true;

@@ -26,16 +26,16 @@ const slash = new SlashCommandBuilder()
         );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const voiceChannel = (ctx.interaction.member as GuildMember).voice.channel;
-    const avatarUrl = ctx.interaction.user.displayAvatarURL();
-    const name = ctx.interaction.user.username;
+    const voiceChannel = (ctx.chatInteraction.member as GuildMember).voice.channel;
+    const avatarUrl = ctx.chatInteraction.user.displayAvatarURL();
+    const name = ctx.chatInteraction.user.username;
 
-    const options = ctx.interaction.options.getString("options", true) as I_Playlist["options"];
-    const playlistName = ctx.interaction.options.getString("name", false) ?? undefined;
+    const options = ctx.chatInteraction.options.getString("options", true) as I_Playlist["options"];
+    const playlistName = ctx.chatInteraction.options.getString("name", false) ?? undefined;
 
-    await ctx.interaction.deferReply();
+    await ctx.chatInteraction.deferReply();
     const embeds = await playlist({
-        message: ctx.interaction,
+        message: ctx.chatInteraction,
         options, 
         playlistName,
         voiceChannel,
@@ -45,7 +45,7 @@ const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
         }
     });
 
-    await ctx.interaction.editReply({content: embeds.content, embeds: embeds.embeds});
+    await ctx.chatInteraction.editReply({content: embeds.content, embeds: embeds.embeds});
 }
 
 export default {

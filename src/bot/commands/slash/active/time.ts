@@ -9,14 +9,14 @@ const slash = new SlashCommandBuilder()
         .addStringOption(opt => opt.setName("keyword").setDescription("could be name, country, city, etc. Defaulted to japan time").setMinLength(2).setRequired(false))
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    let keyword = ctx.interaction.options.getString("keyword", false);
+    let keyword = ctx.chatInteraction.options.getString("keyword", false);
 
     if(keyword === "me")
-        keyword = ctx.interaction.user.id;
+        keyword = ctx.chatInteraction.user.id;
 
     const embeds = await time({keyword: keyword ?? undefined});
     
-    await ctx.interaction.reply(embeds);
+    await ctx.chatInteraction.reply(embeds);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

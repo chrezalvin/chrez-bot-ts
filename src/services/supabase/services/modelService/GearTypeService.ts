@@ -1,42 +1,46 @@
-import { supabaseModels } from "@shared/supabase";
-import { GearType, GearTypeCreate, GearTypeUpdate } from "../../types/models/GearType";
+// import { supabaseModels } from "@shared/supabase";
+// import { GearType, gearTypeCreate, GearTypeCreate, gearTypeUpdate, GearTypeUpdate } from "@services/supabase/types";
 
-export const tableName = "gear_types";
+// export const tableName = "gear_types";
 
-export async function createGearType(schema: GearTypeCreate): Promise<GearType>{
-    const {data} = await supabaseModels
-        .from(tableName)
-        .insert(schema)
-        .select()
-        .single()
-        .throwOnError();
+// export async function createGearType(schema: GearTypeCreate): Promise<GearType>{
+//     const parsed = gearTypeCreate.parse(schema);
 
-    return data!;
-}
+//     const {data} = await supabaseModels
+//         .from(tableName)
+//         .insert(parsed)
+//         .select()
+//         .single()
+//         .throwOnError();
 
-export async function updateGearType(
-    gearType: GearType["gear_type"], 
-    schema: GearTypeUpdate, 
-): Promise<GearType>{
-    const {data} = await supabaseModels
-        .from(tableName)
-        .update(schema)
-        .eq("gearType", gearType)
-        .select()
-        .single()
-        .throwOnError();
+//     return data!;
+// }
 
-    return data!;
-}
+// export async function updateGearType(
+//     gearType: GearType["gear_type"], 
+//     schema: GearTypeUpdate, 
+// ): Promise<GearType>{
+//     const parsed = gearTypeUpdate.parse(schema);
 
-export async function deleteGearType(
-    gearType: GearType["gear_type"]
-): Promise<true>{
-    await supabaseModels
-        .from(tableName)
-        .delete()
-        .eq("gearType", gearType)
-        .throwOnError();
+//     const {data} = await supabaseModels
+//         .from(tableName)
+//         .update(parsed)
+//         .eq("gearType", gearType)
+//         .select()
+//         .single()
+//         .throwOnError();
 
-    return true;
-}
+//     return data!;
+// }
+
+// export async function deleteGearType(
+//     gearType: GearType["gear_type"]
+// ): Promise<true>{
+//     await supabaseModels
+//         .from(tableName)
+//         .delete()
+//         .eq("gearType", gearType)
+//         .throwOnError();
+
+//     return true;
+// }
