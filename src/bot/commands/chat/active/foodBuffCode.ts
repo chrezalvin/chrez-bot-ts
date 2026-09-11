@@ -15,10 +15,6 @@ const chat = new ChatCommandBuilder({
             description: "Searches for str food buff codes"
         },
         {
-            command: "Chrez food guild",
-            description: "Shows food buffs from guild members"
-        },
-        {
             command: "Chrez food me",
             description: "Searches for your preferred food buff codes"
         },

@@ -9,10 +9,10 @@ const slash = new SlashCommandBuilder()
     .setDescription("Answering the real question");
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const discordId = ctx.interaction.user.id;
+    const discordId = ctx.chatInteraction.user.id;
     const res = await why({discordId});
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

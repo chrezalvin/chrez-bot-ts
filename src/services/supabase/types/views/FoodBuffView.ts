@@ -1,15 +1,20 @@
 import z from "zod";
 import { foodBuffModel } from "../models/FoodBuff";
-import { statModel } from "../models/Stat";
+import { statModel } from "../models/Stat/Stat";
 import { toramUserFoodBuffModel } from "../models/ToramUserFoodBuff";
 import { toramUserModel } from "../models/ToramUser";
 import { discordUserModel } from "../models/DiscordUser";
-import { FoodBuffService } from "@services/supabase/services";
 
-export const toramUserFoodBuffView = z.object({
-    name: foodBuffModel.shape.name,
-    image: foodBuffModel.shape.image.transform(img => img ? FoodBuffService.fileUpload.translatePathToUrl(img) : null),
-    stat: statModel,
+export const toramUserFoodBuffView = foodBuffModel
+.pick({
+    name: true,
+    image: true
+}).extend({
+    stat: statModel.pick({
+        stat: true,
+        stat_name: true,
+    }),
+    aliases: foodBuffModel.shape.aliases,
     toram_user_food_buffs: z.array(
         z.object({
             level: toramUserFoodBuffModel.shape.level,
@@ -30,7 +35,10 @@ export const toramUserFoodBuffView = z.object({
 export type ToramUserFoodBuffView = z.infer<typeof toramUserFoodBuffView>;
 
 export const foodBuffView = foodBuffModel.extend({
-    stat: statModel
+    stat: statModel.pick({
+        stat: true,
+        stat_name: true
+    })
 });
 
 export type FoodBuffView = z.infer<typeof foodBuffView>;

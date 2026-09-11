@@ -4,6 +4,9 @@ const debug = require("debug")("middleware:chat:errorHandler");
 
 export const errorHandler: ChrezBotMiddlewareFunction<SlashContext> = async (ctx, next, err) => {
     debug(JSON.stringify(err, null, 2));
+
+    if(!ctx.interaction.isRepliable())
+        return;
     
     if(typeof err === "string")
         if(ctx.interaction.deferred)

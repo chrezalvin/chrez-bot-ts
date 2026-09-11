@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Role, RoleCreate, RoleUpdate } from "../../types/models/Role";
+import { Role, roleCreate, RoleCreate, roleUpdate, RoleUpdate } from "@services/supabase/types";
 
 export const tableName = "roles";
 
 export async function createRole(schema: RoleCreate): Promise<Role>{
+    const parsed = roleCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateRole(
     role: Role["role"], 
     schema: RoleUpdate, 
 ): Promise<Role>{
+    const parsed = roleUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("role", role)
         .select()
         .single()

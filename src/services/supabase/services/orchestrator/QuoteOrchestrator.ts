@@ -1,6 +1,6 @@
 import { QuoteView } from "@services/supabase/types/views/QuoteView";
 import { QuoteViewService } from "../viewService";
-import { QuoteCreate, QuoteUpdate } from "@services/supabase/types/models/Quote";
+import { QuoteCreate, QuoteUpdate } from "@services/supabase/types";
 import { QuoteService } from "../modelService";
 import { MappedArray } from "@library/MappedArray";
 

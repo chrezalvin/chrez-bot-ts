@@ -15,6 +15,9 @@ export const postgresErrorHandler: ChrezBotMiddlewareFunction<SlashContext> = as
     const parsed = postgresError.safeParse(err);
 
     if(parsed.success){
+        if(!ctx.interaction.isRepliable())
+            return next();
+
         debug(`postgres error: ${err}`);
 
         const error = MyEmbedBuilder.createError({

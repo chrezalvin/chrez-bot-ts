@@ -1,6 +1,6 @@
 const debug = require("debug")("ChrezBot:bot");
 
-import { CacheType, ChatInputCommandInteraction, Client, Message, OmitPartialGroupDMChannel } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Client, Interaction, Message, OmitPartialGroupDMChannel } from "discord.js";
 import { middlewareEngine, MiddlewareFunction } from "./middlewareEngine";
 
 declare global {
@@ -12,13 +12,11 @@ declare global {
 }
 
 export interface ChatContext extends ChrezBot.ChatContext{
-    client: Client;
     message: OmitPartialGroupDMChannel<Message<boolean>>;
 }
 
 export interface SlashContext extends ChrezBot.SlashContext{
-    client: Client;
-    interaction: ChatInputCommandInteraction<CacheType>;
+    interaction: Interaction<CacheType>;
 }
 
 export type ChrezBotNextFunction = (err?: any) => void;
@@ -46,7 +44,6 @@ export class ChrezBot{
 
             const context = {
                 message,
-                client: this.m_client
             } as ChatContext;
             const handle = middlewareEngine(...this.m_chat_middlewares, this.defaultErrorHandler);
             
@@ -54,11 +51,8 @@ export class ChrezBot{
         });
 
         this.m_client.on("interactionCreate", async (interaction) => {
-            if(!interaction.isChatInputCommand()) return;
-
             const context = {
-                client: this.m_client,
-                interaction: interaction
+                interaction
             } as SlashContext;
 
             const handle = middlewareEngine(...this.m_slash_middlewares, this.defaultErrorHandler);

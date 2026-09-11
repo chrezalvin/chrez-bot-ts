@@ -14,23 +14,23 @@ const slash = new SlashCommandBuilder()
     );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const query = ctx.interaction.options.getString("search", true);
+    const query = ctx.chatInteraction.options.getString("search", true);
 
-    const voiceChannel = (ctx.interaction.member as GuildMember).voice.channel;
-    const avatarUrl = ctx.interaction.user.displayAvatarURL();
-    const name = ctx.interaction.user.username;
+    const voiceChannel = (ctx.chatInteraction.member as GuildMember).voice.channel;
+    const avatarUrl = ctx.chatInteraction.user.displayAvatarURL();
+    const name = ctx.chatInteraction.user.username;
 
     if(!voiceChannel)
         throw new Error("You need to be in a voice channel to play music");
 
     const res = await play({
-        message: ctx.interaction,
+        message: ctx.chatInteraction,
         query,
         voiceChannel,
         requester: {name, iconUrl: avatarUrl}
     });
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

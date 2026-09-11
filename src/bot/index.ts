@@ -2,7 +2,7 @@
 const debug = require("debug")("ChrezBot:bot");
 
 import { BOT_PREFIXES, MAX_MESSAGE_ALLOWED } from "@config";
-import {chatMiddleware, slashMiddleware} from "./commandMiddlewares";
+import {chatMiddleware, slashMiddleware, InteeractMiddleware} from "./commandMiddlewares";
 import {client} from "@shared/DiscordClient";
 
 import { ChrezBot } from "@library/ChrezBot";
@@ -10,7 +10,8 @@ import { ChrezBot } from "@library/ChrezBot";
 import { 
     chat_commands,
     slash_commands,
-    inline_commands
+    inline_commands,
+    stringSelectCommands
 } from "./commands";
 
 const chrezBot = new ChrezBot(client);
@@ -27,6 +28,7 @@ chrezBot.useChat(chatMiddleware.errorHandler.errorHandler);
 
 chrezBot.useSlash(slashMiddleware.excludeBot);
 chrezBot.useSlash(slashMiddleware.handleAbsoluteMute);
+chrezBot.useSlash(InteeractMiddleware.stringSelectHandler(stringSelectCommands))
 chrezBot.useSlash(slashMiddleware.commandHandler(slash_commands));
 chrezBot.useSlash(slashMiddleware.errorHandler.errorValidationHandler);
 chrezBot.useSlash(slashMiddleware.errorHandler.postgresErrorHandler);

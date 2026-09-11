@@ -11,6 +11,7 @@ import roshambo from"./roshambo"
 import translate from"./translate"
 import weirdThing from"./weirdThing"
 import yomama from"./yomama";
+import ailment from"./ailment";
 
 export const commands = [
     agree,
@@ -25,6 +26,7 @@ export const commands = [
     translate,
     weirdThing,
     yomama,
+    ailment,
 ] as ChatCommand[];
 
 export default commands;

@@ -15,11 +15,11 @@ const slash = new SlashCommandBuilder().setName("levelling")
     )
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const lvl = ctx.interaction.options.getInteger("level", true);
+    const lvl = ctx.chatInteraction.options.getInteger("level", true);
 
     const embeds = await levelling({lvl});
 
-    await ctx.interaction.reply(embeds);
+    await ctx.chatInteraction.reply(embeds);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

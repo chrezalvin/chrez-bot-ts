@@ -21,20 +21,20 @@ const slash = new SlashCommandBuilder().setName("detect")
         );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const model = ctx.interaction.options.getString("model", true);
-    const image = ctx.interaction.options.getAttachment("image", true);
+    const model = ctx.chatInteraction.options.getString("model", true);
+    const image = ctx.chatInteraction.options.getAttachment("image", true);
 
     if(!image.contentType?.startsWith("image/"))
         throw new ErrorValidation("interaction_error");
 
-    ctx.interaction.deferReply();
+    ctx.chatInteraction.deferReply();
     const embeds = await detect({
         model,
         image,
-        message: ctx.interaction
+        message: ctx.chatInteraction
     });
 
-    await ctx.interaction.editReply({embeds: embeds.embeds});
+    await ctx.chatInteraction.editReply({embeds: embeds.embeds});
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

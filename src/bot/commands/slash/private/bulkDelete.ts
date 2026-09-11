@@ -25,28 +25,28 @@ const slash = new SlashCommandBuilder()
         );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const amount = ctx.interaction.options.getInteger("amount", true);
-    const channel = ctx.interaction.options.getChannel("channel", false) ?? ctx.interaction.channel;
+    const amount = ctx.chatInteraction.options.getInteger("amount", true);
+    const channel = ctx.chatInteraction.options.getChannel("channel", false) ?? ctx.chatInteraction.channel;
 
     if(!channel) throw new Error("Channel is not provided");
     if(channel.type !== ChannelType.GuildText) throw new Error("Channel must be a text based channel");
 
-    await ctx.interaction.deferReply();
+    await ctx.chatInteraction.deferReply();
 
     const embed = await bulkDelete({
         amount,
         channel: channel as any, // TODO
         filterMessage: (msg: Message<boolean>) => {
-            return msg.id !== ctx.interaction.id;
+            return msg.id !== ctx.chatInteraction.id;
         },
-        message: ctx.interaction,
+        message: ctx.chatInteraction,
         messageTimeout
     });
 
-    await ctx.interaction.editReply({embeds: embed.embeds});
+    await ctx.chatInteraction.editReply({embeds: embed.embeds});
 
     setTimeout(async () => {
-        await ctx.interaction.deleteReply();
+        await ctx.chatInteraction.deleteReply();
     }, messageTimeout * 1000);
 }
 

@@ -6,6 +6,9 @@ const debug = require("debug")("middleware:chat:errorHandler");
 
 export const zodErrorHandler: ChrezBotMiddlewareFunction<SlashContext> = async (ctx, next, err) => {
     if(err instanceof ZodError){
+        if(!ctx.interaction.isRepliable())
+            return next();
+
         debug(`error is from zod: ${err}`);
 
         const issues = err.issues;

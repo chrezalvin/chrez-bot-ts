@@ -18,15 +18,15 @@ const slash = new SlashCommandBuilder()
         );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const setArgs = ctx.interaction.options.getString("set");
-    const stat = ctx.interaction.options.getString("stat")
+    const setArgs = ctx.chatInteraction.options.getString("set");
+    const stat = ctx.chatInteraction.options.getString("stat")
     
     let embeds = undefined;
 
     if(stat){
         if(stat === "me")
             embeds = await myFoodBuffCode({
-                user_id: ctx.interaction.user.id
+                user_id: ctx.chatInteraction.user.id
             });
         else
             embeds = await foodBuffCode({stat: stat}); 
@@ -36,14 +36,14 @@ const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
         const sets = setArgs.split(",").map(stat => stat.trim());
 
         embeds = await setFoodBuffCode({
-            user_id: ctx.interaction.user.id,
+            user_id: ctx.chatInteraction.user.id,
             keywords: sets
         });
     }
     else
         throw new Error("Invalid command!");
 
-    await ctx.interaction.reply(embeds);
+    await ctx.chatInteraction.reply(embeds);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;

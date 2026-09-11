@@ -1,10 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { FoodBuff, foodBuffCreate, FoodBuffCreate, foodBuffUpdate, FoodBuffUpdate } from "../../types/models/FoodBuff";
-import { FileUpload } from "@library";
+import { 
+    type FoodBuff, 
+    type FoodBuffUpdate,
+    type FoodBuffCreate, 
+    foodBuffCreate, 
+    foodBuffUpdate, 
+    foodBuffFileUploader
+} from "@services/supabase/types";
 
 export const tableName = "food_buffs";
-export const bucketName = "foods";
-export const fileUpload = new FileUpload(bucketName, supabaseModels);
 
 async function getFoodBuff(food_buff: FoodBuff["food_buff"]): Promise<FoodBuff>{
     const {data} = await supabaseModels
@@ -22,7 +26,7 @@ export async function createFoodBuff(schema: FoodBuffCreate): Promise<FoodBuff>{
 
     let image: string | undefined = undefined;
     if(parsed.image)
-        image = await fileUpload.uploadFile(parsed.image, {filename: parsed.foodBuff.food_buff});
+        image = await foodBuffFileUploader.uploadFile(parsed.image, {filename: parsed.foodBuff.food_buff});
     
     const {data} = await supabaseModels
         .from(tableName)
@@ -48,9 +52,9 @@ export async function updateFoodBuff(
     let image: string | null | undefined = undefined;
     if(parsed.image !== undefined){
         if(get.image)
-            await fileUpload.removeFile(get.image)
+            await foodBuffFileUploader.removeFile(get.image)
 
-        image = parsed.image ? await fileUpload.uploadFile(parsed.image, {filename: get.food_buff}) : null;
+        image = parsed.image ? await foodBuffFileUploader.uploadFile(parsed.image, {filename: get.food_buff}) : null;
     }
 
     const {data} = await supabaseModels
@@ -71,7 +75,7 @@ export async function deleteFoodBuff(food_buff: FoodBuff["food_buff"]): Promise<
     const get = await getFoodBuff(food_buff);
 
     if(get.image)
-        fileUpload.removeFile(get.image);
+        foodBuffFileUploader.removeFile(get.image);
 
     await supabaseModels
         .from(tableName)

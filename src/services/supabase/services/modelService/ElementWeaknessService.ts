@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { ElementWeakness, ElementWeaknessCreate } from "../../types/models/ElementWeakness";
+import { ElementWeakness, elementWeaknessCreate, ElementWeaknessCreate } from "@services/supabase/types";
 
 export const tableName = "element_weakness";
 
 export async function createElementWeakness(schema: ElementWeaknessCreate): Promise<ElementWeakness>{
+    const parsed = elementWeaknessCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();

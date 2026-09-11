@@ -1,7 +1,7 @@
 import { DiscordUserView } from "@services/supabase/types/views/DiscordUserView";
 import { DiscordUserViewService } from "../viewService";
 import { DiscordUserService } from "../modelService";
-import { DiscordUserCreate, DiscordUserUpdate } from "@services/supabase/types/models/DiscordUser";
+import { DiscordUserCreate, DiscordUserUpdate } from "@services/supabase/types";
 
 const cache = new Map<DiscordUserView["user_id"], DiscordUserView>();
 

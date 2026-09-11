@@ -18,17 +18,17 @@ const slash = new SlashCommandBuilder()
     );
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const mute = ctx.interaction.options.getBoolean("mute", true);
+    const mute = ctx.chatInteraction.options.getBoolean("mute", true);
     const onUnmuted = () => {
-        if(ctx.interaction.channel?.isSendable())
-            ctx.interaction.channel?.send({
+        if(ctx.chatInteraction.channel?.isSendable())
+            ctx.chatInteraction.channel?.send({
                 embeds: [new MyEmbedBuilder({description: "Chrezbot is now unmuted"})]
             });
     }
 
     const res = setMute({mute}, onUnmuted);
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

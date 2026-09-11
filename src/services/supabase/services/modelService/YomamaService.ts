@@ -1,12 +1,14 @@
 import { supabaseModels } from "@shared/supabase";
-import { Yomama, YomamaCreate, YomamaUpdate } from "../../types/models/Yomama";
+import { Yomama, yomamaCreate, YomamaCreate, yomamaUpdate, YomamaUpdate } from "@services/supabase/types";
 
 export const tableName = "yomamas";
 
 export async function createYomama(schema: YomamaCreate): Promise<Yomama>{
+    const parsed = yomamaCreate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .insert(schema)
+        .insert(parsed)
         .select()
         .single()
         .throwOnError();
@@ -18,9 +20,11 @@ export async function updateYomama(
     yomama: Yomama["yomama_id"], 
     schema: YomamaUpdate, 
 ): Promise<Yomama>{
+    const parsed = yomamaUpdate.parse(schema);
+
     const {data} = await supabaseModels
         .from(tableName)
-        .update(schema)
+        .update(parsed)
         .eq("yomama_id", yomama)
         .select()
         .single()

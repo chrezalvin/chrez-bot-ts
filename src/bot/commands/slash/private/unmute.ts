@@ -11,7 +11,7 @@ const slash = new SlashCommandBuilder()
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
     const res = unmute({});
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

@@ -9,14 +9,14 @@ const slash = new SlashCommandBuilder()
     .setDescription("Stops all the songs in the queue");
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const voiceChannel = (ctx.interaction.member as GuildMember).voice.channel;
+    const voiceChannel = (ctx.chatInteraction.member as GuildMember).voice.channel;
 
     if(!voiceChannel)
         throw new Error("You must be in a voice channel to use this command");
 
     const res = await stop({voiceChannel});
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

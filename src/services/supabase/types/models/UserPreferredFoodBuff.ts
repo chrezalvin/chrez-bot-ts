@@ -7,11 +7,4 @@ export const userPreferedFoodBuffModel = z.object({
     discord_user: discordUserModel.shape.user_id
 });
 
-const modelShape = userPreferedFoodBuffModel.shape;
-export const userPreferedFoodBuffCreate = z.object({
-    discord_user: modelShape.discord_user,
-    food_buffs: modelShape.food_buff.array(),
-});
-
 export type UserPreferedFoodBuff = z.infer<typeof userPreferedFoodBuffModel>;
-export type UserPreferedFoodBuffCreate = z.infer<typeof userPreferedFoodBuffCreate>;

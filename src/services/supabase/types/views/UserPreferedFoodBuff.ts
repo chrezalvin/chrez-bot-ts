@@ -1,7 +1,7 @@
 import z from "zod";
 import { discordUserModel } from "../models/DiscordUser";
 import { foodBuffModel } from "../models/FoodBuff";
-import { statModel } from "../models/Stat";
+import { statModel } from "../models/Stat/Stat";
 import { toramUserFoodBuffModel } from "../models/ToramUserFoodBuff";
 import { toramUserModel } from "../models/ToramUser";
 
@@ -10,7 +10,10 @@ export const userPreferedFoodBuffView = z.object({
     food_buff: foodBuffModel.pick({
         name: true,
     }).extend({
-        stat: statModel,
+        stat: statModel.pick({
+            stat: true,
+            stat_name: true,
+        }),
         toram_user_food_buffs: toramUserFoodBuffModel.pick({
             level: true,
         }).extend({

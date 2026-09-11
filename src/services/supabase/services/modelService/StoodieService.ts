@@ -1,5 +1,5 @@
 import { supabaseModels } from "@shared/supabase";
-import { Stoodie, stoodieCreate, StoodieCreate, stoodieUpdate, StoodieUpdate } from "../../types/models/Stoodie";
+import { Stoodie, stoodieCreate, StoodieCreate, stoodieUpdate, StoodieUpdate } from "@services/supabase/types";
 import { FileUpload } from "@library";
 
 export const tableName = "stoodies";

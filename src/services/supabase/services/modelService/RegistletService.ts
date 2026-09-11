@@ -1,5 +1,5 @@
 import { supabaseModels } from "@shared/supabase";
-import { Registlet, registletCreate, RegistletCreate, registletUpdate, RegistletUpdate } from "../../types/models/Registlet";
+import { Registlet, registletCreate, RegistletCreate, registletUpdate, RegistletUpdate } from "@services/supabase/types";
 import { FileUpload } from "@library";
 
 export const tableName = "registlets";
@@ -24,6 +24,7 @@ export async function updateRegistlet(
     schema: RegistletUpdate, 
 ): Promise<Registlet>{
     const parsed = registletUpdate.parse(schema);
+    
     const {data} = await supabaseModels
         .from(tableName)
         .update(parsed)

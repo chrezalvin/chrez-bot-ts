@@ -2,7 +2,6 @@ import { Router } from "express";
 
 import event from "./events";
 import authenticate from "./authenticate";
-import recommend from "./recommend";
 import memes from "./memes";
 import cursed from "./cursed";
 import update from "./update";
@@ -17,7 +16,6 @@ import events from "./events";
 const routes: Router[] = [
     event,
     authenticate,
-    recommend,
     memes,
     cursed,
     update,

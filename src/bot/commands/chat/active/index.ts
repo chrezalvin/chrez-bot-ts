@@ -21,6 +21,7 @@ import time from "./time";
 import trait from "./trait";
 import update from "./update";
 import quote from "./quote";
+import item from "./item";
 
 export const chatCommand =  [
     calculate,
@@ -44,7 +45,8 @@ export const chatCommand =  [
     time,
     trait,
     update,
-    quote
+    quote,
+    item,
 ] as ChatCommand[];
 
 export default chatCommand;

@@ -1,40 +1,44 @@
-import { supabaseModels } from "@shared/supabase";
-import { Enemy, EnemyCreate, EnemyUpdate } from "../../types/models/Enemy";
+// import { supabaseModels } from "@shared/supabase";
+// import { Enemy, enemyCreate, EnemyCreate, enemyUpdate, EnemyUpdate } from "@services/supabase/types";
 
-export const tableName = "enemies";
+// export const tableName = "enemies";
 
-export async function createEnemy(schema: EnemyCreate): Promise<Enemy>{
-    const {data} = await supabaseModels
-        .from(tableName)
-        .insert(schema)
-        .select()
-        .single()
-        .throwOnError();
+// export async function createEnemy(schema: EnemyCreate): Promise<Enemy>{
+//     const parsed = enemyCreate.parse(schema);
 
-    return data!;
-}
+//     const {data} = await supabaseModels
+//         .from(tableName)
+//         .insert(parsed)
+//         .select()
+//         .single()
+//         .throwOnError();
 
-export async function updateEnemy(
-    enemy: Enemy["enemy"], 
-    schema: EnemyUpdate, 
-): Promise<Enemy>{
-    const {data} = await supabaseModels
-        .from(tableName)
-        .update(schema)
-        .eq("enemy", enemy)
-        .select()
-        .single()
-        .throwOnError();
+//     return data!;
+// }
 
-    return data!;
-}
+// export async function updateEnemy(
+//     enemy: Enemy["enemy"], 
+//     schema: EnemyUpdate, 
+// ): Promise<Enemy>{
+//     const parsed = enemyUpdate.parse(schema);
 
-export async function deleteEnemy(enemy: Enemy["enemy"]): Promise<true>{
-    await supabaseModels
-        .from(tableName)
-        .delete()
-        .eq("enemy", enemy)
-        .throwOnError();
+//     const {data} = await supabaseModels
+//         .from(tableName)
+//         .update(parsed)
+//         .eq("enemy", enemy)
+//         .select()
+//         .single()
+//         .throwOnError();
 
-    return true;
-}
+//     return data!;
+// }
+
+// export async function deleteEnemy(enemy: Enemy["enemy"]): Promise<true>{
+//     await supabaseModels
+//         .from(tableName)
+//         .delete()
+//         .eq("enemy", enemy)
+//         .throwOnError();
+
+//     return true;
+// }

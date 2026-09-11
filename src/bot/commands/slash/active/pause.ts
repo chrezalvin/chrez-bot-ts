@@ -10,17 +10,17 @@ const slash = new SlashCommandBuilder()
     .setDescription("Pauses the current song");
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    if(!ctx.interaction.guildId)
+    if(!ctx.chatInteraction.guildId)
         throw new ErrorValidation("something_not_found", "guild id");
 
-    const voiceChannel = (ctx.interaction.member as GuildMember).voice.channel;
+    const voiceChannel = (ctx.chatInteraction.member as GuildMember).voice.channel;
 
     if(!voiceChannel)
         throw new ErrorValidation("forbidden", "you must be in a voice channel to use this command");
 
     const res = await pause({voiceChannel});
 
-    await ctx.interaction.reply(res);
+    await ctx.chatInteraction.reply(res);
 }
 
 export default {

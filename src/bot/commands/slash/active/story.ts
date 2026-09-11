@@ -9,11 +9,11 @@ const slash = new SlashCommandBuilder()
         .addIntegerOption(option => option.setName("index").setDescription("Index to target a story"));
 
 const execute: ChrezBotMiddlewareFunction<SlashContext> = async (ctx) => {
-    const index = ctx.interaction.options.getInteger("index", false);
+    const index = ctx.chatInteraction.options.getInteger("index", false);
 
     const embed = await story({index});
 
-    await ctx.interaction.reply(embed);
+    await ctx.chatInteraction.reply(embed);
 }
 
 export default {slash, middlewares: [execute]} as SlashCommand;
