@@ -10,7 +10,7 @@ import no from "./no";
 import pewpew from "./pewpew";
 import pika from "./pika";
 import sad from "./sad";
-import thanks from "./thanks";
+// import thanks from "./thanks";
 import thatsucks from "./thatsucks";
 import yay from "./yay";
 import yousuck from "./yousuck";
@@ -27,7 +27,7 @@ export const inline_commands = [
     pewpew,
     pika,
     sad,
-    thanks,
+    // thanks,
     thatsucks,
     yay,
     yousuck,
