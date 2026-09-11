@@ -1,4 +1,4 @@
-import { MyEmbedBuilder } from "@library";
+import { DSATreeNode, MyEmbedBuilder } from "@library";
 import { InteractionReplyOptions, MessageCreateOptions } from "discord.js";
 import emojis from "@assets/data/emojis.json";
 import z from "zod";
@@ -94,31 +94,64 @@ export async function itemDetail(item: ItemView): Promise<MessageCreateOptions &
         if(item.item_crysta.upgrades.length > 0){
             const baseCrysta = item.item_crysta?.upgrades[0].base_crysta;
             const upgrades = item.item_crysta?.upgrades[0].upgrades;
-            const arr = [
-                {crysta: baseCrysta}
-            ];
-    
-            for(let iii = 0; iii < upgrades.length; ++iii)
-                for(const {crysta, upgrade_for} of upgrades){
-                    if(arr[arr.length - 1].crysta.item.name === upgrade_for.item.name){
-                        arr.push({crysta});
-                        break;
-                    }
+
+            const map: Record<string, typeof baseCrysta[]> = {}
+
+            for(const upgrade of upgrades)
+                map[upgrade.upgrade_for.item.name] = [...(map[upgrade.upgrade_for.item.name] ?? []), upgrade.crysta];
+
+            const tree = DSATreeNode.createTree(baseCrysta, (data) => {return map[data.item.name] ?? []});
+
+            const found = DSATreeNode.find(tree, (data) => data.item.name === item.name);
+
+            if(!found)
+                throw new Error("cannot find the crysta tree");
+
+            const arrLine: typeof baseCrysta[] = [];
+            let isTree = false;
+            for(let current = found; current.nexts.length !== 0; current = current.nexts[0]){
+                if(current.nexts.length > 1){
+                    isTree = true
+                    break;
                 }
-                    
-            const crystaList = arr
-                .map(upgrade => {
-                    const icon_normal = upgrade.crysta.crysta_type.icon;
-                    const icon_highlight = upgrade.crysta.crysta_type.icon_highlighted;
-                    const txt = upgrade.crysta.item.name
-    
-                    if(upgrade.crysta.item.name === item.name)
-                        return `${(icon_highlight ?? icon_normal)?.discord_emoji} **${txt}**`;
-                    else 
-                        return `${icon_normal?.discord_emoji} ${txt}`;
-                })
-                .join(" -> ")
-    
+                else
+                    arrLine.push(current.value);
+            }
+
+            let crystaList;
+            if(isTree){
+                const arr = DSATreeNode.toArray(found);
+
+                crystaList = arr
+                    .map(({data, depth}) => {
+                        const icon_normal = data.crysta_type.icon;
+                        const icon_highlight = data.crysta_type.icon_highlighted;
+                        const txt = data.item.name
+        
+                        if(data.item.name === item.name)
+                            return "\\|".repeat(depth) + ` ${(icon_highlight ?? icon_normal)?.discord_emoji} **${txt}**`;
+                        else 
+                            return "\\|".repeat(depth) + ` ${icon_normal?.discord_emoji} ${txt}`;
+                    })
+                    .join("\n")
+            }
+            else{
+                const arr = found.prev ? DSATreeNode.linePredecessor(found) : [];
+
+                crystaList = [...arr, ...arrLine]
+                    .map(upgrade => {
+                        const icon_normal = upgrade.crysta_type.icon;
+                        const icon_highlight = upgrade.crysta_type.icon_highlighted;
+                        const txt = upgrade.item.name
+        
+                        if(upgrade.item.name === item.name)
+                            return `${(icon_highlight ?? icon_normal)?.discord_emoji} **${txt}**`;
+                        else 
+                            return `${icon_normal?.discord_emoji} ${txt}`;
+                    })
+                    .join(" -> ")
+            }
+        
             embed.addFields([{
                 name: `Upgradeable Crysta:`,
                 value: crystaList
