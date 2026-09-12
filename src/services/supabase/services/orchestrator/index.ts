@@ -5,3 +5,4 @@ export * as StoodieOrchestrator from  "./StoodieOrchestrator";
 export * as RegistletOrchestrator from  "./RegistletOrchestrator";
 export * as AilmentOrchestrator from  "./AilmentOrchestrator";
 export * as ItemOrchestrator from  "./ItemOrchestrator";
+export * as EnemyOrchestrator from  "./EnemyOrchestrator";
