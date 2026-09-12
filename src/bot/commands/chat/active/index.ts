@@ -22,6 +22,7 @@ import trait from "./trait";
 import update from "./update";
 import quote from "./quote";
 import item from "./item";
+import enemy from "./enemy";
 
 export const chatCommand =  [
     calculate,
@@ -47,6 +48,7 @@ export const chatCommand =  [
     update,
     quote,
     item,
+    enemy,
 ] as ChatCommand[];
 
 export default chatCommand;
