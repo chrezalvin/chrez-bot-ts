@@ -11,7 +11,7 @@ import {
     locationModel,
     locationTypeModel
  } from "../../models";
-import { itemCrystaModel, itemEquipableLabelTypeModel, itemEquipableModel, itemEquipableTypeModel, itemMaterialTypeModel, itemModel, itemProcessableModel } from "../../models/Items";
+import { itemEquipableLabelTypeModel, itemEquipableModel, itemEquipableTypeModel, itemModel } from "../../models/Items";
 
 export const enemyView = enemyDetailModel.pick({
     level: true,
@@ -27,7 +27,12 @@ export const enemyView = enemyDetailModel.pick({
             name: true,
         })
         .extend({
-            location_type: locationTypeModel.nullable()
+            location_type: locationTypeModel.pick({
+                name: true,
+            })
+            .extend({
+                icon: iconModel.nullable()
+            }),
         })
     }),
 
@@ -55,28 +60,14 @@ export const enemyView = enemyDetailModel.pick({
     enemy_difficulty: enemyDifficultyModel.nullable(),
 
     drops: itemModel
+        .pick({
+            description: true,
+            is_verified: true,
+            item: true,
+            name: true,
+        })
         .extend({
-            item_crysta: itemCrystaModel
-                .pick({})
-                .extend({
-                    crysta_type: itemCrystaModel
-                        .pick({})
-                        .extend({
-                            icon: iconModel.nullable()
-                        })
-                })
-            .nullable(),
-
-            item_processable: itemProcessableModel
-                .pick({})
-                .extend({
-                    material: itemMaterialTypeModel
-                        .pick({})
-                        .extend({
-                            icon: iconModel.nullable()
-                        })
-                })
-            .nullable(),
+            icon: iconModel.nullable(),
 
             item_equipable: itemEquipableModel
                 .pick({})

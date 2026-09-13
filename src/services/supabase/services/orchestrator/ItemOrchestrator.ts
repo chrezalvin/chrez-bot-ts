@@ -6,17 +6,11 @@ export async function getItems(item: string): Promise<ItemSimpleView[]>{
     const res = await supabaseModels
         .from("items")
         .select(`
-            *,
-            item_crysta:item_crystas(
-                crysta_type:item_crysta_types(
-                    icon:item_crysta_types_icon_fkey(*)
-                )
-            ),
-            item_processable(
-                material:item_material_types(
-                    icon:icon(*)
-                )
-            ),
+            item,
+            name,
+            description,
+            is_verified,
+            icon:icons(*),
             item_equipable(
                 equipment_type:item_equipable_types(
                     name,
@@ -26,8 +20,7 @@ export async function getItems(item: string): Promise<ItemSimpleView[]>{
                     name,
                     icon:icons(*)
                 )
-            ),
-            item_chests!item(*)
+            )
         `)
         .ilike("name", `%${item}%`)
         .limit(7)
@@ -42,7 +35,11 @@ export async function getItem(item: string): Promise<ItemView>{
     const res = await supabaseModels
         .from("items")
         .select(`
-            *,
+            item,
+            name,
+            description,
+            is_verified,
+            icon:icons(*),
             item_crysta:item_crystas(
                 crysta_type:item_crysta_types(
                     name,
