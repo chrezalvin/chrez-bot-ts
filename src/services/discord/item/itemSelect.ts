@@ -1,6 +1,5 @@
 import { ContainerBuilder, InteractionReplyOptions, MessageCreateOptions, MessageFlags, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, UserSelectMenuBuilder } from "discord.js";
 import { ItemSimpleView } from "@services/supabase/types/views/item";
-import { Icon } from "@services/supabase/types";
 
 export async function itemSelect(items: ItemSimpleView[]): Promise<MessageCreateOptions & InteractionReplyOptions>{
     const action = new ContainerBuilder();
@@ -14,25 +13,17 @@ export async function itemSelect(items: ItemSimpleView[]): Promise<MessageCreate
             .setPlaceholder('Select item')
 
         for(const item of items){
-            let icon: Icon | null = null;
             let label: string | null = null;
 
-            if(item.item_processable)
-                icon = item.item_processable.material.icon;
-
-            if(item.item_crysta)
-                icon = item.item_crysta.crysta_type.icon;
-            else if(item.item_equipable){
-                icon = item.item_equipable.equipment_type.icon;
-
+            if(item.item_equipable){
                 if(item.item_equipable.label)
                     label = item.item_equipable.label.name
             }
 
             const strSelect = new StringSelectMenuOptionBuilder();
 
-            if(icon)
-                strSelect.setEmoji(icon.discord_emoji);
+            if(item.icon)
+                strSelect.setEmoji(item.icon.discord_emoji);
         
             if(label)
                 strSelect.setDescription(label);

@@ -73,7 +73,15 @@ const crystaUpgrades = itemCrystaUpgradeModel
             })
     }).array();
 
-export const itemView = itemModel.extend({
+export const itemView = itemModel
+    .pick({
+        item: true,
+        name: true,
+        description: true,
+        is_verified: true,
+    })
+    .extend({
+    icon: iconModel.nullable(),
     item_crysta: z.object({
         crysta_type: itemCrystaTypeModel.pick({
             name: true
@@ -162,6 +170,9 @@ export const itemView = itemModel.extend({
     })
     .array()
     .transform(arr => {
+        if(arr.length === 0)
+            return null;
+
         arr = arr.sort((a, b) => a.stat.order - b.stat.order);
         const records: Record<string, typeof arr> = {};
 
@@ -187,7 +198,7 @@ export const itemView = itemModel.extend({
                     name: true
                 }).extend({
                     icon: iconModel.nullable()
-                })
+                }).nullable()
             })
         }),
         enemy_type: enemyTypeModel.pick({
@@ -200,6 +211,6 @@ export const itemView = itemModel.extend({
         })
         .nullable()
     }).array()
-})
+});
 
 export type ItemView = z.infer<typeof itemView>;

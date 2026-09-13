@@ -52,7 +52,10 @@ export async function getEnemy(
                 name,
                 location:locations(
                     name,
-                    location_type:location_types(*)
+                    location_type:location_types(
+                        name,
+                        icon:icons(*)
+                    )
                 )
             ),
             enemy_type:enemy_types(
@@ -69,17 +72,11 @@ export async function getEnemy(
                 *
             ),
             drops:items(
-                *,
-                item_crysta:item_crystas(
-                    crysta_type:item_crysta_types(
-                        icon:item_crysta_types_icon_fkey(*)
-                    )
-                ),
-                item_processable(
-                    material:item_material_types(
-                        icon:icon(*)
-                    )
-                ),
+                item,
+                name,
+                description,
+                is_verified,
+                icon:icons(*),
                 item_equipable(
                     equipment_type:item_equipable_types(
                         name,
