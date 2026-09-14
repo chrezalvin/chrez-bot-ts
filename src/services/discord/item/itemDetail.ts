@@ -1,5 +1,5 @@
 import { DSATreeNode, MyEmbedBuilder } from "@library";
-import { InteractionReplyOptions, MessageCreateOptions } from "discord.js";
+import { ActionRowBuilder, InteractionReplyOptions, MessageCreateOptions, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import emojis from "@assets/data/emojis.json";
 import { ItemView } from "@services/supabase/types/views/item";
 import { middlewareEngine } from "@library/middlewareEngine";
@@ -7,6 +7,7 @@ import { middlewareEngine } from "@library/middlewareEngine";
 interface I_ItemDetail{
     item: ItemView;
     embed: MyEmbedBuilder;
+    actionRow: ActionRowBuilder | null;
 }
 
 type MiddlewareFcn = (item: I_ItemDetail, next: (err?: any) => void) => Promise<void>;
@@ -196,8 +197,8 @@ const handleItemCrysta: MiddlewareFcn = async ({item, embed}, next) => {
 }
 
 const handleItemEnemies: MiddlewareFcn = async ({item, embed}, next) => {
-    if(item.enemy){        
-        const enemies = item.enemy.map(enemy => {
+    if(item.enemy.length > 0){
+        const enemies = item.enemy.slice(0, 7).map(enemy => {
             const emoji = enemy.enemy_type.icon?.discord_emoji ?? "";
             const name = enemy.enemy.name;
             const difficulty = enemy.difficulty?.name ? `(${enemy.difficulty.name})` : "";
@@ -207,7 +208,7 @@ const handleItemEnemies: MiddlewareFcn = async ({item, embed}, next) => {
         })
 
         embed.addFields([{
-            name: `${emojis["item_chest_wood"]} Obtained From`,
+            name: `${emojis["item_chest_wood"]} Obtained From ${item.enemy.length > 7 ? "**(Limited to 7 enemies)**" : ""}`,
             value: enemies.join("\n"),
             inline: false,
         }]);
@@ -226,6 +227,38 @@ const handleItemVerified: MiddlewareFcn = async ({item, embed}, next) => {
     next();
 }
 
+const handleItemEnemiesComponent: MiddlewareFcn = async (data, next) => {
+    const {item} = data;
+
+    if(item.enemy.length > 0){
+        const selectMenu = new StringSelectMenuBuilder();
+        selectMenu
+            .setPlaceholder(`Select from this box search the enemies`)
+            .setCustomId("enemy");
+        
+        for(const enemy of item.enemy){    
+            const strSelect = new StringSelectMenuOptionBuilder();
+    
+            if(enemy.enemy_type.icon)
+                strSelect.setEmoji(enemy.enemy_type.icon.discord_emoji);
+    
+            strSelect
+                .setLabel(`${enemy.enemy.name} Lv.${enemy.level} ${enemy.difficulty?.name ? `(${enemy.difficulty?.name})` : ""}`)
+                .setValue(`${enemy.enemy.enemy} ${enemy.area.area} ${enemy.enemy_type.enemy_type} ${enemy.level}`)
+                .setDescription(`${enemy.area.name} - ${enemy.area.location.name}`);
+    
+            selectMenu.addOptions(strSelect);
+        }
+    
+        const row = new ActionRowBuilder();
+        row.addComponents(selectMenu)
+   
+        data.actionRow = row;
+    }
+
+    next();
+}
+
 
 const handler = middlewareEngine<I_ItemDetail>(
     handleItem,
@@ -237,15 +270,20 @@ const handler = middlewareEngine<I_ItemDetail>(
     handleItemCrysta,
     handleItemEnemies,
     handleItemVerified,
+    handleItemEnemiesComponent,
 );
 
 export async function itemDetail(item: ItemView): Promise<MessageCreateOptions & InteractionReplyOptions>{
-    const embed = new MyEmbedBuilder();
-
-    await handler({
+    const data: I_ItemDetail = {
         item,
-        embed,
-    });
+        embed: new MyEmbedBuilder(),
+        actionRow: null
+    }
 
-    return {embeds: [embed]};
+    await handler(data);
+
+    return {
+        embeds: [data.embed],
+        components: data.actionRow ? [data.actionRow as any] : undefined
+    };
 }

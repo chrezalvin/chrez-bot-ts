@@ -15,7 +15,7 @@ import {
     itemStatModel,
     itemToolModel
 } from "../../models/Items";
-import { enemyDifficultyModel, enemyModel, enemyTypeModel, iconModel, locationAreaModel, locationModel, locationTypeModel, statModel } from "../../models";
+import { enemyDetailModel, enemyDifficultyModel, enemyModel, enemyTypeModel, iconModel, locationAreaModel, locationModel, locationTypeModel, statModel } from "../../models";
 import { statRestrictionModel } from "../../models/Stats/StatRestriction";
 
 const crystaUpgrades = itemCrystaUpgradeModel
@@ -184,11 +184,17 @@ export const itemView = itemModel
 
     item_chests: itemChestModel.nullable(),
 
-    enemy: z.object({
+    enemy: enemyDetailModel
+        .pick({
+            level: true
+        })
+        .extend({
         enemy: enemyModel.pick({
+            enemy: true,
             name: true
         }),
         area: locationAreaModel.pick({
+            area: true,
             name: true,
         }).extend({
             location: locationModel.pick({
@@ -202,6 +208,7 @@ export const itemView = itemModel
             })
         }),
         enemy_type: enemyTypeModel.pick({
+            enemy_type: true,
             name: true
         }).extend({
             icon: iconModel.nullable()

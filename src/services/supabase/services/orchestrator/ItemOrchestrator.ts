@@ -143,8 +143,13 @@ export async function getItem(item: string): Promise<ItemView>{
             ),
             item_chests!item(*),
             enemy:enemy_details(
-                enemy:enemies(name),
+                level,
+                enemy:enemies(
+                    enemy,
+                    name
+                ),
                 area:location_areas(
+                    area,
                     name,
                     location:locations(
                         name,
@@ -155,6 +160,7 @@ export async function getItem(item: string): Promise<ItemView>{
                     )
                 ),
                 enemy_type:enemy_types(
+                    enemy_type,
                     name,
                     icon:icons(*)
                 ),
@@ -162,7 +168,7 @@ export async function getItem(item: string): Promise<ItemView>{
             )
         `)
         .eq("item", item)
-        .limit(7, {referencedTable: "enemy_details"})
+        .limit(21, {referencedTable: "enemy_details"})
         .single()
         .throwOnError();
 
