@@ -35,7 +35,7 @@ async function handleDescription(data: EnemyViewMiddleware, next: () => void){
 
 async function handleHp({embed, enemy}: EnemyViewMiddleware, next: () => void){
     if(!enemy.hp)
-        return;
+        return next();
 
     const hp = enemy.hp?.toLocaleString();
 
@@ -74,9 +74,8 @@ async function handleExp({embed, enemy}: EnemyViewMiddleware, next: () => void){
 async function handleDrop({embed, enemy}: EnemyViewMiddleware, next: () => void){
     embed.addFields([{
         name: `${emojis["item_chest_wood"]} Drops`,
-        value: enemy.drops.map(drop => `${drop.icon?.discord_emoji ?? ""} ${drop.name}`)
-        .join("\n")
-    }])
+        value: enemy.drops.map(drop => `${drop.icon?.discord_emoji ?? ""} ${drop.name}`).join("\n")
+    }]);
 
     next();
 }
