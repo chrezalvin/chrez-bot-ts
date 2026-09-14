@@ -113,7 +113,7 @@ const handleItemStats: MiddlewareFcn = async ({item, embed}, next) => {
         }
         
         embed.addFields([{
-            name: `${emoji} ${name}\n${value}`,
+            name: `${emoji} ${name}${value ? `\n${value}` : ""}`,
             value: statList.join("\n"),
             inline: false
         }])
