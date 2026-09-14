@@ -7,6 +7,7 @@ import { middlewareEngine } from "@library/middlewareEngine";
 interface EnemyViewMiddleware{
     embed: MyEmbedBuilder;
     enemy: EnemyView;
+    actionRow: ActionRowBuilder | null;
 }
 
 async function handleTitle({embed, enemy}: EnemyViewMiddleware, next: () => void){
@@ -53,7 +54,7 @@ async function handleElement({embed, enemy}: EnemyViewMiddleware, next: () => vo
 
     embed.addFields([{
         name: `${emojis["skill_overlimit"]} element`,
-        value: `**${elementName}**\nweak to **${elementWeakness}**`,
+        value: `**${elementName}** (weak to **${elementWeakness}**)`,
         inline: true,
     }]);
 
@@ -80,6 +81,40 @@ async function handleDrop({embed, enemy}: EnemyViewMiddleware, next: () => void)
     next();
 }
 
+async function handleDropComponent(data: EnemyViewMiddleware, next: () => void){
+    const {enemy, actionRow} = data;
+
+    if(enemy.drops.length > 1){
+        const selectMenu = new StringSelectMenuBuilder();
+        selectMenu
+            .setPlaceholder(`Select from this box to search for item drop`)
+            .setCustomId("item");
+        
+        for(const item of enemy.drops){    
+            const strSelect = new StringSelectMenuOptionBuilder();
+            if(item.item_equipable)
+                if(item.item_equipable.label)
+                    strSelect.setDescription(item.item_equipable.label.name)
+    
+            if(item.icon)
+                strSelect.setEmoji(item.icon.discord_emoji);
+    
+            strSelect
+                .setValue(item.item)
+                .setLabel(item.name);
+    
+            selectMenu.addOptions(strSelect);
+        }
+    
+        const row = new ActionRowBuilder();
+        row.addComponents(selectMenu)
+    
+        data.actionRow = row;
+    }
+
+    next();
+}
+
 const handler = middlewareEngine<EnemyViewMiddleware>(
     handleTitle,
     handleDescription,
@@ -87,49 +122,20 @@ const handler = middlewareEngine<EnemyViewMiddleware>(
     handleHp,
     handleExp,
     handleDrop,
+    handleDropComponent,
 );
 
 export async function enemyDetail(enemy: EnemyView): Promise<MessageCreateOptions & InteractionReplyOptions>{
-    const embed = new MyEmbedBuilder();
-
-    await handler({
+    const data: EnemyViewMiddleware = {
         enemy,
-        embed
-    });
-
-    const selectMenu = new StringSelectMenuBuilder();
-    selectMenu
-        .setPlaceholder(`Select from this box to search for item drop`)
-        .setCustomId("item");
-    
-    for(const item of enemy.drops){
-        let label: string | null = null;
-
-        if(item.item_equipable){
-            if(item.item_equipable.label)
-                label = item.item_equipable.label.name
-        }
-
-        const strSelect = new StringSelectMenuOptionBuilder();
-
-        if(item.icon)
-            strSelect.setEmoji(item.icon.discord_emoji);
-    
-        if(label)
-            strSelect.setDescription(label);
-
-        strSelect
-            .setValue(item.item)
-            .setLabel(item.name);
-
-        selectMenu.addOptions(strSelect);
+        embed: new MyEmbedBuilder(),
+        actionRow: null
     }
 
-    const row = new ActionRowBuilder();
-    row.addComponents(selectMenu)
+    await handler(data);
 
     return {
-        embeds: [embed], 
-        components: [row as any]
+        embeds: [data.embed],
+        components: data.actionRow ? [data.actionRow as any] : undefined
     };
 }
