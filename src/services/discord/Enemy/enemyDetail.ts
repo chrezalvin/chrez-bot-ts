@@ -52,19 +52,20 @@ async function handleEnemyBoss({embed, enemy}: EnemyViewMiddleware, next: () => 
             embed.addFields([{
                 name: `${enemy.enemy_type.icon?.discord_emoji} Boss Enemy`,
                 value: [
-                    "this enemy has difficulty scaling (base stat multiplier):",
-                    "Easy: x0.1",
-                    "Normal: x1",
-                    "Hard: x2",
-                    "Nightmare: x5",
-                    "Ultimate: x10",
-                ].join("\n")
+                    "The stat shown here are based on **Normal** Difficulty, to calculate the value from other difficulty, multiply base stat by:",
+                    "Easy: x0.1, -10 level",
+                    "Hard: x2, +10 level",
+                    "Nightmare: x5, +20 level",
+                    "Ultimate: x10, +40 level",
+                ].join("\n"),
+                inline: true,
             }]);
         }
         else{
             embed.addFields([{
                 name: `${enemy.enemy_type.icon?.discord_emoji} Boss Enemy`,
-                value: "this enemy is a boss without difficulty scaling"
+                value: "this enemy is a boss without difficulty scaling",
+                inline: true,
             }]);
         }
     }
@@ -148,9 +149,9 @@ async function handleDropComponent(data: EnemyViewMiddleware, next: () => void){
 const handler = middlewareEngine<EnemyViewMiddleware>(
     handleTitle,
     handleDescription,
-    handleEnemyBoss,
     handleDrop,
     handleArea,
+    handleEnemyBoss,
     handleDropComponent,
 );
 
