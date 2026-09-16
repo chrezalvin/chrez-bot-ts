@@ -33,14 +33,12 @@ async function handleTitle({embed, enemy}: EnemyViewMiddleware, next: () => void
 async function handleDescription({embed, enemy}: EnemyViewMiddleware, next: () => void){
     const descriptions = [];
 
+    descriptions.push(enemy.enemy_type.name);
     descriptions.push(`${enemy.element} Element`);
     
-    if(enemy.hp)
-        descriptions.push(`HP: ${enemy.hp.toLocaleString()}`);
-    
-    if(enemy.base_exp)
-        descriptions.push(`Base Exp: ${enemy.base_exp.toLocaleString()}`);
-    
+    descriptions.push(`HP: ${enemy.hp?.toLocaleString() ?? "???"}`);
+    descriptions.push(`Base Exp: ${enemy.base_exp?.toLocaleString() ?? "???"}`);
+        
     embed.setDescription(descriptions.join("\n"));
     
     next();
