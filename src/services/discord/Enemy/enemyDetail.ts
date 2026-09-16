@@ -85,7 +85,27 @@ async function handleArea({embed, enemy}: EnemyViewMiddleware, next: () => void)
 async function handleDrop({embed, enemy}: EnemyViewMiddleware, next: () => void){
     embed.addFields([{
         name: `${emojis["item_chest_wood"]} Drops`,
-        value: enemy.drops.map(drop => `${drop.icon?.discord_emoji ?? ""} ${drop.name}`).join("\n")
+        value: enemy.drops.map(drop => {
+            const title = [];
+
+            if(drop.icon)
+                title.push(drop.icon.discord_emoji);
+
+            title.push(drop.name);
+
+            if(drop.item_equipable?.label){
+                const label = [];
+
+                if(drop.item_equipable.label.icon)
+                    label.push(drop.item_equipable.label.icon.discord_emoji);
+
+                label.push(drop.item_equipable.label.name);
+
+                title.push(`(${label.join(" ")})`)
+            }
+
+            return title.join(" ");
+        }).join("\n")
     }]);
 
     next();

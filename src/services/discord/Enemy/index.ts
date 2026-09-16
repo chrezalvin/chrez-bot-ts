@@ -15,14 +15,19 @@ export type I_Enemy = z.input<typeof enemySchema>;
 export async function enemy(args: I_Enemy): Promise<MessageCreateOptions & InteractionReplyOptions>{
     const parsed = enemySchema.parse(args);
 
+    let enemyId: string | null = null;
     if("name" in parsed){
         const enemies = await EnemyOrchestrator.getEnemies(parsed.name);
 
-        return enemySelect(enemies);
+        if(enemies.length > 1)
+            return enemySelect(enemies);
+
+        enemyId = enemies[0].enemy;
     }
-    else{
-        const item = await EnemyOrchestrator.getEnemy(parsed.enemy);
-    
-        return enemyDetail(item);
-    }
+    else
+        enemyId = parsed.enemy;
+
+    const enemy = await EnemyOrchestrator.getEnemy(enemyId);
+
+    return enemyDetail(enemy);
 }

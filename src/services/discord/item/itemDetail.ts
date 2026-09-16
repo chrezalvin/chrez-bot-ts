@@ -209,6 +209,8 @@ const handleItemEnemies: MiddlewareFcn = async ({item, embed}, next) => {
             if(enemy.difficulty_label)
                 description.push(`(${enemy.difficulty_label})`);
 
+            description.push("-")
+
             if(enemy.area[0])
                 description.push(enemy.area[0].name);
 
