@@ -17,7 +17,6 @@ async function handleTitle({embed, enemy}: EnemyViewMiddleware, next: () => void
         title.push(enemy.enemy_type.icon.discord_emoji);
 
     title.push(enemy.enemy_name);
-    title.push(`Lv. ${enemy.level}`);
 
     if(enemy.difficulty_label)
         title.push(`(${enemy.difficulty_label})`);
@@ -36,6 +35,7 @@ async function handleDescription({embed, enemy}: EnemyViewMiddleware, next: () =
     descriptions.push(enemy.enemy_type.name);
     descriptions.push(`${enemy.element} Element`);
     
+    descriptions.push(`Level: ${enemy.level}`);
     descriptions.push(`HP: ${enemy.hp?.toLocaleString() ?? "???"}`);
     descriptions.push(`Base Exp: ${enemy.base_exp?.toLocaleString() ?? "???"}`);
         
