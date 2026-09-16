@@ -11,62 +11,73 @@ interface EnemyViewMiddleware{
 }
 
 async function handleTitle({embed, enemy}: EnemyViewMiddleware, next: () => void){
-    let name = enemy.enemy.name;
-    let level = enemy.level;
-    let difficulty = enemy.enemy_difficulty?.name ? `(${enemy.enemy_difficulty?.name})` : "";
+    const title = [];
 
-    embed.setTitle(`${name} (Lv. ${level}) ${difficulty}`);
+    if(enemy.enemy_type.icon)
+        title.push(enemy.enemy_type.icon.discord_emoji);
 
-    next();
-}
+    title.push(enemy.enemy_name);
+    title.push(`Lv. ${enemy.level}`);
 
-async function handleDescription(data: EnemyViewMiddleware, next: () => void){
-    const area = data.enemy.area;
+    if(enemy.difficulty_label)
+        title.push(`(${enemy.difficulty_label})`);
 
-    const areaName = area.name;
-    const location = area.location.name;
-    const icon = area.location.location_type.icon?.discord_emoji;
-    const locationType = area.location.location_type.name;
-
-    data.embed.setDescription(`${areaName}\n${location}\n${icon} ${locationType}`);
+    if(enemy.variant_label)
+        title.push(`(${enemy.variant_label})`);
+    
+    embed.setTitle(title.join(" "));
 
     next();
 }
 
-async function handleHp({embed, enemy}: EnemyViewMiddleware, next: () => void){
-    if(!enemy.hp)
-        return next();
+async function handleDescription({embed, enemy}: EnemyViewMiddleware, next: () => void){
+    const descriptions = [];
 
-    const hp = enemy.hp?.toLocaleString();
+    descriptions.push(`${enemy.element} Element`);
+    
+    if(enemy.hp)
+        descriptions.push(`HP: ${enemy.hp.toLocaleString()}`);
+    
+    if(enemy.base_exp)
+        descriptions.push(`Base Exp: ${enemy.base_exp.toLocaleString()}`);
+    
+    embed.setDescription(descriptions.join("\n"));
+    
+    next();
+}
 
-    embed.addFields([{
-        name: `HP`,
-        value: hp,
-        inline: true,
-    }]);
+async function handleEnemyBoss({embed, enemy}: EnemyViewMiddleware, next: () => void){
+    if(enemy.enemy_boss){
+        if(enemy.enemy_boss.has_difficulty){
+            embed.addFields([{
+                name: `${enemy.enemy_type.icon?.discord_emoji} Boss Enemy`,
+                value: [
+                    "this enemy has difficulty scaling (base stat multiplier):",
+                    "Easy: x0.1",
+                    "Normal: x1",
+                    "Hard: x2",
+                    "Nightmare: x5",
+                    "Ultimate: x10",
+                ].join("\n")
+            }]);
+        }
+        else{
+            embed.addFields([{
+                name: `${enemy.enemy_type.icon?.discord_emoji} Boss Enemy`,
+                value: "this enemy is a boss without difficulty scaling"
+            }]);
+        }
+    }
 
     next();
 }
 
-async function handleElement({embed, enemy}: EnemyViewMiddleware, next: () => void){
-    const elementName = enemy.element.element.name;
-    const elementWeakness = enemy.element.weakness.name;
-
-    embed.addFields([{
-        name: `${emojis["skill_overlimit"]} element`,
-        value: `**${elementName}** (weak to **${elementWeakness}**)`,
-        inline: true,
-    }]);
-
-    next();
-}
-
-async function handleExp({embed, enemy}: EnemyViewMiddleware, next: () => void){
-    embed.addFields([{
-        name: `${emojis["stats_experience"]} Base EXP`,
-        value: `${enemy.base_exp}`,
-        inline: true,
-    }]);
+async function handleArea({embed, enemy}: EnemyViewMiddleware, next: () => void){   
+    if(enemy.area.length > 0)
+        embed.addFields([{
+            name: `${emojis["system_ui_world_iruna"]} found at:`,
+            value: enemy.area.map(e => `${e.location.location_type?.icon?.discord_emoji ?? ""} ${e.name} - ${e.location.name}`).join("\n")
+        }])
 
     next();
 }
@@ -117,10 +128,9 @@ async function handleDropComponent(data: EnemyViewMiddleware, next: () => void){
 const handler = middlewareEngine<EnemyViewMiddleware>(
     handleTitle,
     handleDescription,
-    handleElement,
-    handleHp,
-    handleExp,
+    handleEnemyBoss,
     handleDrop,
+    handleArea,
     handleDropComponent,
 );
 

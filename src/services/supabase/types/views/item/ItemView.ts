@@ -15,8 +15,9 @@ import {
     itemStatModel,
     itemToolModel
 } from "../../models/Items";
-import { enemyDetailModel, enemyDifficultyModel, enemyModel, enemyTypeModel, iconModel, locationAreaModel, locationModel, locationTypeModel, statModel } from "../../models";
+import { enemyModel, enemyTypeModel, iconModel, locationAreaModel, locationModel, locationTypeModel, statModel } from "../../models";
 import { statRestrictionModel } from "../../models/Stats/StatRestriction";
+import { enemyNameModel } from "../../models/Enemies/EnemyName";
 
 const crystaUpgrades = itemCrystaUpgradeModel
     .pick({})
@@ -184,15 +185,15 @@ export const itemView = itemModel
 
     item_chests: itemChestModel.nullable(),
 
-    enemy: enemyDetailModel
+    enemy: enemyModel
         .pick({
-            level: true
+            enemy: true,
+            level: true,
+            difficulty_label: true,
+            variant_label: true,
         })
         .extend({
-        enemy: enemyModel.pick({
-            enemy: true,
-            name: true
-        }),
+        enemy_name: enemyNameModel.shape.name,
         area: locationAreaModel.pick({
             area: true,
             name: true,
@@ -206,15 +207,13 @@ export const itemView = itemModel
                     icon: iconModel.nullable()
                 }).nullable()
             })
-        }),
+        })
+        .array(),
         enemy_type: enemyTypeModel.pick({
             enemy_type: true,
             name: true
         }).extend({
             icon: iconModel.nullable()
-        }),
-        difficulty: enemyDifficultyModel.pick({
-            name: true
         })
         .nullable()
     }).array()

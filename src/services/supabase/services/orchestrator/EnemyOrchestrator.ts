@@ -1,3 +1,4 @@
+import { Enemy } from "@services/supabase/types";
 import { enemySimpleView, EnemySimpleView, enemyView, EnemyView } from "@services/supabase/types/views/enemy";
 import { supabaseModels } from "@shared/supabase";
 
@@ -5,26 +6,19 @@ export async function getEnemies(name: string): Promise<EnemySimpleView[]>{
     const res = await supabaseModels
         .from("enemies")
         .select(`
-            name,
-            enemy_detail:enemy_details(
-                level,
-                enemy:enemies(*),
-                area:location_areas(
-                    area,
-                    name,
-                    location:locations(*)
-                ),
-                enemy_type:enemy_types(
-                    enemy_type,
-                    name,
-                    icon:icons(*)
-                ),
-                enemy_difficulty:enemy_difficulties(
-                    name
-                )
+            enemy,
+            level,
+            difficulty_label,
+            variant_label,
+            ...enemy_names(enemy_name:name),
+            ...enemy_types(enemy_type_icon:icons(*)),
+            area:location_areas(
+                area,
+                name,
+                location:locations(*)
             )
         `)
-        .ilike("name", `%${name}%`)
+        .ilike("enemy_name", `%${name}%`)
         .limit(21)
         .throwOnError();
 
@@ -33,21 +27,21 @@ export async function getEnemies(name: string): Promise<EnemySimpleView[]>{
     return parsed;
 }
 
-export async function getEnemy(
-    enemy: string,
-    area: string,
-    enemy_type: string,
-    level: number
-): Promise<EnemyView>{
+export async function getEnemy(enemy: Enemy["enemy"]): Promise<EnemyView>{
     const res = await supabaseModels
-        .from("enemy_details")
+        .from("enemies")
         .select(`
             level,
             base_exp,
             hp,
-            enemy:enemies(
-                *
+            difficulty_label,
+            variant_label,
+            ...enemy_names(enemy_name: name),
+            ...elements(element: name),
+            enemy_boss(
+                has_difficulty
             ),
+
             area:location_areas(
                 name,
                 location:locations(
@@ -61,15 +55,6 @@ export async function getEnemy(
             enemy_type:enemy_types(
                 name,
                 icon:icons(*)
-            ),
-            element:elements(
-                element:element_weakness!element_weakness_element_fkey(
-                    element:elements!element_weakness_element_fkey(*),
-                    weakness:elements!element_weakness_weakness_fkey(*)
-                )
-            ),
-            enemy_difficulty:enemy_difficulties(
-                *
             ),
             drops:items(
                 item,
@@ -90,9 +75,6 @@ export async function getEnemy(
             )
         `)
         .eq("enemy", enemy)
-        .eq("area", area)
-        .eq("enemy_type", enemy_type)
-        .eq("level", level)
         .limit(1)
         .single()
         .throwOnError();

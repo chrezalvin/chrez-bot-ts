@@ -8,9 +8,6 @@ export const enemySchema = z.object({
     name: z.string().min(2)
 }).or(z.object({
     enemy: z.string(),
-    area: z.string(),
-    enemy_type: z.string(),
-    level: z.coerce.number(),
 }));
 
 export type I_Enemy = z.input<typeof enemySchema>;
@@ -24,12 +21,7 @@ export async function enemy(args: I_Enemy): Promise<MessageCreateOptions & Inter
         return enemySelect(enemies);
     }
     else{
-        const item = await EnemyOrchestrator.getEnemy(
-            parsed.enemy,
-            parsed.area,
-            parsed.enemy_type,
-            parsed.level
-        );
+        const item = await EnemyOrchestrator.getEnemy(parsed.enemy);
     
         return enemyDetail(item);
     }

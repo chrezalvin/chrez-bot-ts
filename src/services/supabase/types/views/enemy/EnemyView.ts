@@ -2,8 +2,6 @@ import z from "zod";
 import { 
     elementModel,
     elementWeaknessModel,
-    enemyDetailModel,
-    enemyDifficultyModel,
     enemyModel,
     enemyTypeModel,
     iconModel,
@@ -12,13 +10,24 @@ import {
     locationTypeModel
  } from "../../models";
 import { itemEquipableLabelTypeModel, itemEquipableModel, itemEquipableTypeModel, itemModel } from "../../models/Items";
+import { enemyNameModel } from "../../models/Enemies/EnemyName";
+import { enemyBossModel } from "../../models/Enemies/EnemyBoss";
 
-export const enemyView = enemyDetailModel.pick({
+export const enemyView = enemyModel.pick({
     level: true,
     base_exp: true,
     hp: true,
+    difficulty_label: true,
+    variant_label: true,
 }).extend({
-    enemy: enemyModel,
+    enemy_name: enemyNameModel.shape.name,
+    element: elementModel.shape.name,
+
+    enemy_boss: enemyBossModel.pick({
+        has_difficulty: true
+    })
+    .nullable(),
+
     area: locationAreaModel.pick({
         name: true,
     })
@@ -32,9 +41,11 @@ export const enemyView = enemyDetailModel.pick({
             })
             .extend({
                 icon: iconModel.nullable()
-            }),
+            })
+            .nullable(),
         })
-    }),
+    })
+    .array(),
 
     enemy_type: enemyTypeModel.pick({
         name: true,
@@ -42,22 +53,6 @@ export const enemyView = enemyDetailModel.pick({
     .extend({
         icon: iconModel.nullable()
     }),
-
-    element: elementModel
-        .pick({})
-        .extend({
-            element: elementWeaknessModel
-                .pick({})
-                .extend({
-                    element: elementModel,
-                    weakness: elementModel
-                }).array()
-        })
-        .transform(e => {
-            return e.element[0];
-        }),
-
-    enemy_difficulty: enemyDifficultyModel.nullable(),
 
     drops: itemModel
         .pick({

@@ -199,12 +199,20 @@ const handleItemCrysta: MiddlewareFcn = async ({item, embed}, next) => {
 const handleItemEnemies: MiddlewareFcn = async ({item, embed}, next) => {
     if(item.enemy.length > 0){
         const enemies = item.enemy.slice(0, 7).map(enemy => {
-            const emoji = enemy.enemy_type.icon?.discord_emoji ?? "";
-            const name = enemy.enemy.name;
-            const difficulty = enemy.difficulty?.name ? `(${enemy.difficulty.name})` : "";
-            const area = enemy.area.name;
+            const description = [];
 
-            return `${emoji} ${name} ${difficulty}: ${area}`;
+            if(enemy.enemy_type?.icon)
+                description.push(enemy.enemy_type.icon?.discord_emoji);
+
+            description.push(enemy.enemy_name);
+
+            if(enemy.difficulty_label)
+                description.push(`(${enemy.difficulty_label})`);
+
+            if(enemy.area[0])
+                description.push(enemy.area[0].name);
+
+            return description.join(" ");
         })
 
         embed.addFields([{
@@ -239,13 +247,13 @@ const handleItemEnemiesComponent: MiddlewareFcn = async (data, next) => {
         for(const enemy of item.enemy){    
             const strSelect = new StringSelectMenuOptionBuilder();
     
-            if(enemy.enemy_type.icon)
+            if(enemy.enemy_type?.icon)
                 strSelect.setEmoji(enemy.enemy_type.icon.discord_emoji);
     
             strSelect
-                .setLabel(`${enemy.enemy.name} Lv.${enemy.level} ${enemy.difficulty?.name ? `(${enemy.difficulty?.name})` : ""}`)
-                .setValue(`${enemy.enemy.enemy} ${enemy.area.area} ${enemy.enemy_type.enemy_type} ${enemy.level}`)
-                .setDescription(`${enemy.area.name} - ${enemy.area.location.name}`);
+                .setLabel(`${enemy.enemy_name} Lv.${enemy.level} ${enemy.difficulty_label ? `(${enemy.difficulty_label})` : ""}`)
+                .setValue(enemy.enemy)
+                .setDescription(`${enemy.area[0].name} - ${enemy.area[0].location.name}`);
     
             selectMenu.addOptions(strSelect);
         }

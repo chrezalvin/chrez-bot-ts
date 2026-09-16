@@ -142,12 +142,13 @@ export async function getItem(item: string): Promise<ItemView>{
                 )
             ),
             item_chests!item(*),
-            enemy:enemy_details(
+            enemy:enemies(
+                enemy,
                 level,
-                enemy:enemies(
-                    enemy,
-                    name
-                ),
+                difficulty_label,
+                variant_label,
+                ...enemy_names(enemy_name: name),
+
                 area:location_areas(
                     area,
                     name,
@@ -163,12 +164,11 @@ export async function getItem(item: string): Promise<ItemView>{
                     enemy_type,
                     name,
                     icon:icons(*)
-                ),
-                difficulty:enemy_difficulties(name)
+                )
             )
         `)
         .eq("item", item)
-        .limit(21, {referencedTable: "enemy_details"})
+        .limit(21, {referencedTable: "enemies"})
         .single()
         .throwOnError();
 
